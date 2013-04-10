@@ -1,0 +1,32 @@
+{
+	"name": "appendGrid",
+	"version": "1.0.0",
+	"title": "appendGrid - The dynamic table input jQuery plugin",
+	"author": {
+		"name": "Albert L."
+	},
+	"licenses": [
+		{
+			"type": "MIT",
+			"url": "http://opensource.org/licenses/MIT"
+		},
+		{
+			"type": "GPLv3",
+			"url": "http://opensource.org/licenses/LGPL-3.0"
+		}
+	],
+	"dependencies": {
+		"jquery": ">=1.9.x",
+		"jquery.ui": ">=1.10.x"
+	},
+	"description": "appendGrid allow you to input structured data row by row such like filled spreadsheets. It allows you to add/remove/insert/delete row in the grid. The generated input/select/textarea controls are well named that for submitting to server side applications such as ASP.NET/PHP/JSP.",
+	"keywords": [
+		"appendGrid",
+		"header detail",
+		"edit grid"
+	],
+	"homepage": "http://appendgrid.apphb.com/",
+	"docs": "http://appendgrid.apphb.com/Documentation",
+	"demo": "http://appendgrid.apphb.com/Demo",
+	"bugs": "https://github.com/hkalbertl/jquery.appendGrid/issues"
+}

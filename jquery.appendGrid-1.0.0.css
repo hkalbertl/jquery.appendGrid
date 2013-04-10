@@ -1,0 +1,50 @@
+﻿.appendGrid
+{
+    border-collapse: collapse;
+}
+.appendGrid td
+{
+    padding: 1px;
+}
+.appendGrid thead td
+{
+    padding-top: 4px;
+    padding-bottom: 4px;
+    white-space: nowrap;
+}
+.appendGrid thead td.caption
+{
+    padding: 4px;
+    font-weight: bold;
+}
+.appendGrid tbody input[type=text]
+{
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+.appendGrid tbody td
+{
+    white-space: nowrap;
+}
+.appendGrid tbody td.first, .appendGrid tbody td.last
+{
+    text-align: center;
+    vertical-align: middle;
+}
+.appendGrid tbody td.last button
+{
+    width: 20px;
+    height: 20px;
+    margin: 1px;
+}
+.appendGrid tfoot button
+{
+    height: 24px;
+    width: 28px;
+}
+.appendGrid input.double
+{
+    text-align: right;
+}
