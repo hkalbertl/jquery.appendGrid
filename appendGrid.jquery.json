@@ -22,8 +22,11 @@
 	"description": "appendGrid allow you to input structured data row by row such like filled spreadsheets. It allows you to add/remove/insert/delete row in the grid. The generated input/select/textarea controls are well named that for submitting to server side applications such as ASP.NET/PHP/JSP.",
 	"keywords": [
 		"appendGrid",
-		"header detail",
-		"edit grid"
+		"header-detail",
+		"master-detail",
+		"edit",
+		"table",
+		"grid"
 	],
 	"homepage": "http://appendgrid.apphb.com/",
 	"docs": "http://appendgrid.apphb.com/Documentation",
