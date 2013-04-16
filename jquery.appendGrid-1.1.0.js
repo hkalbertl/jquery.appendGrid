@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.0.0
+* jQuery appendGrid v1.1.0
 * https://appendgrid.apphb.com/
 *
 * Copyright 2013 Albert L.
@@ -66,6 +66,8 @@
         cellCss: null,
         // Extra attributes to be added to the control.
         ctrlAttr: null,
+        // Extra properties to be added to the control.
+        ctrlProp: null,
         // Extra CSS to be added to the control.
         ctrlCss: null,
         // Extra name of class to be added to the control.
@@ -648,16 +650,27 @@
                 }
                 else if (settings.columns[y].type == 'checkbox') {
                     ctrl = document.createElement('input');
+                    ctrl.type = 'checkbox';
                     ctrl.id = settings.idPrefix + '_' + settings.columns[y].name + '_' + uniqueIndex;
                     ctrl.name = ctrl.id;
-                    ctrl.type = 'checkbox';
                     ctrl.value = 1;
                     tbCell.appendChild(ctrl);
                     tbCell.style.textAlign = 'center';
                 }
+                else if (-1 != settings.columns[y].type.search(/color|date|datetime|datetime\-local|email|month|number|range|search|tel|time|url|week/)) {
+                    ctrl = document.createElement('input');
+                    try {
+                        ctrl.type = settings.columns[y].type;
+                    }
+                    catch (err) { }
+                    ctrl.id = settings.idPrefix + '_' + settings.columns[y].name + '_' + uniqueIndex;
+                    ctrl.name = ctrl.id;
+                    tbCell.appendChild(ctrl);
+                }
                 else {
                     // Generate text input
                     ctrl = document.createElement('input');
+                    ctrl.type = 'text';
                     ctrl.id = settings.idPrefix + '_' + settings.columns[y].name + '_' + uniqueIndex;
                     ctrl.name = ctrl.id;
                     tbCell.appendChild(ctrl);
@@ -674,6 +687,8 @@
                 if (settings.columns[y].type != 'custom') {
                     // Add control attributes as needed
                     if (settings.columns[y].ctrlAttr != null) $(ctrl).attr(settings.columns[y].ctrlAttr);
+                    // Add control properties as needed
+                    if (settings.columns[y].ctrlProp != null) $(ctrl).prop(settings.columns[y].ctrlProp);
                     // Add control CSS as needed
                     if (settings.columns[y].ctrlCss != null) $(ctrl).css(settings.columns[y].ctrlCss);
                     // Add control class as needed
