@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.1.0
+* jQuery appendGrid v1.1.1
 * https://appendgrid.apphb.com/
 *
 * Copyright 2013 Albert L.
@@ -657,7 +657,7 @@
                     tbCell.appendChild(ctrl);
                     tbCell.style.textAlign = 'center';
                 }
-                else if (-1 != settings.columns[y].type.search(/color|date|datetime|datetime\-local|email|month|number|range|search|tel|time|url|week/)) {
+                else if (-1 != settings.columns[y].type.search(/^(color|date|datetime|datetime\-local|email|month|number|range|search|tel|time|url|week)$/)) {
                     ctrl = document.createElement('input');
                     try {
                         ctrl.type = settings.columns[y].type;
