@@ -1,4 +1,4 @@
-## 1.1.1 (May 19, 2013)
+## 1.1.2 (May 19, 2013)
 
 - Fixed a problem on generating `ui-datepicker` columns (Thanks kado for reporting)
 
