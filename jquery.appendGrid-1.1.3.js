@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.1.2
+* jQuery appendGrid v1.1.3
 * https://appendgrid.apphb.com/
 *
 * Copyright 2013 Albert L.
@@ -108,10 +108,10 @@
                 }
                 // Generate settings
                 var settings = $.extend({}, _defaultInitOptions, options);
-                if ($.isPlainObject(options.textResources))
-                    settings.textResources = $.extend({}, _textResources);
+                if ($.isPlainObject(options.i18n))
+                    settings.textResources = $.extend({}, _textResources, options.i18n);
                 else
-                    settings.textResources = $.extend({}, _textResources, options.textResources);
+                    settings.textResources = $.extend({}, _textResources);
                 settings._rowOrder = [];
                 // Check `idPrefix` is defined
                 if (isEmpty(settings.idPrefix)) {
