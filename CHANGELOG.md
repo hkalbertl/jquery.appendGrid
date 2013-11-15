@@ -1,3 +1,8 @@
+## 1.2.0 (Nov 15, 2013)
+
+- Added drag & drop support
+- Added `rowDragging` and `hideMoveUpDown` initial parameters
+
 ## 1.1.3 (Oct 29, 2013)
 
 - Fixed a problem that `i18n` parameter not working even correct values passed in (Thanks DinkoMiletic for reporting)

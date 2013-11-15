@@ -39,6 +39,14 @@
     height: 20px;
     margin: 1px;
 }
+.appendGrid tbody td.last div.rowDrag
+{
+    display: inline-block;
+    vertical-align: middle;
+    width: 18px;
+    height: 18px;
+    margin: 1px;
+}
 .appendGrid tfoot button
 {
     height: 24px;
