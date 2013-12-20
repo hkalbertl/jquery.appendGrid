@@ -35,10 +35,15 @@
         hideMoveUpDown: false,
         // The extra class for the append button
         appendBtnClass: 'btn btn-sm btn-default fa fa-plus-circle',
+        // The extra class for the remove last row button
         removeLastBtnClass: 'btn btn-sm btn-default fa fa-minus-circle',
+        // The extra class for the insert row button
         insertBtnClass: 'btn btn-sm btn-default fa fa-plus',
+        // The extra class for the remove row button
         removeBtnClass: 'btn btn-sm btn-default fa fa-trash-o',
+        // The extra class for the move up row button
         moveUpBtnClass: 'btn btn-sm btn-default fa fa-arrow-up',
+        // The extra class for the move down row button
         moveDownBtnClass: 'btn btn-sm btn-default fa fa-arrow-down',
         // The callback function to be triggered after data loaded to grid.
         dataLoaded: null,
