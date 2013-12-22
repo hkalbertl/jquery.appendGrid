@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.2.0
+* jQuery appendGrid v1.2.1
 * https://appendgrid.apphb.com/
 *
 * Copyright 2013 Albert L.
@@ -33,18 +33,8 @@
         rowDragging: false,
         // Hide the move up/down buttons at the end of rows.
         hideMoveUpDown: false,
-        // The extra class for the append button
-        appendBtnClass: 'btn btn-sm btn-default fa fa-plus-circle',
-        // The extra class for the remove last row button
-        removeLastBtnClass: 'btn btn-sm btn-default fa fa-minus-circle',
-        // The extra class for the insert row button
-        insertBtnClass: 'btn btn-sm btn-default fa fa-plus',
-        // The extra class for the remove row button
-        removeBtnClass: 'btn btn-sm btn-default fa fa-trash-o',
-        // The extra class for the move up row button
-        moveUpBtnClass: 'btn btn-sm btn-default fa fa-arrow-up',
-        // The extra class for the move down row button
-        moveDownBtnClass: 'btn btn-sm btn-default fa fa-arrow-down',
+        // The extra class names for buttons.
+        buttonClasses: null,
         // The callback function to be triggered after data loaded to grid.
         dataLoaded: null,
         // The callback function to be triggered after new row appended.
@@ -64,7 +54,11 @@
         // (Private) Indicate data is loaded or not.
         _isDataLoaded: false,
         // (Private) Visible column count for internal calculation.
-        _visibleCount: 0
+        _visibleCount: 0,
+        // (Private) Labels or messages used in grid.
+        _i18n: null,
+        // (Private) The extra class names for buttons.
+        _buttonClasses: null
     };
     // Default column options.
     var _defaultColumnOptions = {
@@ -105,7 +99,8 @@
         // The `OnChange` event callback of control.
         onChange: null
     };
-    var _textResources = { append: 'Append Row', removeLast: 'Remove Last Row', insert: 'Insert Row Above', remove: 'Remove Current Row', moveUp: 'Move Up', moveDown: 'Move Down', rowDrag: 'Sort Row' };
+    var _defaultTextResources = { append: 'Append Row', removeLast: 'Remove Last Row', insert: 'Insert Row Above', remove: 'Remove Current Row', moveUp: 'Move Up', moveDown: 'Move Down', rowDrag: 'Sort Row' };
+    var _defaultButtonClasses = { append: null, removeLast: null, insert: null, remove: null, moveUp: null, moveDown: null, rowDrag: null };
     var _methods = {
         init: function (options) {
             var target = this;
@@ -125,9 +120,13 @@
                 // Generate settings
                 var settings = $.extend({}, _defaultInitOptions, options);
                 if ($.isPlainObject(options.i18n))
-                    settings.textResources = $.extend({}, _textResources, options.i18n);
+                    settings._i18n = $.extend({}, _defaultTextResources, options.i18n);
                 else
-                    settings.textResources = $.extend({}, _textResources);
+                    settings._i18n = $.extend({}, _defaultTextResources);
+                if ($.isPlainObject(options.buttonClasses))
+                    settings._buttonClasses = $.extend({}, _defaultButtonClasses, options.buttonClasses);
+                else
+                    settings._buttonClasses = $.extend({}, _defaultButtonClasses);
                 settings._rowOrder = [];
                 // Check `idPrefix` is defined
                 if (isEmpty(settings.idPrefix)) {
@@ -184,8 +183,8 @@
                 tbCell = tbRow.insertCell(-1);
                 tbCell.colSpan = 2 + settings._visibleCount;
                 $(tbCell).append($('<input/>').attr({ type: 'hidden', id: settings.idPrefix + '_rowOrder', name: settings.idPrefix + '_rowOrder' }).addClass('row-order'));
-                $(tbCell).append($('<button class="' + settings.appendBtnClass + '"/>').attr({ type: 'button', title: settings.textResources.append }).button({ icons: { primary: 'ui-icon-plusthick' }, text: false }).click(function () { insertRow(tbWhole, 1, null, null); }));
-                $(tbCell).append($('<button class="' + settings.removeLastBtnClass + '"/>').attr({ type: 'button', title: settings.textResources.removeLast }).button({ icons: { primary: 'ui-icon-closethick' }, text: false }).click(function () { removeRow(tbWhole, null, this.value, false); }));
+                $(tbCell).append($('<button/>').addClass(settings._buttonClasses.append).attr({ type: 'button', title: settings._i18n.append }).button({ icons: { primary: 'ui-icon-plusthick' }, text: false }).click(function () { insertRow(tbWhole, 1, null, null); }));
+                $(tbCell).append($('<button/>').addClass(settings._buttonClasses.removeLast).attr({ type: 'button', title: settings._i18n.removeLast }).button({ icons: { primary: 'ui-icon-closethick' }, text: false }).click(function () { removeRow(tbWhole, null, this.value, false); }));
                 // Enable dragging
                 if (settings.rowDragging) {
                     $(tbBody).sortable({
@@ -745,23 +744,23 @@
             // Add button cell
             tbCell = tbRow.insertCell(-1);
             tbCell.className = 'ui-widget-content last';
-            $(tbCell).append($('<button/>').addClass('insert ' + settings.insertBtnClass).val(uniqueIndex).attr({ id: settings.idPrefix + '_Insert_' + uniqueIndex, type: 'button', title: settings.textResources.insert, tabindex: -1 }).button({ icons: { primary: 'ui-icon-arrowreturnthick-1-w' }, text: false }).click(function () {
+            $(tbCell).append($('<button/>').addClass('insert', settings._buttonClasses.insert).val(uniqueIndex).attr({ id: settings.idPrefix + '_Insert_' + uniqueIndex, type: 'button', title: settings._i18n.insert, tabindex: -1 }).button({ icons: { primary: 'ui-icon-arrowreturnthick-1-w' }, text: false }).click(function () {
                 $(tbWhole).appendGrid('insertRow', 1, null, this.value);
             }));
-            $(tbCell).append($('<button/>').addClass('delete ' + settings.removeBtnClass).val(uniqueIndex).attr({ id: settings.idPrefix + '_Delete_' + uniqueIndex, type: 'button', title: settings.textResources.remove, tabindex: -1 }).button({ icons: { primary: 'ui-icon-trash' }, text: false }).click(function () {
+            $(tbCell).append($('<button/>').addClass('delete', settings._buttonClasses.remove).val(uniqueIndex).attr({ id: settings.idPrefix + '_Delete_' + uniqueIndex, type: 'button', title: settings._i18n.remove, tabindex: -1 }).button({ icons: { primary: 'ui-icon-trash' }, text: false }).click(function () {
                 removeRow(tbWhole, null, this.value, false);
             }));
             if (!settings.hideMoveUpDown) {
-                $(tbCell).append($('<button/>').addClass('moveUp ' + settings.moveUpBtnClass).val(uniqueIndex).attr({ id: settings.idPrefix + '_MoveUp_' + uniqueIndex, type: 'button', title: settings.textResources.moveUp, tabindex: -1 }).button({ icons: { primary: 'ui-icon-arrowthick-1-n' }, text: false }).click(function () {
+                $(tbCell).append($('<button/>').addClass('moveUp', settings._buttonClasses.moveUp).val(uniqueIndex).attr({ id: settings.idPrefix + '_MoveUp_' + uniqueIndex, type: 'button', title: settings._i18n.moveUp, tabindex: -1 }).button({ icons: { primary: 'ui-icon-arrowthick-1-n' }, text: false }).click(function () {
                     $(tbWhole).appendGrid('moveUpRow', null, this.value);
                 }));
-                $(tbCell).append($('<button/>').addClass('moveDown ' + settings.moveDownBtnClass).val(uniqueIndex).attr({ id: settings.idPrefix + '_MoveDown_' + uniqueIndex, type: 'button', title: settings.textResources.moveDown, tabindex: -1 }).button({ icons: { primary: 'ui-icon-arrowthick-1-s' }, text: false }).click(function () {
+                $(tbCell).append($('<button/>').addClass('moveDown' , settings._buttonClasses.moveDown).val(uniqueIndex).attr({ id: settings.idPrefix + '_MoveDown_' + uniqueIndex, type: 'button', title: settings._i18n.moveDown, tabindex: -1 }).button({ icons: { primary: 'ui-icon-arrowthick-1-s' }, text: false }).click(function () {
                     $(tbWhole).appendGrid('moveDownRow', null, this.value);
                 }));
             }
             // Handle row dragging
             if (settings.rowDragging) {
-                $(tbCell).append($('<div/>').attr('title', settings.textResources.rowDrag).addClass('rowDrag ui-state-default ui-corner-all').append($('<div/>').addClass('ui-icon ui-icon-carat-2-n-s')));
+                $(tbCell).append($('<div/>').attr('title', settings._i18n.rowDrag).addClass('rowDrag ui-state-default ui-corner-all', settings._buttonClasses.rowDrag).append($('<div/>').addClass('ui-icon ui-icon-carat-2-n-s')));
             }
             // Add hidden
             for (var y = 0; y < hidden.length; y++) {
