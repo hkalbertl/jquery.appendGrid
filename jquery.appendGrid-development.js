@@ -1,8 +1,8 @@
 ﻿/*!
-* jQuery appendGrid v1.2.1
+* jQuery appendGrid v1.2.2
 * https://appendgrid.apphb.com/
 *
-* Copyright 2013 Albert L.
+* Copyright 2014 Albert L.
 * Dual licensed under the GPL (http://www.gnu.org/licenses/gpl.html)
 * and MIT (http://www.opensource.org/licenses/mit-license.php) licenses.
 *
@@ -766,6 +766,7 @@
             for (var y = 0; y < hidden.length; y++) {
                 ctrl = document.createElement('input');
                 ctrl.id = settings.idPrefix + '_' + settings.columns[hidden[y]].name + '_' + uniqueIndex;
+                ctrl.name = ctrl.id;
                 ctrl.type = 'hidden';
                 tbCell.appendChild(ctrl);
             }

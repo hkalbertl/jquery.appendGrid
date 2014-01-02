@@ -1,3 +1,11 @@
+## 1.2.2 (Jan 02, 2014)
+
+- Fixed a problem on serializing `hidden` type columns (Thanks ahmedsaleh747 for reporting)
+
+## 1.2.1 (Dec 23, 2013)
+
+- Added `buttonClasses` initial parameters (Thanks suggestion from twinh)
+
 ## 1.2.0 (Nov 15, 2013)
 
 - Added drag & drop support
