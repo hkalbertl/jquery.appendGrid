@@ -1,3 +1,7 @@
+## 1.2.3 (Jan 16, 2014)
+
+- Fixed a problem on setting default value on `hidden` type columns (Thanks mailivore for reporting)
+
 ## 1.2.2 (Jan 02, 2014)
 
 - Fixed a problem on serializing `hidden` type columns (Thanks ahmedsaleh747 for reporting)

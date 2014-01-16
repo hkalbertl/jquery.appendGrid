@@ -1,4 +1,16 @@
-﻿.appendGrid
+﻿/*!
+* jQuery appendGrid v1.2.3
+* https://appendgrid.apphb.com/
+*
+* Copyright 2014 Albert L.
+* Dual licensed under the LGPL (http://www.gnu.org/licenses/lgpl.html)
+* and MIT (http://www.opensource.org/licenses/mit-license.php) licenses.
+*
+* Depends:
+* jQuery v1.9.1+
+* jquery UI v1.10.2+
+*/
+.appendGrid
 {
     border-collapse: collapse;
 }
