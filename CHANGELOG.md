@@ -1,3 +1,11 @@
+## 1.3.0 (Jan 21, 2014)
+
+- Added `hideButtons` option that allow hiding each buttons individually and removed `hideMoveUpDown` option
+- Added `customRowButtons` option that allow adding extra buttons at the last cell of each row
+- Added `hideRowNumColumn` option that allow to not generating the row number column
+- Added a message to be displayed when the grid is empty 
+  (Thanks mailivore for above ideas)
+
 ## 1.2.3 (Jan 16, 2014)
 
 - Fixed a problem on setting default value on `hidden` type columns (Thanks mailivore for reporting)
