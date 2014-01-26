@@ -1,3 +1,9 @@
+## 1.3.1 (Jan 26, 2014)
+
+- Removed `firstCellWidth` and `lastCellWidth` parameters
+- Added `customFooterButtons` option that allow adding extra buttons to the bottom of grid
+- The last column will not be displayed if all buttons are hidden
+
 ## 1.3.0 (Jan 21, 2014)
 
 - Added `hideButtons` option that allow hiding each buttons individually and removed `hideMoveUpDown` option

@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.3.0
+* jQuery appendGrid v1.3.1
 * https://appendgrid.apphb.com/
 *
 * Copyright 2014 Albert L.
@@ -40,10 +40,17 @@
 {
     white-space: nowrap;
 }
-.appendGrid tbody td.first, .appendGrid tbody td.last
+.appendGrid tbody td.first
 {
     text-align: center;
     vertical-align: middle;
+    min-width: 32px;
+}
+.appendGrid tbody td.last
+{
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
 }
 .appendGrid tbody td.last button
 {
@@ -65,8 +72,13 @@
 }
 .appendGrid tfoot button
 {
+    min-height: 24px;
+    min-width: 28px;
+}
+.appendGrid tfoot button.append, .appendGrid tfoot button.removeLast
+{
     height: 24px;
-    width: 28px;
+    min-width: 28px;
 }
 .appendGrid input.double
 {
