@@ -1,3 +1,12 @@
+## 1.3.2 (Mar 08, 2014)
+
+- Added `headerSpan` to allow header cell column span.
+  (Thanks Rajeevgandhi for suggestion)
+- Allowed to pass array of data to `appendRow` and `insertRow` method.
+  (Thanks mailivore for suggestion)
+- Fixed a problem that empty row message will not be displayed when passing empty array to `load` method.
+  (Thanks mailivore for reporting)
+
 ## 1.3.1 (Jan 26, 2014)
 
 - Removed `firstCellWidth` and `lastCellWidth` parameters
