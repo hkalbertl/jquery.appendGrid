@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.3.1
+* jQuery appendGrid v1.3.2
 * https://appendgrid.apphb.com/
 *
 * Copyright 2014 Albert L.
@@ -62,6 +62,8 @@
         display: null,
         // Extra CSS setting to be added to display text.
         displayCss: null,
+		// The `colspan` setting on the column header.
+		headerSpan: 1,
         // Extra CSS setting to be added to the control container table cell.
         cellCss: null,
         // Extra attributes to be added to the control.
@@ -183,6 +185,7 @@
                     tbCell.className = 'ui-widget-header';
                 }
                 // Prepare column information and add column header
+				var pendingSkipCol = 0;
                 for (var z = 0; z < settings.columns.length; z++) {
                     // Assign default setting
                     var columnOpt = $.extend({}, _defaultColumnOptions, settings.columns[z]);
@@ -190,10 +193,19 @@
                     // Skip hidden
                     if (settings.columns[z].type != 'hidden') {
                         settings._visibleCount++;
-                        tbCell = tbRow.insertCell(-1);
-                        tbCell.className = 'ui-widget-header';
-                        $(tbCell).text(settings.columns[z].display);
-                        if (settings.columns[z].displayCss) $(tbCell).css(settings.columns[z].displayCss);
+						// Check skip header colSpan
+						if (pendingSkipCol == 0) {
+							tbCell = tbRow.insertCell(-1);
+							tbCell.className = 'ui-widget-header';
+							$(tbCell).text(settings.columns[z].display);
+							if (settings.columns[z].displayCss) $(tbCell).css(settings.columns[z].displayCss);
+							if (settings.columns[z].headerSpan > 1) {
+								$(tbCell).attr('colSpan', settings.columns[z].headerSpan);
+								pendingSkipCol = settings.columns[z].headerSpan - 1;
+							}
+						} else {
+							pendingSkipCol--;
+						}
                     }
                 }
                 // Check to hide last column or not
@@ -330,14 +342,18 @@
         load: function (records) {
             var target = this;
             if (target.length > 0) {
-                loadData(target[0], records, false);
+				if (records != null && records.length > 0) {
+					loadData(target[0], records, false);
+				} else {
+					emptyGrid(target[0]);
+				}
             }
             return target;
         },
-        appendRow: function (numOfRow) {
-            return this.appendGrid('insertRow', numOfRow);
+        appendRow: function (numOfRowOrRowArray) {
+            return this.appendGrid('insertRow', numOfRowOrRowArray);
         },
-        insertRow: function (numOfRow, rowIndex, callerUniqueIndex) {
+        insertRow: function (numOfRowOrRowArray, rowIndex, callerUniqueIndex) {
             var target = this;
             if (target.length > 0) {
                 var tbWhole = target[0], insertResult = null;
@@ -345,9 +361,9 @@
                 if (!settings) {
                     alert(_systemMessages.notInit);
                 }
-                else if (numOfRow > 0) {
+                else if (($.isArray(numOfRowOrRowArray) && numOfRowOrRowArray.length > 0 ) || ($.isNumeric(numOfRowOrRowArray) && numOfRowOrRowArray > 0)) {
                     // Define variables
-                    insertResult = insertRow(tbWhole, numOfRow, rowIndex, callerUniqueIndex);
+                    insertResult = insertRow(tbWhole, numOfRowOrRowArray, rowIndex, callerUniqueIndex);
                     // Reorder sequence as needed
                     if ($.isNumeric(rowIndex) || $.isNumeric(callerUniqueIndex)) {
                         // Sort sequence
@@ -361,9 +377,9 @@
             return target;
         },
         removeRow: function (rowIndex, uniqueIndex) {
-            var target = this, tbodyIndex = -1;
+            var target = this;
             if (target.length > 0) {
-                var tbWhole = target[0], tbHead, tbBody, tbRow;
+                var tbWhole = target[0];
                 var settings = $(tbWhole).data('appendGrid');
                 if (!settings) {
                     alert(_systemMessages.notInit);
@@ -374,6 +390,20 @@
             }
             return target;
         },
+		emptyGrid: function () {
+			var target = this;
+            if (target.length > 0) {
+                var tbWhole = target[0];
+                var settings = $(tbWhole).data('appendGrid');
+                if (!settings) {
+                    alert(_systemMessages.notInit);
+                }
+                else {
+                    emptyGrid(tbWhole);
+                }
+            }
+            return target;
+		},
         moveUpRow: function (rowIndex, uniqueIndex) {
             var target = this, tbodyIndex = -1;
             if (target.length > 0) {
@@ -663,12 +693,18 @@
             return result;
         }
     };
-    function insertRow(tbWhole, numOfRow, rowIndex, callerUniqueIndex) {
+    function insertRow(tbWhole, numOfRowOrRowArray, rowIndex, callerUniqueIndex) {
         // Define variables
         var settings = $(tbWhole).data('appendGrid');
         var addedRows = [], parentIndex = null, uniqueIndex, ctrl, hidden = [];
         var tbHead = tbWhole.getElementsByTagName('thead')[0];
         var tbBody = tbWhole.getElementsByTagName('tbody')[0];
+		// Check number of row to be inserted
+		var numOfRow = numOfRowOrRowArray, loadData = false;
+		if ($.isArray(numOfRowOrRowArray)) {
+			numOfRow = numOfRowOrRowArray.length;
+			loadData = true;
+		}
         // Check parent row
         if ($.isNumeric(callerUniqueIndex)) {
             for (var z = 0; z < settings._rowOrder.length; z++) {
@@ -785,6 +821,12 @@
                     tbCell.appendChild(ctrl);
                     tbCell.style.textAlign = 'center';
                 }
+				else if (settings.columns[y].type == 'textarea') {
+                    ctrl = document.createElement('textarea');
+                    ctrl.id = settings.idPrefix + '_' + settings.columns[y].name + '_' + uniqueIndex;
+                    ctrl.name = ctrl.id;
+                    tbCell.appendChild(ctrl);
+                }
                 else if (-1 != settings.columns[y].type.search(/^(color|date|datetime|datetime\-local|email|month|number|range|search|tel|time|url|week)$/)) {
                     ctrl = document.createElement('input');
                     try {
@@ -835,8 +877,11 @@
                         });
                     }
                 }
-                // Set default value
-                if (!isEmpty(settings.columns[y].value)) {
+				if (loadData) {
+					// Load data if needed
+					setCtrlValue(settings, y, uniqueIndex, numOfRowOrRowArray[z][settings.columns[y].name]);
+				} else if (!isEmpty(settings.columns[y].value)) {
+					// Set default value
                     setCtrlValue(settings, y, uniqueIndex, settings.columns[y].value);
                 }
             }
@@ -886,7 +931,12 @@
                     ctrl.id = settings.idPrefix + '_' + settings.columns[hidden[y]].name + '_' + uniqueIndex;
                     ctrl.name = ctrl.id;
                     ctrl.type = 'hidden';
-                    if (!isEmpty(settings.columns[hidden[y]].value)) {
+					
+					if (loadData) {
+						// Load data if needed
+						ctrl.value = numOfRowOrRowArray[z][settings.columns[hidden[y]].name];
+					} else if (!isEmpty(settings.columns[hidden[y]].value)) {
+						// Set default value
                         ctrl.value = settings.columns[hidden[y]].value;
                     }
                     tbCell.appendChild(ctrl);
@@ -990,6 +1040,21 @@
             $('tbody', tbWhole).append($('<tr></tr>').addClass('empty').append(empty));
         }
     }
+	function emptyGrid(tbWhole) {
+		// Load settings
+		var settings = $(tbWhole).data('appendGrid');
+		// Remove rows
+		$('tbody', tbWhole).empty();
+		settings._rowOrder.length = 0;
+		settings._uniqueIndex = 0;
+		// Save setting
+		saveSetting(tbWhole, settings);
+        // Add empty row
+        if (settings._rowOrder.length == 0) {
+            var empty = $('<td></td>').text(settings._i18n.rowEmpty).attr('colspan', settings._finalColSpan);
+            $('tbody', tbWhole).append($('<tr></tr>').addClass('empty').append(empty));
+        }
+	}
     function sortSequence(tbWhole, startIndex) {
         var settings = $(tbWhole).data('appendGrid');
         if (!settings.hideRowNumColumn) {
