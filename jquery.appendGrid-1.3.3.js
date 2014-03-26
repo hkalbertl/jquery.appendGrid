@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.3.2
+* jQuery appendGrid v1.3.3
 * https://appendgrid.apphb.com/
 *
 * Copyright 2014 Albert L.
@@ -31,6 +31,8 @@
         hideButtons: null,
         // Hide the row number column.
         hideRowNumColumn: false,
+        // Generate row buttom column in the front of input columns.
+        rowBottonsInFront: false,
         // The extra class names for buttons.
         buttonClasses: null,
         // Adding extra button(s) at the end of rows.
@@ -114,6 +116,7 @@
         init: function (options) {
             var target = this;
             var tbWhole, tbHead, tbBody, tbFoot, tbRow, tbCell;
+            var tbHeadCellRowNum, tbHeadCellRowButton;
             if (target.length > 0) {
                 // Check mandatory paramters included
                 if (!$.isArray(options.columns) || options.columns.length == 0) {
@@ -181,8 +184,8 @@
                 // Handle header row
                 tbRow = tbHead.insertRow(-1);
                 if (!settings.hideRowNumColumn) {
-                    tbCell = tbRow.insertCell(-1);
-                    tbCell.className = 'ui-widget-header';
+                    tbHeadCellRowNum = tbRow.insertCell(-1);
+                    tbHeadCellRowNum.className = 'ui-widget-header';
                 }
                 // Prepare column information and add column header
                 var pendingSkipCol = 0;
@@ -220,8 +223,17 @@
                 if (!settings._hideLastColumn) settings._finalColSpan++;
                 // Generate last column header if needed
                 if (!settings._hideLastColumn) {
-                    tbCell = tbRow.insertCell(-1);
-                    tbCell.className = 'ui-widget-header';
+                    if (settings.rowBottonsInFront) {
+                        if (settings.hideRowNumColumn) {
+                            tbHeadCellRowButton = tbRow.insertCell(0);
+                        } else {
+                            tbHeadCellRowNum.colSpan = 2;
+                            tbHeadCellRowButton = tbHeadCellRowNum;
+                        }
+                    } else {
+                        tbHeadCellRowButton = tbRow.insertCell(-1);
+                    }
+                    tbHeadCellRowButton.className = 'ui-widget-header';
                 }
                 // Add caption when defined
                 if (settings.caption) {
@@ -887,7 +899,13 @@
             }
             // Add button cell if needed
             if (!settings._hideLastColumn || settings.columns.length > settings._visibleCount) {
-                tbCell = tbRow.insertCell(-1);
+                if (!settings.rowBottonsInFront) {
+                    tbCell = tbRow.insertCell(-1);
+                } else if (!settings.hideRowNumColumn) {
+                    tbCell = tbRow.insertCell(1);
+                } else {
+                    tbCell = tbRow.insertCell(0);
+                }
                 tbCell.className = 'ui-widget-content last';
                 if (settings._hideLastColumn) tbCell.style.display = 'none';
                 // Add standard buttons

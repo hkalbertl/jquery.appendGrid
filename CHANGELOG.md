@@ -1,3 +1,7 @@
+## 1.3.3 (Mar 26, 2014)
+
+- Added `rowBottonsInFront` option to allow generating row buttons in the front of input columns.
+
 ## 1.3.2 (Mar 08, 2014)
 
 - Added `headerSpan` to allow header cell column span.
