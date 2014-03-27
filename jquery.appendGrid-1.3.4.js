@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.3.3
+* jQuery appendGrid v1.3.4
 * https://appendgrid.apphb.com/
 *
 * Copyright 2014 Albert L.
@@ -32,7 +32,7 @@
         // Hide the row number column.
         hideRowNumColumn: false,
         // Generate row buttom column in the front of input columns.
-        rowBottonsInFront: false,
+        rowButtonsInFront: false,
         // The extra class names for buttons.
         buttonClasses: null,
         // Adding extra button(s) at the end of rows.
@@ -223,7 +223,7 @@
                 if (!settings._hideLastColumn) settings._finalColSpan++;
                 // Generate last column header if needed
                 if (!settings._hideLastColumn) {
-                    if (settings.rowBottonsInFront) {
+                    if (settings.rowButtonsInFront) {
                         if (settings.hideRowNumColumn) {
                             tbHeadCellRowButton = tbRow.insertCell(0);
                         } else {
@@ -899,7 +899,7 @@
             }
             // Add button cell if needed
             if (!settings._hideLastColumn || settings.columns.length > settings._visibleCount) {
-                if (!settings.rowBottonsInFront) {
+                if (!settings.rowButtonsInFront) {
                     tbCell = tbRow.insertCell(-1);
                 } else if (!settings.hideRowNumColumn) {
                     tbCell = tbRow.insertCell(1);

@@ -1,6 +1,12 @@
+## 1.3.4 (Mar 27, 2014)
+
+- Renamed `rowBottonsInFront` option to `rowButtonsInFront`.
+  (Thanks artiaggarwal for reporting)
+
 ## 1.3.3 (Mar 26, 2014)
 
 - Added `rowBottonsInFront` option to allow generating row buttons in the front of input columns.
+  (Thanks artiaggarwal for suggestion)
 
 ## 1.3.2 (Mar 08, 2014)
 
