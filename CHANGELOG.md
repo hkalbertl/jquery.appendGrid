@@ -1,3 +1,10 @@
+## 1.3.5 (Apr 23, 2014)
+
+- Added `customGridButtons` option for customize the standard grid buttons (append/remove last/insert/remove/move up/move down).
+  (Thanks pixelwiz for suggestion)
+- Fixed a problem that the selection of `select` elements are not correct when dragging rows.
+  (Thanks pixelwiz for reporting)
+
 ## 1.3.4 (Mar 27, 2014)
 
 - Renamed `rowBottonsInFront` option to `rowButtonsInFront`.
