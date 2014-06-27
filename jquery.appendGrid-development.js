@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.3.5
+* jQuery appendGrid v1.3.6
 * https://appendgrid.apphb.com/
 *
 * Copyright 2014 Albert L.
@@ -653,25 +653,7 @@
             }
             return target;
         },
-        getCellCtrl: function (name, uniqueIndex) {
-            var target = this, result = null;
-            if (target.length == 1) {
-                settings = target.data('appendGrid');
-                if (!settings) {
-                    alert(_systemMessages.notInit);
-                }
-                else {
-                    for (var z = 0; z < settings.columns.length; z++) {
-                        if (settings.columns[z].name === name) {
-                            return getCellCtrl(settings.columns[z].type, settings.idPrefix, name, uniqueIndex);
-                            break;
-                        }
-                    }
-                }
-            }
-            return null;
-        },
-        getCellCtrlByRowIndex: function (name, rowIndex) {
+        getCellCtrl: function (name, rowIndex) {
             var target = this, result = null;
             if (target.length == 1) {
                 settings = target.data('appendGrid');
@@ -691,7 +673,7 @@
             }
             return null;
         },
-        setCellCtrlByRowIndex: function (name, rowIndex, value) {
+        getCellCtrlByUniqueIndex: function (name, uniqueIndex) {
             var target = this, result = null;
             if (target.length == 1) {
                 settings = target.data('appendGrid');
@@ -699,12 +681,9 @@
                     alert(_systemMessages.notInit);
                 }
                 else {
-                    if (rowIndex >= 0 && rowIndex < settings._rowOrder.length) {
-                        var uniqueIndex = settings._rowOrder[rowIndex];
-                        for (var z = 0; z < settings.columns.length; z++) {
-                            if (settings.columns[z].name === name) {
-                                return setCellCtrl(settings.columns[z].type, settings.idPrefix, name, uniqueIndex, value);
-                            }
+                    for (var z = 0; z < settings.columns.length; z++) {
+                        if (settings.columns[z].name === name) {
+                            return getCellCtrl(settings.columns[z].type, settings.idPrefix, name, uniqueIndex);
                         }
                     }
                 }

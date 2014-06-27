@@ -1,3 +1,7 @@
+## 1.3.6 (Jun 28, 2014)
+
+- Added `getCellCtrl` and `getCellCtrlByUniqueIndex` methods for retrieving generated control for further customization.
+
 ## 1.3.5 (Apr 23, 2014)
 
 - Added `customGridButtons` option for customize the standard grid buttons (append/remove last/insert/remove/move up/move down).
