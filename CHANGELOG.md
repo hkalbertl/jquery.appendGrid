@@ -1,3 +1,10 @@
+## 1.4.0 (Jul 16, 2014)
+
+- Added `invisible` option and `showColumn` / `hideColumn` / `isColumnInvisible` methods for changing / checking visibility of columns.
+- Added `resizable` option that allow column resizable.
+- Added `getColumn` method to get columns array used for grid initialization.
+- [Important] You are allowed to call `appendGrid` methods by passing ONE element in jQuery object only. It will not be affected if you are already using ID, such as $("tblAppendGrid"), as jQuery selector.
+
 ## 1.3.6 (Jun 28, 2014)
 
 - Added `getCellCtrl` and `getCellCtrlByUniqueIndex` methods for retrieving generated control for further customization.

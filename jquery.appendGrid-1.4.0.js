@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.3.6
+* jQuery appendGrid v1.4.0
 * https://appendgrid.apphb.com/
 *
 * Copyright 2014 Albert L.
@@ -84,6 +84,10 @@
         uiOption: null,
         // Options for initalize jQuery UI tooltip.
         uiTooltip: null,
+        // Let column resizable by using jQuery UI Resizable Interaction.
+        resizable: false,
+        // Show or hide column after initialized.
+        invisible: false,
         // Callback function to build custom type control.
         customBuilder: null,
         // Callback function to get control value.
@@ -117,8 +121,6 @@
     var _methods = {
         init: function (options) {
             var target = this;
-            var tbWhole, tbHead, tbBody, tbFoot, tbRow, tbCell;
-            var tbHeadCellRowNum, tbHeadCellRowButton;
             if (target.length > 0) {
                 // Check mandatory paramters included
                 if (!$.isArray(options.columns) || options.columns.length == 0) {
@@ -126,7 +128,7 @@
                     return target;
                 }
                 // Check target element is table or not
-                tbWhole = target[0];
+                var tbWhole = target[0], tbHead, tbBody, tbFoot, tbRow, tbCell;
                 if (isEmpty(tbWhole.tagName) || tbWhole.tagName != 'TABLE') {
                     alert(_systemMessages.elemNotTable);
                     return target;
@@ -188,6 +190,7 @@
                 // Remove existing content and append new thead and tbody
                 $(tbWhole).empty().addClass('appendGrid ui-widget').append(tbHead, tbBody, tbFoot);
                 // Handle header row
+                var tbHeadCellRowNum, tbHeadCellRowButton;
                 tbRow = tbHead.insertRow(-1);
                 if (!settings.hideRowNumColumn) {
                     tbHeadCellRowNum = tbRow.insertCell(-1);
@@ -201,11 +204,18 @@
                     settings.columns[z] = columnOpt;
                     // Skip hidden
                     if (settings.columns[z].type != 'hidden') {
-                        settings._visibleCount++;
+                        // Check column is invisible
+                        if (!settings.columns[z].invisible) {
+                            settings._visibleCount++;
+                        }
                         // Check skip header colSpan
                         if (pendingSkipCol == 0) {
+                            var className = 'ui-widget-header';
+                            if (settings.columns[z].invisible) className += ' invisible';
+                            if (settings.columns[z].resizable) className += ' resizable';
                             tbCell = tbRow.insertCell(-1);
-                            tbCell.className = 'ui-widget-header';
+                            tbCell.id = settings.idPrefix + '_' + settings.columns[z].name + '_td_head';
+                            tbCell.className = className;
                             $(tbCell).text(settings.columns[z].display);
                             if (settings.columns[z].displayCss) $(tbCell).css(settings.columns[z].displayCss);
                             if (settings.columns[z].headerSpan > 1) {
@@ -217,6 +227,8 @@
                         }
                     }
                 }
+                // Enable columns resizable
+                $('td.resizable', tbHead).resizable({ handles: 'e' });
                 // Check to hide last column or not
                 if (settings.hideButtons.insert && settings.hideButtons.remove
                         && settings.hideButtons.moveUp && settings.hideButtons.moveDown
@@ -245,6 +257,7 @@
                 if (settings.caption) {
                     tbRow = tbHead.insertRow(0);
                     tbCell = tbRow.insertCell(-1);
+                    tbCell.id = settings.idPrefix + '_caption_td';
                     tbCell.className = 'ui-state-active caption';
                     tbCell.colSpan = settings._finalColSpan;
                     $(tbCell).text(settings.caption);
@@ -252,6 +265,7 @@
                 // Handle footer row
                 tbRow = tbFoot.insertRow(-1);
                 tbCell = tbRow.insertCell(-1);
+                tbCell.id = settings.idPrefix + '_footer_td';
                 tbCell.colSpan = settings._finalColSpan;
                 $('<input/>').attr({
                     type: 'hidden',
@@ -349,34 +363,23 @@
         },
         isReady: function () {
             // Check the appendGrid is initialized or not
-            var target = this, result = false;
-            if (target.length > 0) {
-                var settings = target.first().data('appendGrid');
-                if (settings) {
-                    result = true;
-                }
+            var settings = checkGridAndGetSettings(this, true);
+            if (settings) {
+                return true;
             }
-            return result;
+            return false;
         },
         isDataLoaded: function () {
             // Check the grid data is loaded by `load` method or `initData` parameter or not
-            var target = this, result = null;
-            if (this.length == 1) {
-                var settings = target.data('appendGrid');
-                if (settings) {
-                    return settings._isDataLoaded;
-                }
-                else {
-                    return false;
-                }
+            var settings = checkGridAndGetSettings(this);
+            if (settings) {
+                return settings._isDataLoaded;
             }
-            else {
-                return false;
-            }
+            return false;
         },
         load: function (records) {
-            var target = this;
-            if (target.length > 0) {
+            var settings = checkGridAndGetSettings(this), target = this;
+            if (settings) {
                 if (records != null && records.length > 0) {
                     loadData(target[0], records, false);
                 } else {
@@ -389,15 +392,11 @@
             return this.appendGrid('insertRow', numOfRowOrRowArray);
         },
         insertRow: function (numOfRowOrRowArray, rowIndex, callerUniqueIndex) {
-            var target = this;
-            if (target.length > 0) {
-                var tbWhole = target[0], insertResult = null;
-                var settings = $(tbWhole).data('appendGrid');
-                if (!settings) {
-                    alert(_systemMessages.notInit);
-                }
-                else if (($.isArray(numOfRowOrRowArray) && numOfRowOrRowArray.length > 0) || ($.isNumeric(numOfRowOrRowArray) && numOfRowOrRowArray > 0)) {
+            var settings = checkGridAndGetSettings(this);
+            if (settings) {
+                if (($.isArray(numOfRowOrRowArray) && numOfRowOrRowArray.length > 0) || ($.isNumeric(numOfRowOrRowArray) && numOfRowOrRowArray > 0)) {
                     // Define variables
+                    var tbWhole = this[0];
                     insertResult = insertRow(tbWhole, numOfRowOrRowArray, rowIndex, callerUniqueIndex);
                     // Reorder sequence as needed
                     if ($.isNumeric(rowIndex) || $.isNumeric(callerUniqueIndex)) {
@@ -409,304 +408,309 @@
                     }
                 }
             }
-            return target;
+            return this;
         },
         removeRow: function (rowIndex, uniqueIndex) {
-            var target = this;
-            if (target.length > 0) {
-                var tbWhole = target[0];
-                var settings = $(tbWhole).data('appendGrid');
-                if (!settings) {
-                    alert(_systemMessages.notInit);
-                }
-                else if (settings._rowOrder.length > 0) {
-                    removeRow(tbWhole, rowIndex, uniqueIndex, true);
-                }
+            var settings = checkGridAndGetSettings(this);
+            if (settings && settings._rowOrder.length > 0) {
+                removeRow(this[0], rowIndex, uniqueIndex, true);
             }
-            return target;
+            return this;
         },
         emptyGrid: function () {
-            var target = this;
-            if (target.length > 0) {
-                var tbWhole = target[0];
-                var settings = $(tbWhole).data('appendGrid');
-                if (!settings) {
-                    alert(_systemMessages.notInit);
-                }
-                else {
-                    emptyGrid(tbWhole);
-                }
+            var settings = checkGridAndGetSettings(this);
+            if (settings) {
+                emptyGrid(this[0]);
             }
             return target;
         },
         moveUpRow: function (rowIndex, uniqueIndex) {
-            var target = this, tbodyIndex = -1;
-            if (target.length > 0) {
-                var tbWhole = target[0], tbBody, trTarget, trSwap, swapSeq;
-                var settings = $(tbWhole).data('appendGrid');
-                if (!settings) {
-                    alert(_systemMessages.notInit);
+            var settings = checkGridAndGetSettings(this), target = this;
+            if (settings) {
+                var tbWhole = target[0], trTarget, trSwap, swapSeq, oldIndex = null;
+                var tbBody = tbWhole.getElementsByTagName('tbody')[0];
+                if ($.isNumeric(rowIndex) && rowIndex > 0 && rowIndex < settings._rowOrder.length) {
+                    oldIndex = rowIndex;
+                    uniqueIndex = settings._rowOrder[rowIndex];
+                    trTarget = document.getElementById(settings.idPrefix + '_Row_' + uniqueIndex, tbWhole);
+                } else if ($.isNumeric(uniqueIndex)) {
+                    oldIndex = findRowIndex(uniqueIndex, settings);
+                    trTarget = document.getElementById(settings.idPrefix + '_Row_' + uniqueIndex, tbWhole);
                 }
-                else {
-                    var oldIndex = null;
-                    tbBody = tbWhole.getElementsByTagName('tbody')[0];
-                    if ($.isNumeric(rowIndex) && rowIndex > 0 && rowIndex < settings._rowOrder.length) {
-                        oldIndex = rowIndex;
-                        uniqueIndex = settings._rowOrder[rowIndex];
-                        trTarget = document.getElementById(settings.idPrefix + '_Row_' + uniqueIndex, tbWhole);
-                    } else if ($.isNumeric(uniqueIndex)) {
-                        oldIndex = findRowIndex(uniqueIndex, settings);
-                        trTarget = document.getElementById(settings.idPrefix + '_Row_' + uniqueIndex, tbWhole);
-                    }
-                    if (oldIndex != null && oldIndex > 0) {
-                        // Get row to swap
-                        trSwap = document.getElementById(settings.idPrefix + '_Row_' + settings._rowOrder[oldIndex - 1], tbWhole);
-                        // Remove current row
-                        tbBody.removeChild(trTarget);
-                        // Insert before the above row
-                        tbBody.insertBefore(trTarget, trSwap);
-                        // Update rowOrder
-                        settings._rowOrder[oldIndex] = settings._rowOrder[oldIndex - 1];
-                        settings._rowOrder[oldIndex - 1] = uniqueIndex;
-                        // Update row label
-                        swapSeq = $('td.first', trSwap).html();
-                        $('td.first', trSwap).html($('td.first', trTarget).html());
-                        $('td.first', trTarget).html(swapSeq)
-                        // Save setting
-                        saveSetting(tbWhole, settings);
-                        // Change focus
-                        $('td.last button.moveUp', trTarget).removeClass('ui-state-hover').blur();
-                        $('td.last button.moveUp', trSwap).focus();
-                        // Trigger event
-                        if (settings.afterRowSwapped) {
-                            settings.afterRowSwapped(tbWhole, oldIndex, oldIndex - 1);
-                        }
+                if (oldIndex != null && oldIndex > 0) {
+                    // Get row to swap
+                    trSwap = document.getElementById(settings.idPrefix + '_Row_' + settings._rowOrder[oldIndex - 1], tbWhole);
+                    // Remove current row
+                    tbBody.removeChild(trTarget);
+                    // Insert before the above row
+                    tbBody.insertBefore(trTarget, trSwap);
+                    // Update rowOrder
+                    settings._rowOrder[oldIndex] = settings._rowOrder[oldIndex - 1];
+                    settings._rowOrder[oldIndex - 1] = uniqueIndex;
+                    // Update row label
+                    swapSeq = $('td.first', trSwap).html();
+                    $('td.first', trSwap).html($('td.first', trTarget).html());
+                    $('td.first', trTarget).html(swapSeq)
+                    // Save setting
+                    saveSetting(tbWhole, settings);
+                    // Change focus
+                    $('td.last button.moveUp', trTarget).removeClass('ui-state-hover').blur();
+                    $('td.last button.moveUp', trSwap).focus();
+                    // Trigger event
+                    if (settings.afterRowSwapped) {
+                        settings.afterRowSwapped(tbWhole, oldIndex, oldIndex - 1);
                     }
                 }
             }
             return target;
         },
         moveDownRow: function (rowIndex, uniqueIndex) {
-            var target = this, tbodyIndex = -1;
-            if (target.length > 0) {
-                var tbWhole = target[0], tbBody, trTarget, trSwap, swapSeq;
-                var settings = $(tbWhole).data('appendGrid');
-                if (!settings) {
-                    alert(_systemMessages.notInit);
+            var settings = checkGridAndGetSettings(this), target = this;
+            if (settings) {
+                var tbWhole = target[0], trTarget, trSwap, swapSeq, oldIndex = null;
+                var tbBody = tbWhole.getElementsByTagName('tbody')[0];
+                if ($.isNumeric(rowIndex) && rowIndex >= 0 && rowIndex < settings._rowOrder.length - 1) {
+                    oldIndex = rowIndex;
+                    uniqueIndex = settings._rowOrder[rowIndex];
+                    trTarget = document.getElementById(settings.idPrefix + '_Row_' + uniqueIndex, tbWhole);
+                } else if ($.isNumeric(uniqueIndex)) {
+                    oldIndex = findRowIndex(uniqueIndex, settings);
+                    trTarget = document.getElementById(settings.idPrefix + '_Row_' + uniqueIndex, tbWhole);
                 }
-                else {
-                    var oldIndex = null;
-                    tbBody = tbWhole.getElementsByTagName('tbody')[0];
-                    if ($.isNumeric(rowIndex) && rowIndex >= 0 && rowIndex < settings._rowOrder.length - 1) {
-                        oldIndex = rowIndex;
-                        uniqueIndex = settings._rowOrder[rowIndex];
-                        trTarget = document.getElementById(settings.idPrefix + '_Row_' + uniqueIndex, tbWhole);
-                    } else if ($.isNumeric(uniqueIndex)) {
-                        oldIndex = findRowIndex(uniqueIndex, settings);
-                        trTarget = document.getElementById(settings.idPrefix + '_Row_' + uniqueIndex, tbWhole);
-                    }
-                    if (oldIndex != null && oldIndex != settings._rowOrder.length - 1) {
-                        // Get row to swap
-                        trSwap = document.getElementById(settings.idPrefix + '_Row_' + settings._rowOrder[oldIndex + 1], tbWhole);
-                        // Remove current row
-                        tbBody.removeChild(trSwap);
-                        // Insert before the above row
-                        tbBody.insertBefore(trSwap, trTarget);
-                        // Update rowOrder
-                        settings._rowOrder[oldIndex] = settings._rowOrder[oldIndex + 1];
-                        settings._rowOrder[oldIndex + 1] = uniqueIndex;
-                        // Update row label
-                        swapSeq = $('td.first', trSwap).html();
-                        $('td.first', trSwap).html($('td.first', trTarget).html());
-                        $('td.first', trTarget).html(swapSeq)
-                        // Save setting
-                        saveSetting(tbWhole, settings);
-                        // Change focus
-                        $('td.last button.moveDown', trTarget).removeClass('ui-state-hover').blur();
-                        $('td.last button.moveDown', trSwap).focus();
-                        // Trigger event
-                        if (settings.afterRowSwapped) {
-                            settings.afterRowSwapped(tbWhole, oldIndex, oldIndex + 1);
-                        }
+                if (oldIndex != null && oldIndex != settings._rowOrder.length - 1) {
+                    // Get row to swap
+                    trSwap = document.getElementById(settings.idPrefix + '_Row_' + settings._rowOrder[oldIndex + 1], tbWhole);
+                    // Remove current row
+                    tbBody.removeChild(trSwap);
+                    // Insert before the above row
+                    tbBody.insertBefore(trSwap, trTarget);
+                    // Update rowOrder
+                    settings._rowOrder[oldIndex] = settings._rowOrder[oldIndex + 1];
+                    settings._rowOrder[oldIndex + 1] = uniqueIndex;
+                    // Update row label
+                    swapSeq = $('td.first', trSwap).html();
+                    $('td.first', trSwap).html($('td.first', trTarget).html());
+                    $('td.first', trTarget).html(swapSeq)
+                    // Save setting
+                    saveSetting(tbWhole, settings);
+                    // Change focus
+                    $('td.last button.moveDown', trTarget).removeClass('ui-state-hover').blur();
+                    $('td.last button.moveDown', trSwap).focus();
+                    // Trigger event
+                    if (settings.afterRowSwapped) {
+                        settings.afterRowSwapped(tbWhole, oldIndex, oldIndex + 1);
                     }
                 }
             }
             return target;
         },
-        getRowCount: function () {
-            var target = this;
-            if (target.length > 0) {
-                var settings = target.data('appendGrid');
-                if (settings) {
-                    return settings._rowOrder.length;
+        showColumn: function (name) {
+            var settings = checkGridAndGetSettings(this);
+            if (settings && name) {
+                // Find column index
+                var colIndex = -1, tbWhole = this[0];
+                for (var z = 0; z < settings.columns.length; z++) {
+                    if (settings.columns[z].name == name) {
+                        colIndex = z;
+                        break;
+                    }
                 }
-                else {
-                    alert(_systemMessages.notInit);
+                // Make sure the column exist and show the column if it is invisible only
+                if (colIndex != -1 && settings.columns[colIndex].invisible) {
+                    // Change caption and footer column span
+                    settings._visibleCount++;
+                    settings._finalColSpan++;
+                    $('#' + settings.idPrefix + '_caption_td').attr('colSpan', settings._finalColSpan);
+                    $('#' + settings.idPrefix + '_footer_td').attr('colSpan', settings._finalColSpan);
+                    // Remove invisible class on each row
+                    $('#' + settings.idPrefix + '_' + name + '_td_head').removeClass('invisible');
+                    for (var z = 0; z < settings._rowOrder.length; z++) {
+                        var uniqueIndex = settings._rowOrder[z];
+                        $('#' + settings.idPrefix + '_' + name + '_td_' + uniqueIndex).removeClass('invisible');
+                    }
+                    // Save changes
+                    settings.columns[colIndex].invisible = false;
+                    saveSetting(tbWhole, settings);
                 }
             }
-            else {
-                alert(_systemMessages.getValueMultiGrid);
+            return this;
+        },
+        hideColumn: function (name) {
+            var settings = checkGridAndGetSettings(this);
+            if (settings && name) {
+                // Find column index
+                var colIndex = -1, tbWhole = this[0];
+                for (var z = 0; z < settings.columns.length; z++) {
+                    if (settings.columns[z].name == name) {
+                        colIndex = z;
+                        break;
+                    }
+                }
+                // Make sure the column exist and hide the column if it is visible only
+                if (colIndex != -1 && !settings.columns[colIndex].invisible) {
+                    // Change caption and footer column span
+                    settings._visibleCount--;
+                    settings._finalColSpan--;
+                    $('#' + settings.idPrefix + '_caption_td').attr('colSpan', settings._finalColSpan);
+                    $('#' + settings.idPrefix + '_footer_td').attr('colSpan', settings._finalColSpan);
+                    // Add invisible class on each row
+                    $('#' + settings.idPrefix + '_' + name + '_td_head').addClass('invisible');
+                    for (var z = 0; z < settings._rowOrder.length; z++) {
+                        var uniqueIndex = settings._rowOrder[z];
+                        $('#' + settings.idPrefix + '_' + name + '_td_' + uniqueIndex).addClass('invisible');
+                    }
+                    // Save changes
+                    settings.columns[colIndex].invisible = true;
+                    saveSetting(tbWhole, settings);
+                }
+            }
+            return this;
+        },
+        isColumnInvisible: function (name) {
+            var settings = checkGridAndGetSettings(this);
+            if (settings && name) {
+                for (var z = 0; z < settings.columns.length; z++) {
+                    if (settings.columns[z].name == name) {
+                        return settings.columns[z].invisible;
+                    }
+                }
+            }
+            return null;
+        },
+        getRowCount: function () {
+            var settings = checkGridAndGetSettings(this);
+            if (settings) {
+                return settings._rowOrder.length;
             }
             return null;
         },
         getUniqueIndex: function (rowIndex) {
-            var target = this;
-            if (target.length > 0 && rowIndex >= 0) {
-                var settings = target.data('appendGrid');
-                if (settings) {
-                    if (rowIndex < settings._rowOrder.length) {
-                        return settings._rowOrder[rowIndex];
-                    }
-                }
-                else {
-                    alert(_systemMessages.notInit);
-                }
+            var settings = checkGridAndGetSettings(this);
+            if (settings && $.isNumeric(rowIndex) && rowIndex < settings._rowOrder.length) {
+                return settings._rowOrder[rowIndex];
             }
             return null;
         },
         getRowIndex: function (uniqueIndex) {
-            var target = this;
-            if (target.length > 0) {
-                var settings = target.data('appendGrid');
-                if (settings) {
-                    for (var z = 0; z < settings._rowOrder.length; z++) {
-                        if (settings._rowOrder[z] == uniqueIndex) {
-                            return z;
-                        }
+            var settings = checkGridAndGetSettings(this);
+            if (settings && $.isNumeric(uniqueIndex)) {
+                for (var z = 0; z < settings._rowOrder.length; z++) {
+                    if (settings._rowOrder[z] == uniqueIndex) {
+                        return z;
                     }
-                    return null;
-                }
-                else {
-                    alert(_systemMessages.notInit);
                 }
             }
             return null;
         },
         getRowValue: function (rowIndex, uniqueIndex, loopIndex) {
-            var target = this, result = null;
-            if (target.length > 0) {
-                var settings = target.data('appendGrid');
-                if (settings) {
-                    if ($.isNumeric(rowIndex) && rowIndex >= 0 && rowIndex < settings._rowOrder.length) {
-                        uniqueIndex = settings._rowOrder[rowIndex];
-                    }
-                    if (!isEmpty(uniqueIndex)) {
-                        result = getRowValue(settings, uniqueIndex, loopIndex);
-                    }
+            var settings = checkGridAndGetSettings(this), result = null;
+            if (settings) {
+                if ($.isNumeric(rowIndex) && rowIndex >= 0 && rowIndex < settings._rowOrder.length) {
+                    uniqueIndex = settings._rowOrder[rowIndex];
                 }
-                else {
-                    alert(_systemMessages.notInit);
+                if (!isEmpty(uniqueIndex)) {
+                    result = getRowValue(settings, uniqueIndex, loopIndex);
                 }
             }
             return result;
         },
         getAllValue: function (objectMode) {
-            var target = this, result = null, rowValue;
-            if (target.length > 0) {
-                var settings = $(target).data('appendGrid');
-                if (settings) {
-                    // Prepare result based on objectMode setting
-                    result = objectMode ? {} : [];
-                    // Process on each rows
-                    for (var z = 0; z < settings._rowOrder.length; z++) {
-                        if (objectMode) {
-                            rowValue = getRowValue(settings, settings._rowOrder[z], z);
-                            $.extend(result, rowValue)
-                        } else {
-                            rowValue = getRowValue(settings, settings._rowOrder[z]);
-                            result.push(rowValue);
-                        }
-                    }
+            var settings = checkGridAndGetSettings(this), result = null;
+            if (settings) {
+                // Prepare result based on objectMode setting
+                result = objectMode ? {} : [];
+                // Process on each rows
+                for (var z = 0; z < settings._rowOrder.length; z++) {
                     if (objectMode) {
-                        result['_RowCount'] = settings._rowOrder.length;
+                        rowValue = getRowValue(settings, settings._rowOrder[z], z);
+                        $.extend(result, rowValue)
+                    } else {
+                        rowValue = getRowValue(settings, settings._rowOrder[z]);
+                        result.push(rowValue);
                     }
+                }
+                if (objectMode) {
+                    result['_RowCount'] = settings._rowOrder.length;
                 }
             }
             return result;
         },
         getCtrlValue: function (name, rowIndex) {
-            var target = this;
-            if (target.length > 0) {
-                settings = target.data('appendGrid');
-                if (settings && rowIndex >= 0 && rowIndex < settings._rowOrder.length) {
-                    for (var z = 0; z < settings.columns.length; z++) {
-                        if (settings.columns[z].name === name) {
-                            return getCtrlValue(settings, z, settings._rowOrder[rowIndex]);
-                        }
+            var settings = checkGridAndGetSettings(this);
+            if (settings && rowIndex >= 0 && rowIndex < settings._rowOrder.length) {
+                for (var z = 0; z < settings.columns.length; z++) {
+                    if (settings.columns[z].name === name) {
+                        return getCtrlValue(settings, z, settings._rowOrder[rowIndex]);
                     }
                 }
             }
             return null;
         },
         setCtrlValue: function (name, rowIndex, value) {
-            var target = this;
-            if (target.length > 0) {
-                var tbWhole = this, settings = $(this).data('appendGrid');
-                if (settings && rowIndex >= 0 && rowIndex < settings._rowOrder.length) {
-                    for (var z = 0; z < settings.columns.length; z++) {
-                        if (settings.columns[z].name == name) {
-                            setCtrlValue(settings, z, settings._rowOrder[rowIndex], value);
-                            break;
-                        }
+            var settings = checkGridAndGetSettings(this);
+            if (settings && rowIndex >= 0 && rowIndex < settings._rowOrder.length) {
+                for (var z = 0; z < settings.columns.length; z++) {
+                    if (settings.columns[z].name == name) {
+                        setCtrlValue(settings, z, settings._rowOrder[rowIndex], value);
+                        break;
                     }
                 }
             }
-            return target;
+            return this;
         },
         getCellCtrl: function (name, rowIndex) {
-            var target = this, result = null;
-            if (target.length == 1) {
-                settings = target.data('appendGrid');
-                if (!settings) {
-                    alert(_systemMessages.notInit);
-                }
-                else {
-                    if (rowIndex >= 0 && rowIndex < settings._rowOrder.length) {
-                        var uniqueIndex = settings._rowOrder[rowIndex];
-                        for (var z = 0; z < settings.columns.length; z++) {
-                            if (settings.columns[z].name === name) {
-                                return getCellCtrl(settings.columns[z].type, settings.idPrefix, name, uniqueIndex);
-                            }
-                        }
+            var settings = checkGridAndGetSettings(this);
+            if (settings && rowIndex >= 0 && rowIndex < settings._rowOrder.length) {
+                var uniqueIndex = settings._rowOrder[rowIndex];
+                for (var z = 0; z < settings.columns.length; z++) {
+                    if (settings.columns[z].name === name) {
+                        return getCellCtrl(settings.columns[z].type, settings.idPrefix, name, uniqueIndex);
                     }
                 }
             }
             return null;
         },
         getCellCtrlByUniqueIndex: function (name, uniqueIndex) {
-            var target = this, result = null;
-            if (target.length == 1) {
-                settings = target.data('appendGrid');
-                if (!settings) {
-                    alert(_systemMessages.notInit);
-                }
-                else {
-                    for (var z = 0; z < settings.columns.length; z++) {
-                        if (settings.columns[z].name === name) {
-                            return getCellCtrl(settings.columns[z].type, settings.idPrefix, name, uniqueIndex);
-                        }
+            var settings = checkGridAndGetSettings(this);
+            if (settings) {
+                for (var z = 0; z < settings.columns.length; z++) {
+                    if (settings.columns[z].name === name) {
+                        return getCellCtrl(settings.columns[z].type, settings.idPrefix, name, uniqueIndex);
                     }
                 }
             }
             return null;
         },
         getRowOrder: function () {
-            var target = this, result = null;
-            if (this.length == 1) {
-                var settings = target.data('appendGrid');
-                if (settings) {
-                    result = settings._rowOrder.slice();
-                }
-                else {
-                    alert(_systemMessages.notInit);
-                }
+            var settings = checkGridAndGetSettings(this);
+            if (settings) {
+                // Return a copy of `Row Order` array
+                return settings._rowOrder.slice();
             }
-            else {
-                alert(_systemMessages.getValueMultiGrid);
+            return null;
+        },
+        getColumns: function () {
+            var settings = checkGridAndGetSettings(this);
+            if (settings) {
+                // Return a copy of the columns array
+                return settings.columns.slice();
             }
-            return result;
+            return null;
         }
     };
+    function checkGridAndGetSettings(grid, noMsg) {
+        // Check the jQuery grid object is initialized and return its settings
+        var settings = null;
+        if (grid.length == 1) {
+            settings = grid.data('appendGrid');
+            if (!settings && !noMsg) {
+                alert(_systemMessages.notInit);
+            }
+        } else if (!noMsg) {
+            alert(_systemMessages.getValueMultiGrid);
+        }
+        return settings;
+    }
     function insertRow(tbWhole, numOfRowOrRowArray, rowIndex, callerUniqueIndex) {
         // Define variables
         var settings = $(tbWhole).data('appendGrid');
@@ -775,9 +779,13 @@
                     hidden.push(y);
                     continue;
                 }
+                // Check column invisble
+                var className = 'ui-widget-content';
+                if (settings.columns[y].invisible) className += ' invisible';
                 // Insert cell
                 tbCell = tbRow.insertCell(-1);
-                tbCell.className = 'ui-widget-content';
+                tbCell.id = settings.idPrefix + '_' + settings.columns[y].name + '_td_' + uniqueIndex;
+                tbCell.className = className;
                 if (settings.columns[y].cellCss != null) $(tbCell).css(settings.columns[y].cellCss);
                 // Check control type
                 ctrl = null;
