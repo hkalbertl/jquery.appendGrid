@@ -52,7 +52,9 @@
         // The callback function to be triggered before grid row remove.
         beforeRowRemove: null,
         // The callback function to be triggered after grid row removed.
-        afterRowRemoved: null
+        afterRowRemoved: null,
+        // The callback function to be triggered after grid row dragged.
+        afterRowDragged: null
     };
     // Default column options.
     var _defaultColumnOptions = {
@@ -1239,6 +1241,11 @@
         sortSequence(tbWhole, startIndex);
         // Save setting
         saveSetting(tbWhole, settings);
+
+        // Trigger event
+        if (typeof (settings.afterRowDragged) == 'function') {
+            settings.afterRowDragged(tbWhole, null);
+        }
     }
     function createGridButton(param, uiIcon) {
         // Generate the standard grid action button based on its parameter.
