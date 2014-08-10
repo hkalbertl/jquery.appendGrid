@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.4.0
+* jQuery appendGrid v1.4.1
 * https://appendgrid.apphb.com/
 *
 * Copyright 2014 Albert L.
@@ -41,6 +41,8 @@
         customRowButtons: null,
         // Adding extra button(s) at the bottom of grid.
         customFooterButtons: null,
+        // The callback function for format the HTML name of generated controls.
+        nameFormatter: null,
         // The callback function to be triggered after data loaded to grid.
         dataLoaded: null,
         // The callback function to be triggered after new row appended.
@@ -52,7 +54,9 @@
         // The callback function to be triggered before grid row remove.
         beforeRowRemove: null,
         // The callback function to be triggered after grid row removed.
-        afterRowRemoved: null
+        afterRowRemoved: null,
+        // The callback function to be triggered after grid row dragged.
+        afterRowDragged: null
     };
     // Default column options.
     var _defaultColumnOptions = {
@@ -787,6 +791,13 @@
                 tbCell.id = settings.idPrefix + '_' + settings.columns[y].name + '_td_' + uniqueIndex;
                 tbCell.className = className;
                 if (settings.columns[y].cellCss != null) $(tbCell).css(settings.columns[y].cellCss);
+                // Prepare control id and name
+                var ctrlId = settings.idPrefix + '_' + settings.columns[y].name + '_' + uniqueIndex, ctrlName;
+                if (typeof (settings.nameFormatter) == 'function') {
+                    ctrlName = settings.nameFormatter(settings.idPrefix, settings.columns[y].name, uniqueIndex);
+                } else {
+                    ctrlName = ctrlId;
+                }
                 // Check control type
                 ctrl = null;
                 if (settings.columns[y].type == 'custom') {
@@ -796,8 +807,8 @@
                 }
                 else if (settings.columns[y].type == 'select') {
                     ctrl = document.createElement('select');
-                    ctrl.id = settings.idPrefix + '_' + settings.columns[y].name + '_' + uniqueIndex;
-                    ctrl.name = ctrl.id;
+                    ctrl.id = ctrlId;
+                    ctrl.name = ctrlName;
                     // Build option list
                     if ($.isArray(settings.columns[y].ctrlOptions)) {
                         // For array type option list
@@ -837,16 +848,16 @@
                 else if (settings.columns[y].type == 'checkbox') {
                     ctrl = document.createElement('input');
                     ctrl.type = 'checkbox';
-                    ctrl.id = settings.idPrefix + '_' + settings.columns[y].name + '_' + uniqueIndex;
-                    ctrl.name = ctrl.id;
+                    ctrl.id = ctrlId;
+                    ctrl.name = ctrlName;
                     ctrl.value = 1;
                     tbCell.appendChild(ctrl);
                     tbCell.style.textAlign = 'center';
                 }
                 else if (settings.columns[y].type == 'textarea') {
                     ctrl = document.createElement('textarea');
-                    ctrl.id = settings.idPrefix + '_' + settings.columns[y].name + '_' + uniqueIndex;
-                    ctrl.name = ctrl.id;
+                    ctrl.id = ctrlId;
+                    ctrl.name = ctrlName;
                     tbCell.appendChild(ctrl);
                 }
                 else if (-1 != settings.columns[y].type.search(/^(color|date|datetime|datetime\-local|email|month|number|range|search|tel|time|url|week)$/)) {
@@ -855,16 +866,16 @@
                         ctrl.type = settings.columns[y].type;
                     }
                     catch (err) { /* Not supported type */ }
-                    ctrl.id = settings.idPrefix + '_' + settings.columns[y].name + '_' + uniqueIndex;
-                    ctrl.name = ctrl.id;
+                    ctrl.id = ctrlId;
+                    ctrl.name = ctrlName;
                     tbCell.appendChild(ctrl);
                 }
                 else {
                     // Generate text input
                     ctrl = document.createElement('input');
                     ctrl.type = 'text';
-                    ctrl.id = settings.idPrefix + '_' + settings.columns[y].name + '_' + uniqueIndex;
-                    ctrl.name = ctrl.id;
+                    ctrl.id = ctrlId;
+                    ctrl.name = ctrlName;
                     tbCell.appendChild(ctrl);
                     // Handle UI widget
                     if (settings.columns[y].type == 'ui-datepicker') {
@@ -1239,6 +1250,11 @@
         sortSequence(tbWhole, startIndex);
         // Save setting
         saveSetting(tbWhole, settings);
+
+        // Trigger event
+        if (typeof (settings.afterRowDragged) == 'function') {
+            settings.afterRowDragged(tbWhole, tbRowIndex);
+        }
     }
     function createGridButton(param, uiIcon) {
         // Generate the standard grid action button based on its parameter.

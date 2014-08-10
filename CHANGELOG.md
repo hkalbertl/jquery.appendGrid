@@ -1,3 +1,10 @@
+## 1.4.1 (Aug 10, 2014)
+
+- Added `afterRowDragged` callback function to be triggered after grid row dragged.
+  (Thanks for PolarbearDK's work)
+- Added `nameFormatter` callback function for format the HTML name of generated controls.
+  (Thanks iannos for suggestion)
+
 ## 1.4.0 (Jul 16, 2014)
 
 - Added `invisible` option and `showColumn` / `hideColumn` / `isColumnInvisible` methods for changing / checking visibility of columns.
