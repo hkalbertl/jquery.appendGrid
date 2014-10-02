@@ -1,3 +1,16 @@
+## 1.4.2 (Oct 2, 2014)
+- `caption` and `display` can be fully customized by passing a callback function.
+  (Thanks iannos for suggestion)
+- Added `captionTooltip` and `displayTooltip` that make use of jQuery UI tooltip for generate tooltip on caption or column header text.
+  (Thanks iannos for suggestion)
+- Added `sectionClasses` that can specify CSS classes to different table section.
+  (Thanks iannos for suggestion)
+- Added `emptyCriteria` option to identify a row is empty. Also, `isRowEmpty` and `removeEmptyRows` methods are added that make use of this changes.
+  (Thanks iannos for suggestion)
+- Added support on generating `select` element with `optgroup` support. You can also specify the `title` attribute for each option.
+  (Thanks iannos for suggestion)
+- Added `rowDataLoaded` callback function that will be useful when loading data into a row with controls with dynamic content, such as cascading drop down list.
+
 ## 1.4.1 (Aug 10, 2014)
 
 - Added `afterRowDragged` callback function to be triggered after grid row dragged.
@@ -10,7 +23,7 @@
 - Added `invisible` option and `showColumn` / `hideColumn` / `isColumnInvisible` methods for changing / checking visibility of columns.
 - Added `resizable` option that allow column resizable.
 - Added `getColumn` method to get columns array used for grid initialization.
-- [Important] You are allowed to call `appendGrid` methods by passing ONE element in jQuery object only. It will not be affected if you are already using ID, such as $("tblAppendGrid"), as jQuery selector.
+- [Important] You are allowed to call `appendGrid` methods by passing ONE element in jQuery object only. It will not be affected if you are already using ID, such as $("#tblAppendGrid"), as jQuery selector.
 
 ## 1.3.6 (Jun 28, 2014)
 

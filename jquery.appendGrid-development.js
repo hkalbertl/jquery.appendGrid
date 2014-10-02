@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.4.1
+* jQuery appendGrid v1.4.2
 * https://appendgrid.apphb.com/
 *
 * Copyright 2014 Albert L.
@@ -15,6 +15,8 @@
     var _defaultInitOptions = {
         // The text as table caption, set null to disable caption generation.
         caption: null,
+        // Tooltip for caption.
+        captionTooltip: null,
         // The total number of empty rows generated when init the grid. This will be ignored if `initData` is assigned.
         initRows: 3,
         // An array of data to be filled after initialized the grid.
@@ -35,6 +37,8 @@
         rowButtonsInFront: false,
         // The extra class names for buttons.
         buttonClasses: null,
+        // The extra class names for table sections.
+        sectionClasses: null,
         // Custom the standard grid buttons.
         customGridButtons: null,
         // Adding extra button(s) at the end of rows.
@@ -43,8 +47,10 @@
         customFooterButtons: null,
         // The callback function for format the HTML name of generated controls.
         nameFormatter: null,
-        // The callback function to be triggered after data loaded to grid.
+        // The callback function to be triggered after all data loaded to grid.
         dataLoaded: null,
+        // The callback function to be triggered after data loaded to a row.
+        rowDataLoaded: null,
         // The callback function to be triggered after new row appended.
         afterRowAppended: null,
         // The callback function to be triggered after new row inserted.
@@ -70,6 +76,8 @@
         display: null,
         // Extra CSS setting to be added to display text.
         displayCss: null,
+        // Tooltip for column head.
+        displayTooltip: null,
         // The `colspan` setting on the column header.
         headerSpan: 1,
         // Extra CSS setting to be added to the control container table cell.
@@ -92,6 +100,8 @@
         resizable: false,
         // Show or hide column after initialized.
         invisible: false,
+        // The value to compare for indentify this column value is empty.
+        emptyCriteria: null,
         // Callback function to build custom type control.
         customBuilder: null,
         // Callback function to get control value.
@@ -121,6 +131,7 @@
         rowEmpty: 'This Grid Is Empty'
     };
     var _defaultButtonClasses = { append: null, removeLast: null, insert: null, remove: null, moveUp: null, moveDown: null, rowDrag: null };
+    var _defaultSectionClasses = { caption: null, header: null, body: null, footer: null };
     var _defaultHideButtons = { append: false, removeLast: false, insert: false, remove: false, moveUp: false, moveDown: false };
     var _methods = {
         init: function (options) {
@@ -164,6 +175,11 @@
                     settings._buttonClasses = $.extend({}, _defaultButtonClasses, options.buttonClasses);
                 else
                     settings._buttonClasses = $.extend({}, _defaultButtonClasses);
+                // The extra class names for sections.
+                if ($.isPlainObject(options.sectionClasses))
+                    settings._sectionClasses = $.extend({}, _defaultSectionClasses, options.sectionClasses);
+                else
+                    settings._sectionClasses = $.extend({}, _defaultSectionClasses);
                 // Make sure the `hideButtons` setting defined
                 if ($.isPlainObject(options.hideButtons))
                     settings.hideButtons = $.extend({}, _defaultHideButtons, options.hideButtons);
@@ -196,6 +212,9 @@
                 // Handle header row
                 var tbHeadCellRowNum, tbHeadCellRowButton;
                 tbRow = tbHead.insertRow(-1);
+                if (settings._sectionClasses.header) {
+                    tbRow.className = settings._sectionClasses.header;
+                }
                 if (!settings.hideRowNumColumn) {
                     tbHeadCellRowNum = tbRow.insertCell(-1);
                     tbHeadCellRowNum.className = 'ui-widget-header';
@@ -220,11 +239,23 @@
                             tbCell = tbRow.insertCell(-1);
                             tbCell.id = settings.idPrefix + '_' + settings.columns[z].name + '_td_head';
                             tbCell.className = className;
-                            $(tbCell).text(settings.columns[z].display);
                             if (settings.columns[z].displayCss) $(tbCell).css(settings.columns[z].displayCss);
                             if (settings.columns[z].headerSpan > 1) {
                                 $(tbCell).attr('colSpan', settings.columns[z].headerSpan);
                                 pendingSkipCol = settings.columns[z].headerSpan - 1;
+                            }
+                            // Add tooltip
+                            if ($.isPlainObject(settings.columns[z].displayTooltip)) {
+                                $(tbCell).tooltip(settings.columns[z].displayTooltip);
+                            }
+                            else if (!isEmpty(settings.columns[z].displayTooltip)) {
+                                $(tbCell).attr('title', settings.columns[z].displayTooltip).tooltip();
+                            }
+                            // Check to set display text or generate by function
+                            if (typeof (settings.columns[z].display) == 'function') {
+                                settings.columns[z].display(tbCell);
+                            } else if (!isEmpty(settings.columns[z].display)) {
+                                $(tbCell).text(settings.columns[z].display);
                             }
                         } else {
                             pendingSkipCol--;
@@ -260,14 +291,31 @@
                 // Add caption when defined
                 if (settings.caption) {
                     tbRow = tbHead.insertRow(0);
+                    if (settings._sectionClasses.caption) {
+                        tbRow.className = settings._sectionClasses.caption;
+                    }
                     tbCell = tbRow.insertCell(-1);
                     tbCell.id = settings.idPrefix + '_caption_td';
                     tbCell.className = 'ui-state-active caption';
                     tbCell.colSpan = settings._finalColSpan;
-                    $(tbCell).text(settings.caption);
+                    // Add tooltip
+                    if ($.isPlainObject(settings.captionTooltip)) {
+                        $(tbCell).tooltip(settings.captionTooltip);
+                    } else if (!isEmpty(settings.captionTooltip)) {
+                        $(tbCell).attr('title', settings.captionTooltip).tooltip();
+                    }
+                    // Check to set display text or generate by function
+                    if (typeof (settings.caption) == 'function') {
+                        settings.caption(tbCell);
+                    } else {
+                        $(tbCell).text(settings.caption);
+                    }
                 }
                 // Handle footer row
                 tbRow = tbFoot.insertRow(-1);
+                if (settings._sectionClasses.footer) {
+                    tbRow.className = settings._sectionClasses.footer;
+                }
                 tbCell = tbRow.insertCell(-1);
                 tbCell.id = settings.idPrefix + '_footer_td';
                 tbCell.colSpan = settings._finalColSpan;
@@ -700,6 +748,27 @@
                 return settings.columns.slice();
             }
             return null;
+        },
+        isRowEmpty: function (rowIndex) {
+            var settings = checkGridAndGetSettings(this);
+            if (settings) {
+                return isRowEmpty(settings, rowIndex);
+            }
+            return null;
+        },
+        removeEmptyRows: function () {
+            var settings = checkGridAndGetSettings(this);
+            if (settings) {
+                var tbWhole = this[0];
+                for (var z = settings._rowOrder.length; z >= 0; z--) {
+                    if (isRowEmpty(settings, z)) {
+                        // Remove itself
+                        removeRow(tbWhole, null, settings._rowOrder[z], true);
+                    }
+                }
+                return this;
+            }
+            return null;
         }
     };
     function checkGridAndGetSettings(grid, noMsg) {
@@ -770,6 +839,9 @@
                 addedRows.push(settings._rowOrder.length - 1);
             }
             tbRow.id = settings.idPrefix + '_Row_' + uniqueIndex;
+            if (settings._sectionClasses.body) {
+                tbRow.className = settings._sectionClasses.body;
+            }
             $(tbRow).data('appendGrid', uniqueIndex);
             // Add row number
             if (!settings.hideRowNumColumn) {
@@ -804,8 +876,7 @@
                     if (typeof (settings.columns[y].customBuilder) == 'function') {
                         ctrl = settings.columns[y].customBuilder(tbCell, settings.idPrefix, settings.columns[y].name, uniqueIndex);
                     }
-                }
-                else if (settings.columns[y].type == 'select') {
+                } else if (settings.columns[y].type == 'select') {
                     ctrl = document.createElement('select');
                     ctrl.id = ctrlId;
                     ctrl.name = ctrlName;
@@ -814,8 +885,30 @@
                         // For array type option list
                         if (settings.columns[y].ctrlOptions.length > 0) {
                             if ($.isPlainObject(settings.columns[y].ctrlOptions[0])) {
+                                // Check to generate optGroup or not
+                                var lastGroupName = null, lastGroupElem = null;
                                 for (var x = 0; x < settings.columns[y].ctrlOptions.length; x++) {
-                                    ctrl.options[ctrl.options.length] = new Option(settings.columns[y].ctrlOptions[x].label, settings.columns[y].ctrlOptions[x].value);
+                                    if (!isEmpty(settings.columns[y].ctrlOptions[x].group)) {
+                                        if (lastGroupName != settings.columns[y].ctrlOptions[x].group) {
+                                            lastGroupName = settings.columns[y].ctrlOptions[x].group;
+                                            lastGroupElem = document.createElement('optgroup');
+                                            lastGroupElem.label = lastGroupName;
+                                            ctrl.appendChild(lastGroupElem);
+                                        }
+                                    } else {
+                                        lastGroupElem = null;
+                                    }
+                                    var option = $('<option/>').val(settings.columns[y].ctrlOptions[x].value).text(settings.columns[y].ctrlOptions[x].label);
+                                    if (!isEmpty(settings.columns[y].ctrlOptions[x].title)) {
+                                        option.attr('title', settings.columns[y].ctrlOptions[x].title);
+                                    }
+                                    if (null == lastGroupElem) {
+                                        option.appendTo(ctrl);
+                                    }
+                                    else {
+                                        option.appendTo(lastGroupElem);
+                                    }
+                                    // ctrl.options[ctrl.options.length] = new Option(settings.columns[y].ctrlOptions[x].label, settings.columns[y].ctrlOptions[x].value);
                                 }
                             }
                             else {
@@ -824,14 +917,12 @@
                                 }
                             }
                         }
-                    }
-                    else if ($.isPlainObject(settings.columns[y].ctrlOptions)) {
+                    } else if ($.isPlainObject(settings.columns[y].ctrlOptions)) {
                         // For plain object type option list
                         for (var x in settings.columns[y].ctrlOptions) {
                             ctrl.options[ctrl.options.length] = new Option(settings.columns[y].ctrlOptions[x], x);
                         }
-                    }
-                    else if (typeof (settings.columns[y].ctrlOptions) == 'string') {
+                    } else if (typeof (settings.columns[y].ctrlOptions) == 'string') {
                         // For string type option list
                         var arrayOpt = settings.columns[y].ctrlOptions.split(';');
                         for (var x = 0; x < arrayOpt.length; x++) {
@@ -842,6 +933,8 @@
                                 ctrl.options[ctrl.options.length] = new Option(arrayOpt[x].substring(eqIndex + 1, arrayOpt[x].length), arrayOpt[x].substring(0, eqIndex));
                             }
                         }
+                    } else if (typeof (settings.columns[y].ctrlOptions) == 'function') {
+                        settings.columns[y].ctrlOptions(ctrl);
                     }
                     tbCell.appendChild(ctrl);
                 }
@@ -1136,6 +1229,9 @@
                     for (var c = 0; c < settings.columns.length; c++) {
                         setCtrlValue(settings, c, settings._rowOrder[r], records[r][settings.columns[c].name]);
                     }
+                    if (typeof (settings.rowDataLoaded) == 'function') {
+                        settings.rowDataLoaded(tbWhole, r, records[r]);
+                    }
                 }
             }
             // Save setting
@@ -1144,7 +1240,7 @@
             $(tbWhole).data('appendGrid', settings);
             // Trigger data loaded event
             if (typeof (settings.dataLoaded) == 'function') {
-                settings.dataLoaded(tbWhole);
+                settings.dataLoaded(tbWhole, records);
             }
         }
     }
@@ -1186,7 +1282,7 @@
         }
         return result;
     }
-    function getCtrlValue(settings, colIndex, uniqueIndex) { // type, idPrefix, columnName, uniqueIndex
+    function getCtrlValue(settings, colIndex, uniqueIndex) {
         var ctrl = null, type = settings.columns[colIndex].type, columnName = settings.columns[colIndex].name;
         if (type == 'checkbox') {
             ctrl = getCellCtrl(type, settings.idPrefix, columnName, uniqueIndex);
@@ -1276,6 +1372,43 @@
             genButton = $('<button/>').attr({ type: 'button' }).button({ icons: { primary: uiIcon }, text: false });
         }
         return genButton;
+    }
+    function isRowEmpty(settings, rowIndex) {
+        for (var z = 0; z < settings.columns.length; z++) {
+            var uniqueIndex = settings._rowOrder[rowIndex];
+            var currentValue = getCtrlValue(settings, z, uniqueIndex);
+            // Check the empty criteria is function
+            if (typeof (settings.columns[z].emptyCriteria) == 'function') {
+                if (!settings.columns[z].emptyCriteria(currentValue)) {
+                    return false;
+                }
+            } else {
+                // Find the default value
+                var defaultValue = null;
+                if (!isEmpty(settings.columns[z].emptyCriteria)) {
+                    defaultValue = settings.columns[z].emptyCriteria;
+                } else {
+                    // Check default value based on its type
+                    if (settings.columns[z].type == 'checkbox') {
+                        defaultValue = 0;
+                    } else if (settings.columns[z].type == 'select') {
+                        var options = getCellCtrl(settings.columns[z].type, settings.idPrefix, settings.columns[z].name, uniqueIndex).options;
+                        if (options.length > 0) {
+                            defaultValue = options[0].value;
+                        } else {
+                            defaultValue = '';
+                        }
+                    } else {
+                        defaultValue = '';
+                    }
+                }
+                // Compare with the default value
+                if (currentValue != defaultValue) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
     /// <summary>
     /// Initialize append grid or calling its methods.
