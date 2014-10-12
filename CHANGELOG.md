@@ -1,4 +1,16 @@
+## 1.5.0 (Oct 12, 2014)
+
+- Added `useSubPanel` option to enable the sub panal mode. Users can generated extra elements to the under each of the normal appendGrid row. Please notice that `useSubPanel` *is not compatible with* `rowDragging` feature.
+  (Thanks iannos for naming)
+- Added `subPanelBuilder` and `subPanelGetter` callback function that required for sub panel.
+- Added `subPanel` option for `sectionClasses`.
+- The long-awaited sub grid feature is available by make use of sub panel!
+- Added `rowCountName` option for changing the key name of row count variable for the result of `getAllValue` method.
+- Parameter order of `rowDataLoaded` method is changed.
+- Performaced improve by changing the use of insertRow and insertCell javascript function to appendChild.
+
 ## 1.4.2 (Oct 2, 2014)
+
 - `caption` and `display` can be fully customized by passing a callback function.
   (Thanks iannos for suggestion)
 - Added `captionTooltip` and `displayTooltip` that make use of jQuery UI tooltip for generate tooltip on caption or column header text.

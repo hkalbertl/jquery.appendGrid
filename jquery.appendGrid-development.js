@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.4.2
+* jQuery appendGrid v1.5.0
 * https://appendgrid.apphb.com/
 *
 * Copyright 2014 Albert L.
@@ -35,6 +35,8 @@
         hideRowNumColumn: false,
         // Generate row buttom column in the front of input columns.
         rowButtonsInFront: false,
+        // The variable name of row count used for object mode of getAllValue
+        rowCountName: '_RowCount',
         // The extra class names for buttons.
         buttonClasses: null,
         // The extra class names for table sections.
@@ -45,6 +47,12 @@
         customRowButtons: null,
         // Adding extra button(s) at the bottom of grid.
         customFooterButtons: null,
+        // Use the sub panel or not
+        useSubPanel: false,
+        // The callback function for generating sub panel content.
+        subPanelBuilder: null,
+        // The callback function for getting values from sub panel. Used for `getAllValue` method.
+        subPanelGetter: null,
         // The callback function for format the HTML name of generated controls.
         nameFormatter: null,
         // The callback function to be triggered after all data loaded to grid.
@@ -131,7 +139,7 @@
         rowEmpty: 'This Grid Is Empty'
     };
     var _defaultButtonClasses = { append: null, removeLast: null, insert: null, remove: null, moveUp: null, moveDown: null, rowDrag: null };
-    var _defaultSectionClasses = { caption: null, header: null, body: null, footer: null };
+    var _defaultSectionClasses = { caption: null, header: null, body: null, subPanel: null, footer: null };
     var _defaultHideButtons = { append: false, removeLast: false, insert: false, remove: false, moveUp: false, moveDown: false };
     var _methods = {
         init: function (options) {
@@ -200,6 +208,10 @@
                 if (!$.isPlainObject(settings.customGridButtons)) {
                     settings.customGridButtons = {};
                 }
+                // Check rowDragging and useSubPanel option
+                if (settings.useSubPanel && settings.rowDragging) {
+                    settings.rowDragging = false;
+                }
                 // Create thead and tbody
                 tbHead = document.createElement('thead');
                 tbHead.className = 'ui-widget-header';
@@ -211,12 +223,13 @@
                 $(tbWhole).empty().addClass('appendGrid ui-widget').append(tbHead, tbBody, tbFoot);
                 // Handle header row
                 var tbHeadCellRowNum, tbHeadCellRowButton;
-                tbRow = tbHead.insertRow(-1);
+                tbHead.appendChild(tbRow = document.createElement('tr'));
                 if (settings._sectionClasses.header) {
                     tbRow.className = settings._sectionClasses.header;
                 }
                 if (!settings.hideRowNumColumn) {
-                    tbHeadCellRowNum = tbRow.insertCell(-1);
+                    // tbHeadCellRowNum = tbRow.insertCell(-1);
+                    tbRow.appendChild(tbHeadCellRowNum = document.createElement('td'));
                     tbHeadCellRowNum.className = 'ui-widget-header';
                 }
                 // Prepare column information and add column header
@@ -236,7 +249,8 @@
                             var className = 'ui-widget-header';
                             if (settings.columns[z].invisible) className += ' invisible';
                             if (settings.columns[z].resizable) className += ' resizable';
-                            tbCell = tbRow.insertCell(-1);
+                            // tbCell = tbRow.insertCell(-1);
+                            tbRow.appendChild(tbCell = document.createElement('td'));
                             tbCell.id = settings.idPrefix + '_' + settings.columns[z].name + '_td_head';
                             tbCell.className = className;
                             if (settings.columns[z].displayCss) $(tbCell).css(settings.columns[z].displayCss);
@@ -252,7 +266,7 @@
                                 $(tbCell).attr('title', settings.columns[z].displayTooltip).tooltip();
                             }
                             // Check to set display text or generate by function
-                            if (typeof (settings.columns[z].display) == 'function') {
+                            if ($.isFunction(settings.columns[z].display)) {
                                 settings.columns[z].display(tbCell);
                             } else if (!isEmpty(settings.columns[z].display)) {
                                 $(tbCell).text(settings.columns[z].display);
@@ -278,23 +292,26 @@
                 if (!settings._hideLastColumn) {
                     if (settings.rowButtonsInFront) {
                         if (settings.hideRowNumColumn) {
-                            tbHeadCellRowButton = tbRow.insertCell(0);
+                            // tbHeadCellRowButton = tbRow.insertCell(0);
+                            tbRow.insertBefore(tbHeadCellRowButton = document.createElement('td'), tbRow.firstChild);
                         } else {
                             tbHeadCellRowNum.colSpan = 2;
                             tbHeadCellRowButton = tbHeadCellRowNum;
                         }
                     } else {
-                        tbHeadCellRowButton = tbRow.insertCell(-1);
+                        // tbHeadCellRowButton = tbRow.insertCell(-1);
+                        tbRow.appendChild(tbHeadCellRowButton = document.createElement('td'));
                     }
                     tbHeadCellRowButton.className = 'ui-widget-header';
                 }
                 // Add caption when defined
                 if (settings.caption) {
-                    tbRow = tbHead.insertRow(0);
+                    tbHead.insertBefore(tbRow = document.createElement('tr'), tbHead.firstChild);
                     if (settings._sectionClasses.caption) {
                         tbRow.className = settings._sectionClasses.caption;
                     }
-                    tbCell = tbRow.insertCell(-1);
+                    // tbCell = tbRow.insertCell(-1);
+                    tbRow.appendChild(tbCell = document.createElement('td'));
                     tbCell.id = settings.idPrefix + '_caption_td';
                     tbCell.className = 'ui-state-active caption';
                     tbCell.colSpan = settings._finalColSpan;
@@ -305,18 +322,19 @@
                         $(tbCell).attr('title', settings.captionTooltip).tooltip();
                     }
                     // Check to set display text or generate by function
-                    if (typeof (settings.caption) == 'function') {
+                    if ($.isFunction(settings.caption)) {
                         settings.caption(tbCell);
                     } else {
                         $(tbCell).text(settings.caption);
                     }
                 }
                 // Handle footer row
-                tbRow = tbFoot.insertRow(-1);
+                tbFoot.appendChild(tbRow = document.createElement('tr'));
                 if (settings._sectionClasses.footer) {
                     tbRow.className = settings._sectionClasses.footer;
                 }
-                tbCell = tbRow.insertCell(-1);
+                // tbCell = tbRow.insertCell(-1);
+                tbRow.appendChild(tbCell = document.createElement('td'));
                 tbCell.id = settings.idPrefix + '_footer_td';
                 tbCell.colSpan = settings._finalColSpan;
                 $('<input/>').attr({
@@ -479,23 +497,32 @@
         moveUpRow: function (rowIndex, uniqueIndex) {
             var settings = checkGridAndGetSettings(this), target = this;
             if (settings) {
-                var tbWhole = target[0], trTarget, trSwap, swapSeq, oldIndex = null;
+                var tbWhole = target[0], trTarget, trSwap, trAdtTarget, swapSeq, oldIndex = null;
                 var tbBody = tbWhole.getElementsByTagName('tbody')[0];
                 if ($.isNumeric(rowIndex) && rowIndex > 0 && rowIndex < settings._rowOrder.length) {
                     oldIndex = rowIndex;
                     uniqueIndex = settings._rowOrder[rowIndex];
-                    trTarget = document.getElementById(settings.idPrefix + '_Row_' + uniqueIndex, tbWhole);
                 } else if ($.isNumeric(uniqueIndex)) {
                     oldIndex = findRowIndex(uniqueIndex, settings);
-                    trTarget = document.getElementById(settings.idPrefix + '_Row_' + uniqueIndex, tbWhole);
                 }
                 if (oldIndex != null && oldIndex > 0) {
                     // Get row to swap
+                    trTarget = document.getElementById(settings.idPrefix + '_Row_' + uniqueIndex, tbWhole);
                     trSwap = document.getElementById(settings.idPrefix + '_Row_' + settings._rowOrder[oldIndex - 1], tbWhole);
+                    // Get the sub panel row if used
+                    if (settings.useSubPanel) {
+                        trAdtTarget = document.getElementById(settings.idPrefix + '_SubRow_' + uniqueIndex, tbWhole);
+                    }
                     // Remove current row
                     tbBody.removeChild(trTarget);
+                    if (settings.useSubPanel) {
+                        tbBody.removeChild(trAdtTarget);
+                    }
                     // Insert before the above row
                     tbBody.insertBefore(trTarget, trSwap);
+                    if (settings.useSubPanel) {
+                        tbBody.insertBefore(trAdtTarget, trSwap);
+                    }
                     // Update rowOrder
                     settings._rowOrder[oldIndex] = settings._rowOrder[oldIndex - 1];
                     settings._rowOrder[oldIndex - 1] = uniqueIndex;
@@ -519,23 +546,29 @@
         moveDownRow: function (rowIndex, uniqueIndex) {
             var settings = checkGridAndGetSettings(this), target = this;
             if (settings) {
-                var tbWhole = target[0], trTarget, trSwap, swapSeq, oldIndex = null;
+                var tbWhole = target[0], trTarget, trSwap, trAdtSwap, swapSeq, oldIndex = null;
                 var tbBody = tbWhole.getElementsByTagName('tbody')[0];
                 if ($.isNumeric(rowIndex) && rowIndex >= 0 && rowIndex < settings._rowOrder.length - 1) {
                     oldIndex = rowIndex;
                     uniqueIndex = settings._rowOrder[rowIndex];
-                    trTarget = document.getElementById(settings.idPrefix + '_Row_' + uniqueIndex, tbWhole);
                 } else if ($.isNumeric(uniqueIndex)) {
                     oldIndex = findRowIndex(uniqueIndex, settings);
-                    trTarget = document.getElementById(settings.idPrefix + '_Row_' + uniqueIndex, tbWhole);
                 }
                 if (oldIndex != null && oldIndex != settings._rowOrder.length - 1) {
                     // Get row to swap
+                    trTarget = document.getElementById(settings.idPrefix + '_Row_' + uniqueIndex, tbWhole);
                     trSwap = document.getElementById(settings.idPrefix + '_Row_' + settings._rowOrder[oldIndex + 1], tbWhole);
+                    // Get the sub panel row if used
+                    if (settings.useSubPanel) {
+                        trAdtSwap = document.getElementById(settings.idPrefix + '_SubRow_' + settings._rowOrder[oldIndex + 1], tbWhole);
+                    }
                     // Remove current row
                     tbBody.removeChild(trSwap);
                     // Insert before the above row
                     tbBody.insertBefore(trSwap, trTarget);
+                    if (settings.useSubPanel) {
+                        tbBody.insertBefore(trAdtSwap, trTarget);
+                    }
                     // Update rowOrder
                     settings._rowOrder[oldIndex] = settings._rowOrder[oldIndex + 1];
                     settings._rowOrder[oldIndex + 1] = uniqueIndex;
@@ -579,6 +612,9 @@
                     for (var z = 0; z < settings._rowOrder.length; z++) {
                         var uniqueIndex = settings._rowOrder[z];
                         $('#' + settings.idPrefix + '_' + name + '_td_' + uniqueIndex).removeClass('invisible');
+                        if (settings.useSubPanel) {
+                            $('#' + settings.idPrefix + '_SubRow_' + uniqueIndex).attr('colSpan', settings._visibleCount + (settings._hideLastColumn ? 0 : 1));
+                        }
                     }
                     // Save changes
                     settings.columns[colIndex].invisible = false;
@@ -610,6 +646,9 @@
                     for (var z = 0; z < settings._rowOrder.length; z++) {
                         var uniqueIndex = settings._rowOrder[z];
                         $('#' + settings.idPrefix + '_' + name + '_td_' + uniqueIndex).addClass('invisible');
+                        if (settings.useSubPanel) {
+                            $('#' + settings.idPrefix + '_SubRow_' + uniqueIndex).attr('colSpan', settings._visibleCount + (settings._hideLastColumn ? 0 : 1));
+                        }
                     }
                     // Save changes
                     settings.columns[colIndex].invisible = true;
@@ -682,7 +721,7 @@
                     }
                 }
                 if (objectMode) {
-                    result['_RowCount'] = settings._rowOrder.length;
+                    result[settings.rowCountName] = settings._rowOrder.length;
                 }
             }
             return result;
@@ -790,6 +829,7 @@
         var addedRows = [], parentIndex = null, uniqueIndex, ctrl, hidden = [];
         var tbHead = tbWhole.getElementsByTagName('thead')[0];
         var tbBody = tbWhole.getElementsByTagName('tbody')[0];
+        var tbRow, tbSubRow = null, tbCell;
         // Check number of row to be inserted
         var numOfRow = numOfRowOrRowArray, loadData = false;
         if ($.isArray(numOfRowOrRowArray)) {
@@ -830,12 +870,23 @@
             // Check row insert index
             if ($.isNumeric(rowIndex)) {
                 settings._rowOrder.splice(rowIndex, 0, uniqueIndex);
-                tbRow = tbBody.insertRow(rowIndex);
+                if (settings.useSubPanel) {
+                    // tbSubRow = tbBody.insertRow(rowIndex * 2);
+                    // tbRow = tbBody.insertRow(rowIndex * 2);
+                    tbBody.insertBefore(tbSubRow = document.createElement('tr'), tbBody.childNodes[rowIndex * 2]);
+                    tbBody.insertBefore(tbRow = document.createElement('tr'), tbBody.childNodes[rowIndex * 2]);
+                } else {
+                    // tbRow = tbBody.insertRow(rowIndex);
+                    tbBody.insertBefore(tbRow = document.createElement('tr'), tbBody.childNodes[rowIndex]);
+                }
                 addedRows.push(rowIndex);
             }
             else {
                 settings._rowOrder.push(uniqueIndex);
-                tbRow = tbBody.insertRow(-1);
+                tbBody.appendChild(tbRow = document.createElement('tr'));
+                if (settings.useSubPanel) {
+                    tbBody.appendChild(tbSubRow = document.createElement('tr'));
+                }
                 addedRows.push(settings._rowOrder.length - 1);
             }
             tbRow.id = settings.idPrefix + '_Row_' + uniqueIndex;
@@ -843,10 +894,20 @@
                 tbRow.className = settings._sectionClasses.body;
             }
             $(tbRow).data('appendGrid', uniqueIndex);
+            // Config on the sub panel row
+            if (tbSubRow != null) {
+                tbSubRow.id = settings.idPrefix + '_SubRow_' + uniqueIndex;
+                $(tbSubRow).data('appendGrid', uniqueIndex);
+                if (settings._sectionClasses.subPanel) {
+                    tbSubRow.className = settings._sectionClasses.subPanel;
+                }
+            }
             // Add row number
             if (!settings.hideRowNumColumn) {
-                tbCell = tbRow.insertCell(-1);
+                // tbCell = tbRow.insertCell(-1);
+                tbRow.appendChild(tbCell = document.createElement('td'));
                 $(tbCell).addClass('ui-widget-content first').text(settings._rowOrder.length);
+                if (settings.useSubPanel) tbCell.rowSpan = 2;
             }
             // Process on each columns
             for (var y = 0; y < settings.columns.length; y++) {
@@ -859,13 +920,14 @@
                 var className = 'ui-widget-content';
                 if (settings.columns[y].invisible) className += ' invisible';
                 // Insert cell
-                tbCell = tbRow.insertCell(-1);
+                // tbCell = tbRow.insertCell(-1);
+                tbRow.appendChild(tbCell = document.createElement('td'));
                 tbCell.id = settings.idPrefix + '_' + settings.columns[y].name + '_td_' + uniqueIndex;
                 tbCell.className = className;
                 if (settings.columns[y].cellCss != null) $(tbCell).css(settings.columns[y].cellCss);
                 // Prepare control id and name
                 var ctrlId = settings.idPrefix + '_' + settings.columns[y].name + '_' + uniqueIndex, ctrlName;
-                if (typeof (settings.nameFormatter) == 'function') {
+                if ($.isFunction(settings.nameFormatter)) {
                     ctrlName = settings.nameFormatter(settings.idPrefix, settings.columns[y].name, uniqueIndex);
                 } else {
                     ctrlName = ctrlId;
@@ -873,10 +935,10 @@
                 // Check control type
                 ctrl = null;
                 if (settings.columns[y].type == 'custom') {
-                    if (typeof (settings.columns[y].customBuilder) == 'function') {
+                    if ($.isFunction(settings.columns[y].customBuilder)) {
                         ctrl = settings.columns[y].customBuilder(tbCell, settings.idPrefix, settings.columns[y].name, uniqueIndex);
                     }
-                } else if (settings.columns[y].type == 'select') {
+                } else if (settings.columns[y].type == 'select' || settings.columns[y].type == 'ui-selectmenu') {
                     ctrl = document.createElement('select');
                     ctrl.id = ctrlId;
                     ctrl.name = ctrlName;
@@ -933,10 +995,14 @@
                                 ctrl.options[ctrl.options.length] = new Option(arrayOpt[x].substring(eqIndex + 1, arrayOpt[x].length), arrayOpt[x].substring(0, eqIndex));
                             }
                         }
-                    } else if (typeof (settings.columns[y].ctrlOptions) == 'function') {
+                    } else if ($.isFunction(settings.columns[y].ctrlOptions)) {
                         settings.columns[y].ctrlOptions(ctrl);
                     }
                     tbCell.appendChild(ctrl);
+                    // Handle UI widget
+                    if (settings.columns[y].type == 'ui-selectmenu') {
+                        $(ctrl).selectmenu(settings.columns[y].uiOption);
+                    }
                 }
                 else if (settings.columns[y].type == 'checkbox') {
                     ctrl = document.createElement('input');
@@ -992,12 +1058,12 @@
                     // Add jQuery UI tooltip as needed
                     if (settings.columns[y].uiTooltip) $(ctrl).tooltip(settings.columns[y].uiTooltip);
                     // Add control events as needed
-                    if (typeof (settings.columns[y].onClick) == 'function') {
+                    if ($.isFunction(settings.columns[y].onClick)) {
                         $(ctrl).click({ caller: tbWhole, callback: settings.columns[y].onClick, uniqueIndex: uniqueIndex }, function (evt) {
                             evt.data.callback(evt, $(evt.data.caller).appendGrid('getRowIndex', evt.data.uniqueIndex));
                         });
                     }
-                    if (typeof (settings.columns[y].onChange) == 'function') {
+                    if ($.isFunction(settings.columns[y].onChange)) {
                         $(ctrl).change({ caller: tbWhole, callback: settings.columns[y].onChange, uniqueIndex: uniqueIndex }, function (evt) {
                             evt.data.callback(evt, $(evt.data.caller).appendGrid('getRowIndex', evt.data.uniqueIndex));
                         });
@@ -1014,11 +1080,14 @@
             // Add button cell if needed
             if (!settings._hideLastColumn || settings.columns.length > settings._visibleCount) {
                 if (!settings.rowButtonsInFront) {
-                    tbCell = tbRow.insertCell(-1);
+                    // tbCell = tbRow.insertCell(-1);
+                    tbRow.appendChild(tbCell = document.createElement('td'));
                 } else if (!settings.hideRowNumColumn) {
-                    tbCell = tbRow.insertCell(1);
+                    // tbCell = tbRow.insertCell(1);
+                    tbRow.insertBefore(tbCell = document.createElement('td'), tbRow.childNodes[1]);
                 } else {
-                    tbCell = tbRow.insertCell(0);
+                    // tbCell = tbRow.insertCell(0);
+                    tbRow.insertBefore(tbCell = document.createElement('td'), tbRow.firstChild);
                 }
                 tbCell.className = 'ui-widget-content last';
                 if (settings._hideLastColumn) tbCell.style.display = 'none';
@@ -1107,17 +1176,27 @@
                     }
                 }
             }
+            // Create sub panel
+            if (settings.useSubPanel) {
+                // tbCell = tbSubRow.insertCell(-1);
+                tbSubRow.appendChild(tbCell = document.createElement('td'));
+                tbCell.className = 'ui-widget-content';
+                tbCell.colSpan = settings._visibleCount + (settings._hideLastColumn ? 0 : 1);
+                if ($.isFunction(settings.subPanelBuilder)) {
+                    settings.subPanelBuilder(tbCell, uniqueIndex);
+                }
+            }
         }
         // Save setting
         saveSetting(tbWhole, settings);
         // Trigger events
         if ($.isNumeric(rowIndex)) {
-            if (typeof (settings.afterRowInserted) == 'function') {
+            if ($.isFunction(settings.afterRowInserted)) {
                 settings.afterRowInserted(tbWhole, parentIndex, addedRows);
             }
         }
         else {
-            if (typeof (settings.afterRowAppended) == 'function') {
+            if ($.isFunction(settings.afterRowAppended)) {
                 settings.afterRowAppended(tbWhole, parentIndex, addedRows);
             }
         }
@@ -1158,26 +1237,38 @@
             // Remove middle row
             if (force || typeof (settings.beforeRowRemove) != 'function' || settings.beforeRowRemove(tbWhole, rowIndex)) {
                 settings._rowOrder.splice(rowIndex, 1);
-                tbBody.deleteRow(rowIndex);
+                if (settings.useSubPanel) {
+                    // tbBody.deleteRow(rowIndex * 2);
+                    // tbBody.deleteRow(rowIndex * 2);
+                    tbBody.removeChild(tbBody.childNodes[rowIndex * 2]);
+                    tbBody.removeChild(tbBody.childNodes[rowIndex * 2]);
+                } else {
+                    // tbBody.deleteRow(rowIndex);
+                    tbBody.removeChild(tbBody.childNodes[rowIndex]);
+                }
                 // Save setting
                 saveSetting(tbWhole, settings);
                 // Sort sequence
                 sortSequence(tbWhole, rowIndex);
                 // Trigger event
-                if (typeof (settings.afterRowRemoved) == 'function') {
+                if ($.isFunction(settings.afterRowRemoved)) {
                     settings.afterRowRemoved(tbWhole, rowIndex);
                 }
             }
         }
         else {
             // Remove last row
-            if (force || typeof (settings.beforeRowRemove) != 'function' || settings.beforeRowRemove(tbWhole, settings._rowOrder.length - 1)) {
+            if (force || !$.isFunction(settings.beforeRowRemove) || settings.beforeRowRemove(tbWhole, settings._rowOrder.length - 1)) {
                 uniqueIndex = settings._rowOrder.pop();
-                tbBody.deleteRow(-1);
+                // tbBody.deleteRow(-1);
+                tbBody.removeChild(tbBody.lastChild);
+                if (settings.useSubPanel) {
+                    tbBody.removeChild(tbBody.lastChild);
+                }
                 // Save setting
                 saveSetting(tbWhole, settings);
                 // Trigger event
-                if (typeof (settings.afterRowRemoved) == 'function') {
+                if ($.isFunction(settings.afterRowRemoved)) {
                     settings.afterRowRemoved(tbWhole, null);
                 }
             }
@@ -1229,8 +1320,8 @@
                     for (var c = 0; c < settings.columns.length; c++) {
                         setCtrlValue(settings, c, settings._rowOrder[r], records[r][settings.columns[c].name]);
                     }
-                    if (typeof (settings.rowDataLoaded) == 'function') {
-                        settings.rowDataLoaded(tbWhole, r, records[r]);
+                    if ($.isFunction(settings.rowDataLoaded)) {
+                        settings.rowDataLoaded(tbWhole, records[r], r, settings._rowOrder[r]);
                     }
                 }
             }
@@ -1239,7 +1330,7 @@
             if (isInit) settings.initData = null;
             $(tbWhole).data('appendGrid', settings);
             // Trigger data loaded event
-            if (typeof (settings.dataLoaded) == 'function') {
+            if ($.isFunction(settings.dataLoaded)) {
                 settings.dataLoaded(tbWhole, records);
             }
         }
@@ -1275,10 +1366,27 @@
         return rowIndex;
     }
     function getRowValue(settings, uniqueIndex, loopIndex) {
-        var result = {}, keyName = null;
+        var result = {}, keyName = null, suffix = (isEmpty(loopIndex) ? '' : '_' + loopIndex);
         for (var z = 0; z < settings.columns.length; z++) {
-            keyName = settings.columns[z].name + (isEmpty(loopIndex) ? '' : '_' + loopIndex);
+            keyName = settings.columns[z].name + suffix;
             result[keyName] = getCtrlValue(settings, z, uniqueIndex);
+        }
+        // Merge control values from sub panel if getter method defined
+        if (settings.useSubPanel && $.isFunction(settings.subPanelGetter)) {
+            var adtData = settings.subPanelGetter(uniqueIndex);
+            if ($.isPlainObject(adtData)) {
+                if (suffix == '') {
+                    // Extend to row data directly for array mode
+                    $.extend(result, adtData);
+                } else {
+                    // For returning values in object mode, add suffix to all keys
+                    var newData = {};
+                    for (var key in adtData) {
+                        newData[key + suffix] = adtData[key];
+                    }
+                    $.extend(result, newData);
+                }
+            }
         }
         return result;
     }
@@ -1292,7 +1400,7 @@
                 return ctrl.checked ? 1 : 0;
         }
         else if (type == 'custom') {
-            if (typeof (settings.columns[colIndex].customGetter) == 'function')
+            if ($.isFunction(settings.columns[colIndex].customGetter))
                 return settings.columns[colIndex].customGetter(settings.idPrefix, columnName, uniqueIndex);
             else
                 return null;
@@ -1315,9 +1423,14 @@
             getCellCtrl(type, settings.idPrefix, columnName, uniqueIndex).checked = (data != null && data != 0);
         }
         else if (type == 'custom') {
-            if (typeof (settings.columns[colIndex].customSetter) == 'function') {
+            if ($.isFunction(settings.columns[colIndex].customSetter)) {
                 settings.columns[colIndex].customSetter(settings.idPrefix, columnName, uniqueIndex, data);
             }
+        }
+        else if (type == 'ui-selectmenu') {
+            var menu = getCellCtrl(type, settings.idPrefix, columnName, uniqueIndex);
+            menu.value = (data == null ? '' : data);
+            $(menu).selectmenu('refresh');
         }
         else {
             getCellCtrl(type, settings.idPrefix, columnName, uniqueIndex).value = (data == null ? '' : data);
@@ -1348,7 +1461,7 @@
         saveSetting(tbWhole, settings);
 
         // Trigger event
-        if (typeof (settings.afterRowDragged) == 'function') {
+        if ($.isFunction(settings.afterRowDragged)) {
             settings.afterRowDragged(tbWhole, tbRowIndex);
         }
     }
@@ -1356,7 +1469,7 @@
         // Generate the standard grid action button based on its parameter.
         var genButton = null;
         if (param) {
-            if (typeof (param) == 'function') {
+            if ($.isFunction(param)) {
                 // Generate button if it is a function.
                 genButton = $(param());
             } else if (param.nodeType) {
@@ -1378,7 +1491,7 @@
             var uniqueIndex = settings._rowOrder[rowIndex];
             var currentValue = getCtrlValue(settings, z, uniqueIndex);
             // Check the empty criteria is function
-            if (typeof (settings.columns[z].emptyCriteria) == 'function') {
+            if ($.isFunction(settings.columns[z].emptyCriteria)) {
                 if (!settings.columns[z].emptyCriteria(currentValue)) {
                     return false;
                 }
@@ -1391,7 +1504,7 @@
                     // Check default value based on its type
                     if (settings.columns[z].type == 'checkbox') {
                         defaultValue = 0;
-                    } else if (settings.columns[z].type == 'select') {
+                    } else if (settings.columns[z].type == 'select' || settings.columns[z].type == 'ui-selectmenu') {
                         var options = getCellCtrl(settings.columns[z].type, settings.idPrefix, settings.columns[z].name, uniqueIndex).options;
                         if (options.length > 0) {
                             defaultValue = options[0].value;
@@ -1419,7 +1532,7 @@
         } else if (typeof (params) === 'object' || !params) {
             return _methods.init.apply(this, arguments);
         } else {
-            $.error(_systemMessages.notSupportMethod + params);
+            alert(_systemMessages.notSupportMethod + params);
         }
     };
 })(jQuery);
