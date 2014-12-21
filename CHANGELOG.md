@@ -1,3 +1,11 @@
+## 1.5.1 (Dec 21, 2014)
+
+- Added `maxRowsAllowed` option and `maxNumRowsReached` callback function to limit the number of rows allowed.
+  (Thanks iannos for suggestion)
+- Added `maintainScroll` option to scroll the page after appended or removed last row.
+  (Thanks iannos for suggestion)
+- Removed unnecessary coding so that `appendGrid` requires jQuery UI Core, Widget and Button components only for all standard features. But you will not able to use Datepicker or other jQuery UI widgets.
+
 ## 1.5.0 (Oct 12, 2014)
 
 - Added `useSubPanel` option to enable the sub panal mode. Users can generated extra elements to the under each of the normal appendGrid row. Please notice that `useSubPanel` *is not compatible with* `rowDragging` feature.

@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.5.0
+* jQuery appendGrid v1.5.1
 * https://appendgrid.apphb.com/
 *
 * Copyright 2014 Albert L.
@@ -19,6 +19,8 @@
         captionTooltip: null,
         // The total number of empty rows generated when init the grid. This will be ignored if `initData` is assigned.
         initRows: 3,
+        // The maximum number of rows allowed in this grid.
+        maxRowsAllowed: 0,
         // An array of data to be filled after initialized the grid.
         initData: null,
         // Array of column options.
@@ -49,10 +51,10 @@
         customFooterButtons: null,
         // Use the sub panel or not
         useSubPanel: false,
-        // The callback function for generating sub panel content.
-        subPanelBuilder: null,
-        // The callback function for getting values from sub panel. Used for `getAllValue` method.
-        subPanelGetter: null,
+        // Maintain the scroll position after appended or removed last row.
+        maintainScroll: false
+    };
+    var _defaultCallbackContainer = {
         // The callback function for format the HTML name of generated controls.
         nameFormatter: null,
         // The callback function to be triggered after all data loaded to grid.
@@ -70,7 +72,13 @@
         // The callback function to be triggered after grid row removed.
         afterRowRemoved: null,
         // The callback function to be triggered after grid row dragged.
-        afterRowDragged: null
+        afterRowDragged: null,
+        // The callback function for generating sub panel content.
+        subPanelBuilder: null,
+        // The callback function for getting values from sub panel. Used for `getAllValue` method.
+        subPanelGetter: null,
+        // The callback function to be triggered when row(s) is/are adding to grid but the maximum number of rows allowed is reached.
+        maxNumRowsReached: null
     };
     // Default column options.
     var _defaultColumnOptions = {
@@ -157,7 +165,7 @@
                     return target;
                 }
                 // Generate settings
-                var settings = $.extend({}, _defaultInitOptions, options);
+                var settings = $.extend({}, _defaultInitOptions, _defaultCallbackContainer, options);
                 // Add internal settings
                 $.extend(settings, {
                     //The UniqueIndex accumulate counter.
@@ -228,7 +236,6 @@
                     tbRow.className = settings._sectionClasses.header;
                 }
                 if (!settings.hideRowNumColumn) {
-                    // tbHeadCellRowNum = tbRow.insertCell(-1);
                     tbRow.appendChild(tbHeadCellRowNum = document.createElement('td'));
                     tbHeadCellRowNum.className = 'ui-widget-header';
                 }
@@ -249,7 +256,6 @@
                             var className = 'ui-widget-header';
                             if (settings.columns[z].invisible) className += ' invisible';
                             if (settings.columns[z].resizable) className += ' resizable';
-                            // tbCell = tbRow.insertCell(-1);
                             tbRow.appendChild(tbCell = document.createElement('td'));
                             tbCell.id = settings.idPrefix + '_' + settings.columns[z].name + '_td_head';
                             tbCell.className = className;
@@ -277,7 +283,9 @@
                     }
                 }
                 // Enable columns resizable
-                $('td.resizable', tbHead).resizable({ handles: 'e' });
+                if (!isEmpty(jQuery.ui.resizable)) {
+                    $('td.resizable', tbHead).resizable({ handles: 'e' });
+                }
                 // Check to hide last column or not
                 if (settings.hideButtons.insert && settings.hideButtons.remove
                         && settings.hideButtons.moveUp && settings.hideButtons.moveDown
@@ -292,14 +300,12 @@
                 if (!settings._hideLastColumn) {
                     if (settings.rowButtonsInFront) {
                         if (settings.hideRowNumColumn) {
-                            // tbHeadCellRowButton = tbRow.insertCell(0);
                             tbRow.insertBefore(tbHeadCellRowButton = document.createElement('td'), tbRow.firstChild);
                         } else {
                             tbHeadCellRowNum.colSpan = 2;
                             tbHeadCellRowButton = tbHeadCellRowNum;
                         }
                     } else {
-                        // tbHeadCellRowButton = tbRow.insertCell(-1);
                         tbRow.appendChild(tbHeadCellRowButton = document.createElement('td'));
                     }
                     tbHeadCellRowButton.className = 'ui-widget-header';
@@ -310,7 +316,6 @@
                     if (settings._sectionClasses.caption) {
                         tbRow.className = settings._sectionClasses.caption;
                     }
-                    // tbCell = tbRow.insertCell(-1);
                     tbRow.appendChild(tbCell = document.createElement('td'));
                     tbCell.id = settings.idPrefix + '_caption_td';
                     tbCell.className = 'ui-state-active caption';
@@ -333,7 +338,6 @@
                 if (settings._sectionClasses.footer) {
                     tbRow.className = settings._sectionClasses.footer;
                 }
-                // tbCell = tbRow.insertCell(-1);
                 tbRow.appendChild(tbCell = document.createElement('td'));
                 tbCell.id = settings.idPrefix + '_footer_td';
                 tbCell.colSpan = settings._finalColSpan;
@@ -829,7 +833,8 @@
         var addedRows = [], parentIndex = null, uniqueIndex, ctrl, hidden = [];
         var tbHead = tbWhole.getElementsByTagName('thead')[0];
         var tbBody = tbWhole.getElementsByTagName('tbody')[0];
-        var tbRow, tbSubRow = null, tbCell;
+        var tbRow, tbSubRow = null, tbCell, reachMaxRow = false;
+        var oldHeight = 0, oldScroll = 0;
         // Check number of row to be inserted
         var numOfRow = numOfRowOrRowArray, loadData = false;
         if ($.isArray(numOfRowOrRowArray)) {
@@ -857,12 +862,22 @@
             rowIndex = null;
             parentIndex = settings._rowOrder.length - 1;
         }
+        // Store old grid height
+        if (settings.maintainScroll && !$.isNumeric(rowIndex)) {
+            oldHeight = $(tbWhole).height();
+            oldScroll = $(tbWhole).scrollParent().scrollTop();
+        }
         // Remove empty row
         if (settings._rowOrder.length == 0) {
             $('tr.empty', tbWhole).remove();
         }
         // Add total number of row
         for (var z = 0; z < numOfRow; z++) {
+            // Check maximum number of rows
+            if (0 < settings.maxRowsAllowed && settings._rowOrder.length >= settings.maxRowsAllowed) {
+                reachMaxRow = true;
+                break;
+            }
             // Update variables
             settings._uniqueIndex++;
             uniqueIndex = settings._uniqueIndex;
@@ -904,7 +919,6 @@
             }
             // Add row number
             if (!settings.hideRowNumColumn) {
-                // tbCell = tbRow.insertCell(-1);
                 tbRow.appendChild(tbCell = document.createElement('td'));
                 $(tbCell).addClass('ui-widget-content first').text(settings._rowOrder.length);
                 if (settings.useSubPanel) tbCell.rowSpan = 2;
@@ -920,7 +934,6 @@
                 var className = 'ui-widget-content';
                 if (settings.columns[y].invisible) className += ' invisible';
                 // Insert cell
-                // tbCell = tbRow.insertCell(-1);
                 tbRow.appendChild(tbCell = document.createElement('td'));
                 tbCell.id = settings.idPrefix + '_' + settings.columns[y].name + '_td_' + uniqueIndex;
                 tbCell.className = className;
@@ -1080,13 +1093,10 @@
             // Add button cell if needed
             if (!settings._hideLastColumn || settings.columns.length > settings._visibleCount) {
                 if (!settings.rowButtonsInFront) {
-                    // tbCell = tbRow.insertCell(-1);
                     tbRow.appendChild(tbCell = document.createElement('td'));
                 } else if (!settings.hideRowNumColumn) {
-                    // tbCell = tbRow.insertCell(1);
                     tbRow.insertBefore(tbCell = document.createElement('td'), tbRow.childNodes[1]);
                 } else {
-                    // tbCell = tbRow.insertCell(0);
                     tbRow.insertBefore(tbCell = document.createElement('td'), tbRow.firstChild);
                 }
                 tbCell.className = 'ui-widget-content last';
@@ -1178,7 +1188,6 @@
             }
             // Create sub panel
             if (settings.useSubPanel) {
-                // tbCell = tbSubRow.insertCell(-1);
                 tbSubRow.appendChild(tbCell = document.createElement('td'));
                 tbCell.className = 'ui-widget-content';
                 tbCell.colSpan = settings._visibleCount + (settings._hideLastColumn ? 0 : 1);
@@ -1199,6 +1208,15 @@
             if ($.isFunction(settings.afterRowAppended)) {
                 settings.afterRowAppended(tbWhole, parentIndex, addedRows);
             }
+        }
+        if (reachMaxRow && $.isFunction(settings.maxNumRowsReached)) {
+            settings.maxNumRowsReached();
+        }
+        // Scroll the page when append row
+        if (settings.maintainScroll && !$.isNumeric(rowIndex)) {
+            // Try to maintain the height so that user no need to scroll every time when row added
+            var newHeight = $(tbWhole).height();
+            $(tbWhole).scrollParent().scrollTop(oldScroll + newHeight - oldHeight);
         }
         // Return added rows' uniqueIndex
         return { addedRows: addedRows, parentIndex: parentIndex, rowIndex: rowIndex };
@@ -1238,12 +1256,9 @@
             if (force || typeof (settings.beforeRowRemove) != 'function' || settings.beforeRowRemove(tbWhole, rowIndex)) {
                 settings._rowOrder.splice(rowIndex, 1);
                 if (settings.useSubPanel) {
-                    // tbBody.deleteRow(rowIndex * 2);
-                    // tbBody.deleteRow(rowIndex * 2);
                     tbBody.removeChild(tbBody.childNodes[rowIndex * 2]);
                     tbBody.removeChild(tbBody.childNodes[rowIndex * 2]);
                 } else {
-                    // tbBody.deleteRow(rowIndex);
                     tbBody.removeChild(tbBody.childNodes[rowIndex]);
                 }
                 // Save setting
@@ -1257,10 +1272,15 @@
             }
         }
         else {
+            // Store old window scroll value
+            var oldHeight = 0, oldScroll = 0;
+            if (settings.maintainScroll) {
+                oldHeight = $(tbWhole).height();
+                oldScroll = $(tbWhole).scrollParent().scrollTop();
+            }
             // Remove last row
             if (force || !$.isFunction(settings.beforeRowRemove) || settings.beforeRowRemove(tbWhole, settings._rowOrder.length - 1)) {
                 uniqueIndex = settings._rowOrder.pop();
-                // tbBody.deleteRow(-1);
                 tbBody.removeChild(tbBody.lastChild);
                 if (settings.useSubPanel) {
                     tbBody.removeChild(tbBody.lastChild);
@@ -1271,6 +1291,12 @@
                 if ($.isFunction(settings.afterRowRemoved)) {
                     settings.afterRowRemoved(tbWhole, null);
                 }
+            }
+            // Scroll the page when append row
+            if (settings.maintainScroll) {
+                // Try to maintain the height so that user no need to scroll every time when row added
+                var newHeight = $(tbWhole).height();
+                $(tbWhole).scrollParent().scrollTop(oldScroll + newHeight - oldHeight);
             }
         }
         // Add empty row
