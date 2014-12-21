@@ -1,0 +1,33 @@
+{
+  "name": "jquery.appendGrid",
+  "version": "1.5.1",
+  "description": "appendGrid - The dynamic table input jQuery plugin",
+  "main": "jquery.appendGrid-1.5.1.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hkalbertl/jquery.appendGrid"
+  },
+  "keywords": [
+    "jquery-plugin",
+    "ui",
+    "header-detail",
+    "master-detail",
+    "edit",
+    "table",
+    "input",
+    "grid"
+  ],
+  "author": "Albert L. <hkalbertl@outlook.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hkalbertl/jquery.appendGrid/issues"
+  },
+  "homepage": "https://github.com/hkalbertl/jquery.appendGrid",
+  "dependencies": {
+    "jquery": ">=1.11.x",
+    "jquery.ui": ">=1.11.x"
+  }
+}
