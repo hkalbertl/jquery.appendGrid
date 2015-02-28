@@ -1,3 +1,7 @@
+## 1.5.2 (Feb 28, 2016)
+- Fixed a problem that `nameFormatter` is not working on `hidden` type columns.<br />
+  (Thanks robertadsoft for reporting)
+
 ## 1.5.1 (Dec 21, 2014)
 
 - Added `maxRowsAllowed` option and `maxNumRowsReached` callback function to limit the number of rows allowed.

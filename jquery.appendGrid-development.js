@@ -1,14 +1,14 @@
 ﻿/*!
-* jQuery appendGrid v1.5.1
+* jQuery appendGrid v1.5.2
 * https://appendgrid.apphb.com/
 *
-* Copyright 2014 Albert L.
+* Copyright 2015 Albert L.
 * Dual licensed under the LGPL (http://www.gnu.org/licenses/lgpl.html)
 * and MIT (http://www.opensource.org/licenses/mit-license.php) licenses.
 *
 * Depends:
-* jQuery v1.9.1+
-* jquery UI v1.10.2+
+* jQuery v1.11.1+
+* jQuery UI v1.11.1+
 */
 (function ($) {
     // The default initial options.
@@ -1156,7 +1156,11 @@
                 for (var y = 0; y < hidden.length; y++) {
                     ctrl = document.createElement('input');
                     ctrl.id = settings.idPrefix + '_' + settings.columns[hidden[y]].name + '_' + uniqueIndex;
-                    ctrl.name = ctrl.id;
+                    if ($.isFunction(settings.nameFormatter)) {
+                        ctrl.name = settings.nameFormatter(settings.idPrefix, settings.columns[y].name, uniqueIndex);
+                    } else {
+                        ctrl.name = ctrl.id;
+                    }
                     ctrl.type = 'hidden';
 
                     if (loadData) {
