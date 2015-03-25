@@ -22,7 +22,7 @@
 {
     padding-top: 4px;
     padding-bottom: 4px;
-    white-space: pre-wrap;
+    white-space: nowrap;
 }
 .appendGrid thead td.caption
 {
@@ -38,7 +38,7 @@
 }
 .appendGrid tbody td
 {
-    white-space: nowrap;
+    white-space: pre-wrap;
 }
 .appendGrid tbody td.first
 {
