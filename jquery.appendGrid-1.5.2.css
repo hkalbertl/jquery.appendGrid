@@ -38,7 +38,7 @@
 }
 .appendGrid tbody td
 {
-    white-space: nowrap;
+    white-space: pre-wrap;
 }
 .appendGrid tbody td.first
 {
