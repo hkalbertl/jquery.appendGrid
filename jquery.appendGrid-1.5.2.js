@@ -1522,8 +1522,8 @@
             var currentValue = getCtrlValue(settings, z, uniqueIndex);
             // Check the empty criteria is function
             if ($.isFunction(settings.columns[z].emptyCriteria)) {
-                if (!settings.columns[z].emptyCriteria(currentValue)) {
-                    return false;
+                if (settings.columns[z].emptyCriteria(currentValue)) {
+                    return true;
                 }
             } else {
                 // Find the default value
@@ -1546,12 +1546,12 @@
                     }
                 }
                 // Compare with the default value
-                if (currentValue != defaultValue) {
-                    return false;
+                if (currentValue == defaultValue) {
+                    return true;
                 }
             }
         }
-        return true;
+        return false;
     }
     /// <summary>
     /// Initialize append grid or calling its methods.
