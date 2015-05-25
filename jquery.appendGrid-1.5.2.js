@@ -1526,6 +1526,9 @@
                 if (settings.columns[z].emptyCriteria(currentValue)) {
                     return true;
                 }
+                else{
+                    isEmptyRow = false;//make the empty row false
+                }
             } else {
                 // Find the default value
                 var defaultValue = null;
@@ -1534,6 +1537,9 @@
                     // Compare with the default value
                     if (currentValue == defaultValue) {
                         return true;
+                    }
+                    else{
+                        isEmptyRow = false;//make the empty row false
                     }
                 } 
                 else {                   
@@ -1551,7 +1557,7 @@
                         defaultValue = '';
                     }
                 //if row is still empty but the current value not equal to default value means atleast this column is not empty so make the row not empty
-                    if(isEmptyRow === true && !isEmpty(currentValue) && currentValue != defaultValue)
+                    if(isEmptyRow === true && !isEmpty(currentValue) && currentValue !== defaultValue)
                     {
                         isEmptyRow = false;
                     }
