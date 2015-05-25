@@ -1530,25 +1530,26 @@
                 var defaultValue = null;
                 if (!isEmpty(settings.columns[z].emptyCriteria)) {
                     defaultValue = settings.columns[z].emptyCriteria;
-                } else {
-                    // Check default value based on its type
-                    if (settings.columns[z].type == 'checkbox') {
-                        defaultValue = 0;
-                    } else if (settings.columns[z].type == 'select' || settings.columns[z].type == 'ui-selectmenu') {
-                        var options = getCellCtrl(settings.columns[z].type, settings.idPrefix, settings.columns[z].name, uniqueIndex).options;
-                        if (options.length > 0) {
-                            defaultValue = options[0].value;
-                        } else {
-                            defaultValue = '';
-                        }
-                    } else {
-                        defaultValue = '';
+                    // Compare with the default value
+                    if (currentValue == defaultValue) {
+                        return true;
                     }
-                }
-                // Compare with the default value
-                if (currentValue == defaultValue) {
-                    return true;
-                }
+                } 
+                // else {
+                    // // Check default value based on its type
+                    // if (settings.columns[z].type == 'checkbox') {
+                    //     defaultValue = 0;
+                    // } else if (settings.columns[z].type == 'select' || settings.columns[z].type == 'ui-selectmenu') {
+                    //     var options = getCellCtrl(settings.columns[z].type, settings.idPrefix, settings.columns[z].name, uniqueIndex).options;
+                    //     if (options.length > 0) {
+                    //         defaultValue = options[0].value;
+                    //     } else {
+                    //         defaultValue = '';
+                    //     }
+                    // } else {
+                    //     defaultValue = '';
+                    // }
+                // }                
             }
         }
         return false;
