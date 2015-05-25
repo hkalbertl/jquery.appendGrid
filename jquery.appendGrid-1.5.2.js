@@ -1517,6 +1517,7 @@
         return genButton;
     }
     function isRowEmpty(settings, rowIndex) {
+        var isEmptyRow = true;
         for (var z = 0; z < settings.columns.length; z++) {
             var uniqueIndex = settings._rowOrder[rowIndex];
             var currentValue = getCtrlValue(settings, z, uniqueIndex);
@@ -1535,24 +1536,29 @@
                         return true;
                     }
                 } 
-                // else {
-                    // // Check default value based on its type
-                    // if (settings.columns[z].type == 'checkbox') {
-                    //     defaultValue = 0;
-                    // } else if (settings.columns[z].type == 'select' || settings.columns[z].type == 'ui-selectmenu') {
-                    //     var options = getCellCtrl(settings.columns[z].type, settings.idPrefix, settings.columns[z].name, uniqueIndex).options;
-                    //     if (options.length > 0) {
-                    //         defaultValue = options[0].value;
-                    //     } else {
-                    //         defaultValue = '';
-                    //     }
-                    // } else {
-                    //     defaultValue = '';
-                    // }
-                // }                
+                else {                   
+                    // Check default value based on its type
+                    if (settings.columns[z].type == 'checkbox') {
+                        defaultValue = 0;
+                    } else if (settings.columns[z].type == 'select' || settings.columns[z].type == 'ui-selectmenu') {
+                        var options = getCellCtrl(settings.columns[z].type, settings.idPrefix, settings.columns[z].name, uniqueIndex).options;
+                        if (options.length > 0) {
+                            defaultValue = options[0].value;
+                        } else {
+                            defaultValue = '';
+                        }
+                    } else {
+                        defaultValue = '';
+                    }
+                //if row is still empty but the current value not equal to default value means atleast this column is not empty so make the row not empty
+                    if(isEmptyRow === true && !isEmpty(currentValue) && currentValue != defaultValue)
+                    {
+                        isEmptyRow = false;
+                    }
+                }                
             }
         }
-        return false;
+        return isEmptyRow;
     }
     /// <summary>
     /// Initialize append grid or calling its methods.
