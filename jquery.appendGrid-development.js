@@ -385,22 +385,24 @@
                     tbRow.style.display = 'none';
                 } else {
                     if (!settings.hideButtons.append) {
-                        createGridButton(settings.customGridButtons.append, 'ui-icon-plusthick')
-						.attr({ title: settings._i18n.append }).addClass('append', settings._buttonClasses.append)
+                        var button = createGridButton(settings.customGridButtons.append, 'ui-icon-plusthick')
+						.attr({ title: settings._i18n.append }).addClass('append')
                         .click(function (evt) {
                             insertRow(tbWhole, 1, null, null);
                             if (evt && evt.preventDefault) evt.preventDefault();
                             return false;
                         }).appendTo(tbCell);
+						if (!isEmpty(settings._buttonClasses.append)) button.addClass(settings._buttonClasses.append);
                     }
                     if (!settings.hideButtons.removeLast) {
-                        createGridButton(settings.customGridButtons.removeLast, 'ui-icon-closethick')
-						.attr({ title: settings._i18n.removeLast }).addClass('removeLast', settings._buttonClasses.removeLast)
+                        var button = createGridButton(settings.customGridButtons.removeLast, 'ui-icon-closethick')
+						.attr({ title: settings._i18n.removeLast }).addClass('removeLast')
 						.click(function (evt) {
 						    removeRow(tbWhole, null, this.value, false);
 						    if (evt && evt.preventDefault) evt.preventDefault();
 						    return false;
 						}).appendTo(tbCell);
+						if (!isEmpty(settings._buttonClasses.removeLast)) button.addClass(settings._buttonClasses.removeLast);
                     }
                     if (settings.customFooterButtons && settings.customFooterButtons.length) {
                         // Add front buttons
@@ -1144,54 +1146,59 @@
                 if (settings._hideLastColumn) tbCell.style.display = 'none';
                 // Add standard buttons
                 if (!settings.hideButtons.insert) {
-                    createGridButton(settings.customGridButtons.insert, 'ui-icon-arrowreturnthick-1-w')
+                    var button = createGridButton(settings.customGridButtons.insert, 'ui-icon-arrowreturnthick-1-w')
 						.attr({ id: settings.idPrefix + '_Insert_' + uniqueIndex, title: settings._i18n.insert, tabindex: -1 })
-						.addClass('insert', settings._buttonClasses.insert).data('appendGrid', { uniqueIndex: uniqueIndex })
+						.addClass('insert').data('appendGrid', { uniqueIndex: uniqueIndex })
 						.click(function (evt) {
 						    var rowUniqueIndex = $(this).data('appendGrid').uniqueIndex;
 						    $(tbWhole).appendGrid('insertRow', 1, null, rowUniqueIndex);
-						    if (evt && evt.preventDefault) evt.preventDefault();
+						    if (evt && evt.preventDefault) evt.preventDefault(settings._buttonClasses.insert);
 						    return false;
 						}).appendTo(tbCell);
+					if (!isEmpty(settings._buttonClasses.insert)) button.addClass(settings._buttonClasses.insert);
                 }
                 if (!settings.hideButtons.remove) {
-                    createGridButton(settings.customGridButtons.remove, 'ui-icon-trash')
+                    var button = createGridButton(settings.customGridButtons.remove, 'ui-icon-trash')
 						.attr({ id: settings.idPrefix + '_Delete_' + uniqueIndex, title: settings._i18n.remove, tabindex: -1 })
-						.addClass('remove', settings._buttonClasses.remove).data('appendGrid', { uniqueIndex: uniqueIndex })
+						.addClass('remove').data('appendGrid', { uniqueIndex: uniqueIndex })
                         .click(function (evt) {
                             var rowUniqueIndex = $(this).data('appendGrid').uniqueIndex;
                             removeRow(tbWhole, null, rowUniqueIndex, false);
                             if (evt && evt.preventDefault) evt.preventDefault();
                             return false;
                         }).appendTo(tbCell);
+					if (!isEmpty(settings._buttonClasses.remove)) button.addClass(settings._buttonClasses.remove);
                 }
                 if (!settings.hideButtons.moveUp) {
-                    createGridButton(settings.customGridButtons.moveUp, 'ui-icon-arrowthick-1-n')
+                    var button = createGridButton(settings.customGridButtons.moveUp, 'ui-icon-arrowthick-1-n')
 						.attr({ id: settings.idPrefix + '_MoveUp_' + uniqueIndex, title: settings._i18n.moveUp, tabindex: -1 })
-						.addClass('moveUp', settings._buttonClasses.moveUp).data('appendGrid', { uniqueIndex: uniqueIndex })
+						.addClass('moveUp').data('appendGrid', { uniqueIndex: uniqueIndex })
 						.click(function (evt) {
 						    var rowUniqueIndex = $(this).data('appendGrid').uniqueIndex;
 						    $(tbWhole).appendGrid('moveUpRow', null, rowUniqueIndex);
 						    if (evt && evt.preventDefault) evt.preventDefault();
 						    return false;
 						}).appendTo(tbCell);
+					if (!isEmpty(settings._buttonClasses.moveUp)) button.addClass(settings._buttonClasses.moveUp);
                 }
                 if (!settings.hideButtons.moveDown) {
-                    createGridButton(settings.customGridButtons.moveDown, 'ui-icon-arrowthick-1-s')
+                    var button = createGridButton(settings.customGridButtons.moveDown, 'ui-icon-arrowthick-1-s')
 						.attr({ id: settings.idPrefix + '_MoveDown_' + uniqueIndex, title: settings._i18n.moveDown, tabindex: -1 })
-						.addClass('moveDown', settings._buttonClasses.moveDown).data('appendGrid', { uniqueIndex: uniqueIndex })
+						.addClass('moveDown').data('appendGrid', { uniqueIndex: uniqueIndex })
 						.click(function (evt) {
 						    var rowUniqueIndex = $(this).data('appendGrid').uniqueIndex;
 						    $(tbWhole).appendGrid('moveDownRow', null, rowUniqueIndex);
 						    if (evt && evt.preventDefault) evt.preventDefault();
 						    return false;
 						}).appendTo(tbCell);
+					if (!isEmpty(settings._buttonClasses.moveDown)) button.addClass(settings._buttonClasses.moveDown);
                 }
                 // Handle row dragging
                 if (settings.rowDragging) {
-                    $('<div/>').addClass('rowDrag ui-state-default ui-corner-all', settings._buttonClasses.rowDrag)
+                    var button = $('<div/>').addClass('rowDrag ui-state-default ui-corner-all')
                         .attr('title', settings._i18n.rowDrag).append($('<div/>').addClass('ui-icon ui-icon-carat-2-n-s').append($('<span/>').addClass('ui-button-text').text('Drag')))
                         .appendTo(tbCell);
+					if (!isEmpty(settings._buttonClasses.rowDrag)) button.addClass(settings._buttonClasses.rowDrag);
                 }
                 // Add hidden
                 for (var y = 0; y < hidden.length; y++) {
