@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.6.0-beta
+* jQuery appendGrid v1.6.0-beta2
 * https://appendgrid.apphb.com/
 *
 * Copyright 2015 Albert L.
@@ -184,8 +184,10 @@
                     _finalColSpan: 0,
                     // Indicate to hide last column or not
                     _hideLastColumn: false,
-					// The element ID of the `appendGrid` wrapper
-					_wrapperId: null
+                    // The element ID of the `appendGrid` wrapper
+                    _wrapperId: null,
+                    // 
+                    _calculateWidth: true
                 });
                 // Labels or messages used in grid
                 if ($.isPlainObject(options.i18n))
@@ -235,7 +237,7 @@
                 tbFoot.className = 'ui-widget-header';
                 tbColGp = document.createElement('colgroup');
                 // Prepare the table element
-				settings._wrapperId = settings.idPrefix + '-wrapper';
+                settings._wrapperId = settings.idPrefix + '-wrapper';
                 tbWrap = document.createElement('div');
                 $(tbWrap).attr('id', settings._wrapperId).addClass('appendGrid').insertAfter(tbWhole);
                 $(tbWhole).empty().addClass('ui-widget').appendTo(tbWrap);
@@ -392,7 +394,7 @@
                             if (evt && evt.preventDefault) evt.preventDefault();
                             return false;
                         }).appendTo(tbCell);
-						if (!isEmpty(settings._buttonClasses.append)) button.addClass(settings._buttonClasses.append);
+                        if (!isEmpty(settings._buttonClasses.append)) button.addClass(settings._buttonClasses.append);
                     }
                     if (!settings.hideButtons.removeLast) {
                         var button = createGridButton(settings.customGridButtons.removeLast, 'ui-icon-closethick')
@@ -402,7 +404,7 @@
 						    if (evt && evt.preventDefault) evt.preventDefault();
 						    return false;
 						}).appendTo(tbCell);
-						if (!isEmpty(settings._buttonClasses.removeLast)) button.addClass(settings._buttonClasses.removeLast);
+                        if (!isEmpty(settings._buttonClasses.removeLast)) button.addClass(settings._buttonClasses.removeLast);
                     }
                     if (settings.customFooterButtons && settings.customFooterButtons.length) {
                         // Add front buttons
@@ -464,7 +466,7 @@
                 }
                 // Show no rows in grid
                 if (settings._rowOrder.length == 0) {
-					showEmptyMessage(tbWrap, settings, true);
+                    showEmptyMessage(tbWrap, settings, true);
                 }
                 // Calculate column width
                 if (settings.maxBodyHeight > 0) {
@@ -1155,7 +1157,7 @@
 						    if (evt && evt.preventDefault) evt.preventDefault(settings._buttonClasses.insert);
 						    return false;
 						}).appendTo(tbCell);
-					if (!isEmpty(settings._buttonClasses.insert)) button.addClass(settings._buttonClasses.insert);
+                    if (!isEmpty(settings._buttonClasses.insert)) button.addClass(settings._buttonClasses.insert);
                 }
                 if (!settings.hideButtons.remove) {
                     var button = createGridButton(settings.customGridButtons.remove, 'ui-icon-trash')
@@ -1167,7 +1169,7 @@
                             if (evt && evt.preventDefault) evt.preventDefault();
                             return false;
                         }).appendTo(tbCell);
-					if (!isEmpty(settings._buttonClasses.remove)) button.addClass(settings._buttonClasses.remove);
+                    if (!isEmpty(settings._buttonClasses.remove)) button.addClass(settings._buttonClasses.remove);
                 }
                 if (!settings.hideButtons.moveUp) {
                     var button = createGridButton(settings.customGridButtons.moveUp, 'ui-icon-arrowthick-1-n')
@@ -1179,7 +1181,7 @@
 						    if (evt && evt.preventDefault) evt.preventDefault();
 						    return false;
 						}).appendTo(tbCell);
-					if (!isEmpty(settings._buttonClasses.moveUp)) button.addClass(settings._buttonClasses.moveUp);
+                    if (!isEmpty(settings._buttonClasses.moveUp)) button.addClass(settings._buttonClasses.moveUp);
                 }
                 if (!settings.hideButtons.moveDown) {
                     var button = createGridButton(settings.customGridButtons.moveDown, 'ui-icon-arrowthick-1-s')
@@ -1191,14 +1193,14 @@
 						    if (evt && evt.preventDefault) evt.preventDefault();
 						    return false;
 						}).appendTo(tbCell);
-					if (!isEmpty(settings._buttonClasses.moveDown)) button.addClass(settings._buttonClasses.moveDown);
+                    if (!isEmpty(settings._buttonClasses.moveDown)) button.addClass(settings._buttonClasses.moveDown);
                 }
                 // Handle row dragging
                 if (settings.rowDragging) {
                     var button = $('<div/>').addClass('rowDrag ui-state-default ui-corner-all')
                         .attr('title', settings._i18n.rowDrag).append($('<div/>').addClass('ui-icon ui-icon-carat-2-n-s').append($('<span/>').addClass('ui-button-text').text('Drag')))
                         .appendTo(tbCell);
-					if (!isEmpty(settings._buttonClasses.rowDrag)) button.addClass(settings._buttonClasses.rowDrag);
+                    if (!isEmpty(settings._buttonClasses.rowDrag)) button.addClass(settings._buttonClasses.rowDrag);
                 }
                 // Add hidden
                 for (var y = 0; y < hidden.length; y++) {
@@ -1246,6 +1248,14 @@
                 if ($.isFunction(settings.subPanelBuilder)) {
                     settings.subPanelBuilder(tbCell, uniqueIndex);
                 }
+            }
+        }
+        // Check if re-calculate column width is required
+        if (0 < settings.maxBodyHeight && settings._calculateWidth && !calColWidth) {
+            var scroll = $('#' + settings._wrapperId + '>div.scroller')[0];
+            if (scroll.scrollHeight > scroll.offsetHeight) {
+                calColWidth = true;
+                settings._calculateWidth = false;
             }
         }
         // Save setting
@@ -1357,22 +1367,22 @@
         }
         // Add empty row
         if (settings._rowOrder.length == 0) {
-			showEmptyMessage(document.getElementById(settings._wrapperId), settings);
+            showEmptyMessage(document.getElementById(settings._wrapperId), settings);
         }
     }
-	function showEmptyMessage(tbWrap, settings, skipWidthCalculation) {
-		var $emptyCell = $('<td></td>').text(settings._i18n.rowEmpty).attr('colspan', settings._finalColSpan);
-		$('table.body tbody', tbWrap).append($('<tr></tr>').addClass('empty').append($emptyCell));
-		if (!skipWidthCalculation && settings.maxBodyHeight > 0) {
-			// Check scrolling enabled
-			if (settings.autoColumnWidth) {
-				calculateColumnWidth(tbWrap);
-			} else {
-				// Set the width of empty message cell to the thead width
-				$emptyCell.width($('table.head', tbWrap).width() - 4);
-			}
-		}
-	}
+    function showEmptyMessage(tbWrap, settings, skipWidthCalculation) {
+        var $emptyCell = $('<td></td>').text(settings._i18n.rowEmpty).attr('colspan', settings._finalColSpan);
+        $('table.body tbody', tbWrap).append($('<tr></tr>').addClass('empty').append($emptyCell));
+        if (!skipWidthCalculation && settings.maxBodyHeight > 0) {
+            // Check scrolling enabled
+            if (settings.autoColumnWidth) {
+                calculateColumnWidth(tbWrap);
+            } else {
+                // Set the width of empty message cell to the thead width
+                $emptyCell.width($('table.head', tbWrap).width() - 4);
+            }
+        }
+    }
     function emptyGrid(tbWhole) {
         // Load settings
         var settings = $(tbWhole).data('appendGrid');
@@ -1383,7 +1393,7 @@
         // Save setting
         saveSetting(tbWhole, settings);
         // Add empty row
-		showEmptyMessage(document.getElementById(settings._wrapperId), settings);
+        showEmptyMessage(document.getElementById(settings._wrapperId), settings);
     }
     function sortSequence(tbWhole, startIndex) {
         var settings = $(tbWhole).data('appendGrid');
@@ -1616,6 +1626,7 @@
     }
     function calculateColumnWidth(tbWrap) {
         var $tbWhole = $('table.body', tbWrap);
+        var $scroller = $('div.scroller', tbWrap);
         var settings = $tbWhole.data('appendGrid');
         var tbHeadRow = $('table.head tr.columnHead', tbWrap)[0];
         var tbColGp = $('table.body colgroup', tbWrap)[0];
@@ -1625,6 +1636,7 @@
             $('td', tbHeadRow).width('auto');
             $('col', tbColGp).width('auto');
             $tbWhole.width('auto');
+            $scroller.width('auto');
             // Check the total number of columns
             var tbBodyRow = $('tbody tr', $tbWhole)[0];
             if (tbHeadRow.childNodes.length == tbBodyRow.childNodes.length) {
@@ -1644,7 +1656,6 @@
         // Set the width of footer row
         $('table.foot', tbWrap).width($tbWhole.width());
         // Check the scroll panel width
-        var $scroller = $('div.scroller', tbWrap);
         $scroller.width($tbWhole.width() + $scroller[0].offsetWidth - $scroller[0].clientWidth + 1);
     }
     /// <summary>
