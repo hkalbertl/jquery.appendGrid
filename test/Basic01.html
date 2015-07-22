@@ -1,0 +1,126 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>appendGrid Test Basic 01</title>
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/ui-lightness/jquery-ui.css" />
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-1.18.0.css" />
+    <link href="../jquery.appendGrid-development.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/qunit/qunit-1.18.0.js"></script>
+    <script type="text/javascript" src="../jquery.appendGrid-development.js"></script>
+    <script type="text/javascript">
+        // Prepare common variables
+        var gColumns = [
+            { name: 'ID', type: 'hidden' },
+            { name: 'Album', display: 'Album', type: 'text', ctrlAttr: { maxlength: 100 }, ctrlCss: { width: '160px' } },
+            { name: 'Artist', display: 'Artist', type: 'text', ctrlAttr: { maxlength: 100 }, ctrlCss: { width: '120px' } },
+            { name: 'Year', display: 'Year', type: 'text', ctrlAttr: { maxlength: 4 }, ctrlCss: { width: '50px' } },
+            { name: 'Origin', display: 'Origin', type: 'select', ctrlOptions: { 0: '{Choose}', 1: 'Hong Kong', 2: 'Taiwan', 3: 'Japan', 4: 'Korea', 5: 'US', 6: 'Others' } },
+            { name: 'Poster', display: 'With Poster?', type: 'checkbox' },
+            { name: 'Price', display: 'Price', type: 'text', ctrlAttr: { maxlength: 10 }, ctrlCss: { width: '60px', 'text-align': 'right' }, value: 0 },
+        ], gData = [
+            { 'ID': 1, 'Album': 'Dearest', 'Artist': 'Theresa Fu', 'Year': '2009', 'Origin': 1, 'Poster': true, 'Price': 168.9 },
+            { 'ID': 2, 'Album': 'To be Free', 'Artist': 'Arashi', 'Year': '2010', 'Origin': 3, 'Poster': true, 'Price': 152.6 },
+            { 'ID': 3, 'Album': 'Count On Me', 'Artist': 'Show Luo', 'Year': '2012', 'Origin': 2, 'Poster': false, 'Price': 306.8 },
+            { 'ID': 4, 'Album': 'Wonder Party', 'Artist': 'Wonder Girls', 'Year': '2012', 'Origin': 4, 'Poster': true, 'Price': 108.6 },
+            { 'ID': 5, 'Album': 'Reflection', 'Artist': 'Kelly Chen', 'Year': '2013', 'Origin': 1, 'Poster': false, 'Price': 138.2 }
+        ], gI18n = {
+            append: '!append!',
+            removeLast: '!removeLast!',
+            insert: '!insert!',
+            remove: '!remove!',
+            moveUp: '!moveUp!',
+            moveDown: '!moveDown!',
+            rowDrag: '!rowDrag!',
+            rowEmpty: '!rowEmpty!'
+        }, gButtonClasses = {
+            append: 'ap-pend',
+            removeLast: 'remove-Last',
+            insert: 'in-sert',
+            remove: 're-move',
+            moveUp: 'move-Up',
+            moveDown: 'move-Down',
+            rowDrag: 'row-Drag'
+        };
+        // Start the test
+        QUnit.test('appendGrid.basic01', function (assert) {
+            // Declare variables for testing
+            var eValid = false, eValues, eInitRows = 2, eDataLoaded = false, eCaption = 'My CD Collections', eIdPrefix = 'hello';
+            // Check isReady
+            var $grid = $('#tblAppendGrid');
+            assert.notOk($grid.appendGrid('isReady'), 'Method: isReady=false');
+            // Create the grid
+            $grid.appendGrid({
+                caption: eCaption,
+                captionTooltip: eCaption,
+                columns: gColumns,
+                initRows: eInitRows,
+                idPrefix: eIdPrefix,
+                i18n: gI18n,
+                buttonClasses: gButtonClasses,
+                dataLoaded: function () {
+                    eDataLoaded = true;
+                }
+            });
+            assert.ok($grid.appendGrid('isReady'), 'Method: isReady=true');
+            assert.equal($grid.appendGrid('getRowCount'), eInitRows, 'Option: initRows');
+            // Check grid layout
+            assert.equal($('thead td.caption', $grid).text(), eCaption, 'Caption text.');
+            // Check idPrefix
+            assert.ok(null != document.getElementById(eIdPrefix + '_rowOrder'), 'Option: idPrefix');
+            // Load data
+            assert.notOk($grid.appendGrid('isDataLoaded'), 'Method: isDataLoaded=false');
+            $grid.appendGrid('load', gData);
+            assert.ok($grid.appendGrid('isDataLoaded'), 'Method: isDataLoaded=true');
+            assert.equal($grid.appendGrid('getRowCount'), gData.length, 'Loading data.');
+            assert.ok(eDataLoaded, 'Load data event.');
+            // Check i18n
+            assert.equal($grid.find('tfoot button.append').attr('title'), gI18n.append, 'Option: i18n.append');
+            assert.equal($grid.find('tfoot button.removeLast').attr('title'), gI18n.removeLast, 'Option: i18n.removeLast');
+            assert.equal($grid.find('tbody tr td.last button.insert')[0].title, gI18n.insert, 'Option: i18n.insert');
+            assert.equal($grid.find('tbody tr td.last button.remove')[0].title, gI18n.remove, 'Option: i18n.remove');
+            assert.equal($grid.find('tbody tr td.last button.moveUp')[0].title, gI18n.moveUp, 'Option: i18n.moveUp');
+            assert.equal($grid.find('tbody tr td.last button.moveDown')[0].title, gI18n.moveDown, 'Option: i18n.moveDown');
+            // Check button classes
+            assert.ok($grid.find('tfoot button.append').hasClass(gButtonClasses.append), 'Option: buttonClasses.append');
+            assert.ok($grid.find('tfoot button.removeLast').hasClass(gButtonClasses.removeLast), 'Option: buttonClasses.removeLast');
+            assert.ok($grid.find('tbody tr td.last button.insert').hasClass(gButtonClasses.insert), 'Option: buttonClasses.insert');
+            assert.ok($grid.find('tbody tr td.last button.remove').hasClass(gButtonClasses.remove), 'Option: buttonClasses.remove');
+            assert.ok($grid.find('tbody tr td.last button.moveUp').hasClass(gButtonClasses.moveUp), 'Option: buttonClasses.moveUp');
+            assert.ok($grid.find('tbody tr td.last button.moveDown').hasClass(gButtonClasses.moveDown), 'Option: buttonClasses.moveDown');
+            // Check row data
+            assert.equal($grid.appendGrid('getCtrlValue', 'Artist', 1), gData[1].Artist, 'Method: getCtrlValue 1');
+            assert.equal($grid.appendGrid('getCtrlValue', 'Origin', 2), gData[2].Origin, 'Method: getCtrlValue 2');
+            // Check whole row data
+            eValid = true;
+            eValues = $grid.appendGrid('getRowValue', 3);
+            for (var c = 0; c < gColumns.length; c++) {
+                var colName = gColumns[c].name;
+                if (eValues[colName] != gData[3][colName]) {
+                    eValid = false;
+                    break;
+                }
+            }
+            assert.ok(eValid, 'Method: getRowValue');
+            // Insert 1 row before 3th row (index = 2)
+            $grid.appendGrid('insertRow', 1, 2);
+            eValues = $grid.appendGrid('getRowOrder');
+            assert.deepEqual(eValues, [1, 2, 6, 3, 4, 5], 'Method: insertRow');
+            // Remove 4th row (index = 3)
+            $grid.appendGrid('removeRow', 3);
+            eValues = $grid.appendGrid('getRowOrder');
+            assert.deepEqual(eValues, [1, 2, 6, 4, 5], 'Method: removeRow');
+        });
+    </script>
+</head>
+<body>
+    <div id="qunit">
+    </div>
+    <br />
+    <table id="tblAppendGrid"></table>
+</body>
+</html>
