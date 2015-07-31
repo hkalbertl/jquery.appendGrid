@@ -1517,20 +1517,32 @@
         return genButton;
     }
     function isRowEmpty(settings, rowIndex) {
+        var isEmptyRow = true;
         for (var z = 0; z < settings.columns.length; z++) {
             var uniqueIndex = settings._rowOrder[rowIndex];
             var currentValue = getCtrlValue(settings, z, uniqueIndex);
             // Check the empty criteria is function
             if ($.isFunction(settings.columns[z].emptyCriteria)) {
-                if (!settings.columns[z].emptyCriteria(currentValue)) {
-                    return false;
+                if (settings.columns[z].emptyCriteria(currentValue)) {
+                    return true;
+                }
+                else{
+                    isEmptyRow = false;//make the empty row false
                 }
             } else {
                 // Find the default value
                 var defaultValue = null;
                 if (!isEmpty(settings.columns[z].emptyCriteria)) {
                     defaultValue = settings.columns[z].emptyCriteria;
-                } else {
+                    // Compare with the default value
+                    if (currentValue == defaultValue) {
+                        return true;
+                    }
+                    else{
+                        isEmptyRow = false;//make the empty row false
+                    }
+                } 
+                else {                   
                     // Check default value based on its type
                     if (settings.columns[z].type == 'checkbox') {
                         defaultValue = 0;
@@ -1544,14 +1556,15 @@
                     } else {
                         defaultValue = '';
                     }
-                }
-                // Compare with the default value
-                if (currentValue != defaultValue) {
-                    return false;
-                }
+                //if row is still empty but the current value not equal to default value means atleast this column is not empty so make the row not empty
+                    if(isEmptyRow === true && !isEmpty(currentValue) && currentValue !== defaultValue)
+                    {
+                        isEmptyRow = false;
+                    }
+                }                
             }
         }
-        return true;
+        return isEmptyRow;
     }
     /// <summary>
     /// Initialize append grid or calling its methods.
