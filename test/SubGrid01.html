@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>appendGrid Test SubGrid 01</title>
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/ui-lightness/jquery-ui.css" />
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-1.18.0.css" />
+    <link href="../jquery.appendGrid-development.css" rel="stylesheet" />
+	<style>
+		#tblAppendGrid input[type=text],
+		#tblAppendGrid input[type=number],
+		#tblAppendGrid input[type=date],
+		#tblAppendGrid select {
+			width: 120px;
+			font-size: 10pt;
+		}
+		#tblAppendGrid input[type=email] {
+			width: 120px;
+			font-size: 10pt;
+		}
+	</style>
+
+    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <script src="https://code.jquery.com/qunit/qunit-1.18.0.js"></script>
+    <script src="../jquery.appendGrid-development.js"></script>
+    <script>
+        // Prepare common variables
+        var gMainColumns = [
+            { name: 'MainText', display: 'Main Text', type: 'text' },
+            { name: 'MainNumber', display: 'Main Number', type: 'number', ctrlAttr: { 'min': 0, 'max': 99999.9, 'step': 0.1 } },
+            { name: 'MainEmail', display: 'Main Email', type: 'email' },
+            { name: 'MainDate', display: 'Main Date', type: 'date' },
+			{ name: 'MainSelect', display: 'Main Select', type: 'select', ctrlOptions: [1, 2, 3, 4, 5] }
+        ], gSubColumns = [
+			{ name: 'SubText', display: 'Sub Text', type: 'text' },
+            { name: 'SubNumber', display: 'Sub Number', type: 'number', ctrlAttr: { 'min': 0, 'max': 99999.9, 'step': 0.1 } },
+            { name: 'SubEmail', display: 'Sub Email', type: 'email' },
+            { name: 'SubDate', display: 'Sub Date', type: 'date' }
+		], gData = [
+            {
+				'MainText': 'MainRow1', 'MainNumber': '1111', 'MainEmail': '1111@jquery.com', 'MainDate': '2011-01-31', 'MainSelect': 1,
+				'SubGridData': [
+					{ 'SubText': 'SubRow1-1', 'SubNumber': '1111.1', 'SubEmail': '1111-1@jquery.com', 'SubDate': '2011-01-01' },
+					{ 'SubText': 'SubRow1-2', 'SubNumber': '1111.2', 'SubEmail': '1111-2@jquery.com', 'SubDate': '2011-01-02' },
+					{ 'SubText': 'SubRow1-3', 'SubNumber': '1111.3', 'SubEmail': '1111-3@jquery.com', 'SubDate': '2011-01-03' }
+				]
+			},
+            {
+				'MainText': 'MainRow2', 'MainNumber': '2222', 'MainEmail': '2222@jquery.com', 'MainDate': '2011-02-28', 'MainSelect': 2,
+				'SubGridData': [ /* No record */ ]
+			},
+			{
+				'MainText': 'MainRow3', 'MainNumber': '3333', 'MainEmail': '3333@jquery.com', 'MainDate': '2015-03-31', 'MainSelect': 3,
+				'SubGridData': [
+					{ 'SubText': 'SubRow3-1', 'SubNumber': '3333.1', 'SubEmail': '3333-1@jquery.com', 'SubDate': '2011-03-01' },
+					{ 'SubText': 'SubRow3-2', 'SubNumber': '3333.2', 'SubEmail': '3333-2@jquery.com', 'SubDate': '2011-03-02' }
+				]
+			},
+			{
+				'MainText': 'MainRow4', 'MainNumber': '4444', 'MainEmail': '4444@jquery.com', 'MainDate': '2015-04-30', 'MainSelect': 4,
+				'SubGridData': [
+					{ 'SubText': 'SubRow4-1', 'SubNumber': '4444.1', 'SubEmail': '4444-1@jquery.com', 'SubDate': '2011-04-01' },
+					{ 'SubText': 'SubRow4-2', 'SubNumber': '4444.2', 'SubEmail': '4444-2@jquery.com', 'SubDate': '2011-04-02' },
+					{ 'SubText': 'SubRow4-3', 'SubNumber': '4444.3', 'SubEmail': '4444-3@jquery.com', 'SubDate': '2011-04-03' },
+					{ 'SubText': 'SubRow4-4', 'SubNumber': '4444.4', 'SubEmail': '4444-4@jquery.com', 'SubDate': '2011-04-04' },
+					{ 'SubText': 'SubRow4-5', 'SubNumber': '4444.5', 'SubEmail': '4444-5@jquery.com', 'SubDate': '2011-04-05' },
+					{ 'SubText': 'SubRow4-6', 'SubNumber': '4444.6', 'SubEmail': '4444-6@jquery.com', 'SubDate': '2011-04-06' }
+				]
+			}
+        ];
+        // Start the test
+        QUnit.test('appendGrid.subgrid01', function (assert) {
+            // Declare variables for testing
+            var eValid = false, eValues, eOtherValues, eIndex;
+            // Create grid
+            var $grid = $('#tblAppendGrid').appendGrid({
+                columns: gMainColumns,
+				initData: gData,
+				useSubPanel: true,
+				subPanelBuilder: function (cell, uniqueIndex) {
+					var $subgrid = $('<table></table>').attr('id', 'tblSubGrid_' + uniqueIndex).appendTo(cell);
+					$subgrid.appendGrid({
+						initRows: 0,
+						columns: gSubColumns
+					});
+				},
+				subPanelGetter: function (uniqueIndex) {
+					return $('#tblSubGrid_' + uniqueIndex).appendGrid('getAllValue', true);
+				},
+				rowDataLoaded: function (caller, record, rowIndex, uniqueIndex) {
+					if (record.SubGridData) {
+						$('#tblSubGrid_' + uniqueIndex, caller).appendGrid('load', record.SubGridData);
+					}
+				}
+            });
+			// Check `isReady`
+            assert.ok($grid.appendGrid('isReady'), 'Method: isReady=true');
+			// Check row count
+			assert.equal($grid.appendGrid('getRowCount'), gData.length, 'Method: getRowCount');
+			// Check main grid data
+			assert.equal($grid.appendGrid('getCtrlValue', 'MainNumber', 1), gData[1].MainNumber, 'Method: getCtrlValue 1');
+			assert.equal($grid.appendGrid('getCtrlValue', 'MainEmail', 2), gData[2].MainEmail, 'Method: getCtrlValue 2');
+			assert.equal($grid.appendGrid('getCtrlValue', 'MainDate', 3), gData[3].MainDate, 'Method: getCtrlValue 3');
+			// Check sub grid data
+			var eSubRowData = $grid.appendGrid('getRowValue', 3);
+			assert.equal(eSubRowData.SubText_0, gData[3].SubGridData[0].SubText, 'Method: getRowValue 1 [sub]');
+			assert.equal(eSubRowData.SubNumber_1, gData[3].SubGridData[1].SubNumber, 'Method: getRowValue 2 [sub]');
+			// Insert 1 row before 3th row (index = 2)
+            $grid.appendGrid('insertRow', 1, 2);
+            eValues = $grid.appendGrid('getRowOrder');
+            assert.deepEqual(eValues, [1, 2, 5, 3, 4], 'Method: insertRow [main]');
+			// Append 2 rows to the sub grid
+			var $subgrid = $('#tblSubGrid_' + 5);
+			$subgrid.appendGrid('appendRow', 2);
+			eValues = $subgrid.appendGrid('getRowOrder');
+			assert.deepEqual(eValues, [1, 2], 'Method: appendRow 1 [sub]');
+			// Append 2 rows with data to the sub grid
+			$subgrid.appendGrid('appendRow', [
+				{ 'SubText': 'SubRow5-3', 'SubNumber': '5555.3', 'SubEmail': '5555-3@jquery.com', 'SubDate': '2011-05-03' },
+				{ 'SubText': 'SubRow5-4', 'SubNumber': '5555.4', 'SubEmail': '5555-4@jquery.com', 'SubDate': '2011-05-04' }
+			]);
+			eValues = $subgrid.appendGrid('getRowOrder');
+			assert.deepEqual(eValues, [1, 2, 3, 4], 'Method: appendRow 2 [sub]');
+			// Remove the 2nd row (index = 1)
+			$subgrid.appendGrid('removeRow', 1);
+			eValues = $subgrid.appendGrid('getRowOrder');
+			assert.deepEqual(eValues, [1, 3, 4], 'Method: removeRow 1 [sub]');
+			// Insert a row between 2nd and 3rd rows (index = 2)
+			$subgrid.appendGrid('insertRow', 1, 2);
+			eValues = $subgrid.appendGrid('getRowOrder');
+			assert.deepEqual(eValues, [1, 3, 5, 4], 'Method: insertRow 1 [sub]');
+			// Insert a row with data as the first row (index = 0)
+			$subgrid.appendGrid('insertRow', [
+				{ 'SubText': 'SubRow5-1', 'SubNumber': '5555.1', 'SubEmail': '5555-1@jquery.com', 'SubDate': '2011-05-01' },
+			], 0);
+			eValues = $subgrid.appendGrid('getRowOrder');
+			assert.deepEqual(eValues, [6, 1, 3, 5, 4], 'Method: insertRow 2 [sub]');
+			// Move up the 2nd row (index = 1)
+			$subgrid.appendGrid('moveUpRow', 1);
+			eValues = $subgrid.appendGrid('getRowOrder');
+			assert.deepEqual(eValues, [1, 6, 3, 5, 4], 'Method: moveUpRow [sub]');
+			// Move up the 4th row (index = 3)
+			$subgrid.appendGrid('moveDownRow', 3);
+			eValues = $subgrid.appendGrid('getRowOrder');
+			assert.deepEqual(eValues, [1, 6, 3, 4, 5], 'Method: moveDownRow [sub]');
+			// Remove first and last row
+			$subgrid.appendGrid('removeRow', 4);
+			$subgrid.appendGrid('removeRow', 0);
+			eValues = $subgrid.appendGrid('getRowOrder');
+			assert.deepEqual(eValues, [6, 3, 4], 'Method: removeRow 2 [sub]');
+			// Set sub row values
+			eValues = 'Hello!';
+			$subgrid.appendGrid('setCtrlValue', 'SubText', 1, 'Hello!');
+			assert.equal(eValues, $subgrid.appendGrid('getCtrlValue', 'SubText', 1), 'Method: setCtrlValue [sub]');
+			// Move down main row
+			$grid.appendGrid('moveDownRow', 2);
+			eOtherValues = $grid.appendGrid('getRowOrder');
+			assert.deepEqual(eOtherValues, [1, 2, 3, 5, 4], 'Method: moveDownRow [main]');
+			// Get main row values
+			eOtherValues = $grid.appendGrid('getRowValue', 3);
+			assert.equal(eValues, eOtherValues['SubText_' + 1], 'Method: getRowValue [main]');
+        });
+    </script>
+</head>
+<body>
+    <div id="qunit">
+    </div>
+    <br />
+    <table id="tblAppendGrid"></table>
+</body>
+</html>
