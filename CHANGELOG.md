@@ -1,4 +1,4 @@
-## 1.5.2 (Feb 28, 2014)
+## 1.5.2 (Feb 28, 2015)
 - Fixed a problem that `nameFormatter` is not working on `hidden` type columns.<br />
   (Thanks robertadsoft for reporting)
 
