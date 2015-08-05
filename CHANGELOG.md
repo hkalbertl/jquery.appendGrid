@@ -1,3 +1,9 @@
+## 1.6.0 (Aug 6, 2015)
+- Added `maxBodyHeight` option to limit the maximum height on table body and vertical scrollbar will be displayed when this height limit is reached.
+  (Thanks niftyhawk for suggestion)
+- Fixed a problem that `buttonClasses` is not working.
+  (Thanks pbreah for reporting)
+
 ## 1.5.2 (Feb 28, 2015)
 - Fixed a problem that `nameFormatter` is not working on `hidden` type columns.<br />
   (Thanks robertadsoft for reporting)
