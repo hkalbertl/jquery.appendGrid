@@ -4,7 +4,7 @@
 
 
 ## Demo
-Lots of demo cases are avaiable at [Demo section of **appendGrid** website](https://appendgrid.apphb.com/Demo).
+Lots of demo cases are available at [Demo section of **appendGrid** website](https://appendgrid.apphb.com/Demo).
 
 
 ## Prerequisite
@@ -46,7 +46,7 @@ Still have problems? Try to download a working sample in demo section!
 
 
 ## Documentation
-The full list of options / methods / callback events are avaiable in the [Documentation section of **appendGrid** website](https://appendgrid.apphb.com/Documentation).
+The full list of options / methods / callback events are available in the [Documentation section of **appendGrid** website](https://appendgrid.apphb.com/Documentation).
 
 
 ## Wanna help **appendGrid**?
@@ -58,7 +58,7 @@ Yeah, you can:
 
 
 ## Changelog
-Changelog is avaiable [here](https://github.com/hkalbertl/jquery.appendGrid/blob/master/CHANGELOG.md).
+Changelog is available [here](https://github.com/hkalbertl/jquery.appendGrid/blob/master/CHANGELOG.md).
 
 
 ## License
