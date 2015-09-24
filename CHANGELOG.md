@@ -1,3 +1,7 @@
+## 1.6.1 (Sep 24, 2015)
+- Fixed a problem that `uniqueIndex` become `undefined` in `afterRowDragged` callback.
+  (Thanks rasikrodri for reporting)
+
 ## 1.6.0 (Aug 6, 2015)
 - Added `maxBodyHeight` option to limit the maximum height on table body and vertical scrollbar will be displayed when this height limit is reached.
   (Thanks niftyhawk for suggestion)

@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.6.0
+* jQuery appendGrid v1.6.1
 * https://appendgrid.apphb.com/
 *
 * Copyright 2015 Albert L.
@@ -1563,7 +1563,7 @@
 
         // Trigger event
         if ($.isFunction(settings.afterRowDragged)) {
-            settings.afterRowDragged(tbWhole, tbRowIndex);
+            settings.afterRowDragged(tbWhole, tbRowIndex, uniqueIndex);
         }
     }
     function createGridButton(param, uiIcon) {
