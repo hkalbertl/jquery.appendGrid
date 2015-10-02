@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>appendGrid Test Bootstrap 01</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/ui-lightness/jquery-ui.css" />
+    <link rel="stylesheet" href="https://code.jquery.com/qunit/qunit-1.18.0.css" />
+    <link href="../jquery.appendGrid-development.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/qunit/qunit-1.18.0.js"></script>
+    <script type="text/javascript" src="../jquery.appendGrid-development.js"></script>
+    <script type="text/javascript">
+        // Prepare common variables
+        var gColumns = [
+            { name: 'ID', type: 'hidden' },
+            { name: 'Album', display: 'Album', type: 'text', ctrlAttr: { maxlength: 100 }, ctrlCss: { width: '160px' } },
+            { name: 'Artist', display: 'Artist', type: 'text', ctrlAttr: { maxlength: 100 }, ctrlCss: { width: '120px' } },
+            { name: 'Year', display: 'Year', type: 'text', ctrlAttr: { maxlength: 4 }, ctrlCss: { width: '50px' } },
+            { name: 'Origin', display: 'Origin', type: 'select', ctrlOptions: { 0: '{Choose}', 1: 'Hong Kong', 2: 'Taiwan', 3: 'Japan', 4: 'Korea', 5: 'US', 6: 'Others' } },
+            { name: 'Poster', display: 'With Poster?', type: 'checkbox' },
+            { name: 'Price', display: 'Price', type: 'text', ctrlAttr: { maxlength: 10 }, ctrlCss: { width: '60px', 'text-align': 'right' }, value: 0 },
+        ], gData = [
+            { 'ID': 1, 'Album': 'Dearest', 'Artist': 'Theresa Fu', 'Year': '2009', 'Origin': 1, 'Poster': true, 'Price': 168.9 },
+            { 'ID': 2, 'Album': 'To be Free', 'Artist': 'Arashi', 'Year': '2010', 'Origin': 3, 'Poster': true, 'Price': 152.6 },
+            { 'ID': 3, 'Album': 'Count On Me', 'Artist': 'Show Luo', 'Year': '2012', 'Origin': 2, 'Poster': false, 'Price': 306.8 },
+            { 'ID': 4, 'Album': 'Wonder Party', 'Artist': 'Wonder Girls', 'Year': '2012', 'Origin': 4, 'Poster': true, 'Price': 108.6 },
+            { 'ID': 5, 'Album': 'Reflection', 'Artist': 'Kelly Chen', 'Year': '2013', 'Origin': 1, 'Poster': false, 'Price': 138.2 }
+        ];
+        // Start the test
+        QUnit.test('appendGrid.bootstrap01', function (assert) {
+            // Declare variables for testing
+            var $grid = $('#tblAppendGrid');
+            // Create the grid
+            $grid.appendGrid({
+                columns: gColumns,
+                initData: gData
+            });
+            assert.ok($grid.appendGrid('isReady'), 'Method: isReady=true');
+		    assert.equal($grid.find('tfoot tr td button.ui-button').length, 2, 'UI button initialized');
+        });
+    </script>
+</head>
+<body>
+    <div id="qunit">
+    </div>
+    <br />
+    <table id="tblAppendGrid"></table>
+    <br/>
+    <div class="container">
+        <h3>Here are some Bootstrap components</h3>
+        <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-success">Item A</a>
+            <a href="#" class="list-group-item list-group-item-info">Item B</a>
+            <a href="#" class="list-group-item list-group-item-warning">Item C</a>
+            <a href="#" class="list-group-item list-group-item-danger">Item D</a>
+            <a href="#" class="list-group-item">Item E<span class="badge">Good!</span></a>
+        </div>
+        <div class="alert alert-success" role="alert"><span class="glyphicon glyphicon-heart"></span>&nbsp;This is an alert!</div>
+        <div class="row">
+            <a class="btn btn-default col-md-6">Button 6/12</a>
+            <a class="btn btn-info col-md-4">Button 4/12</a>
+            <a class="btn btn-success col-md-2">Button 2/12</a>
+        </div>
+    </div>
+    <br/>
+</body>
+</html>
