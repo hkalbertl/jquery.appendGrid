@@ -1,8 +1,8 @@
 ﻿/*!
-* jQuery appendGrid v1.6.1
+* jQuery appendGrid v1.6.2-pre
 * https://appendgrid.apphb.com/
 *
-* Copyright 2015 Albert L.
+* Copyright 2016 Albert L.
 * Dual licensed under the LGPL (http://www.gnu.org/licenses/lgpl.html)
 * and MIT (http://www.opensource.org/licenses/mit-license.php) licenses.
 *
@@ -1640,9 +1640,14 @@
             // Check the total number of columns
             var tbBodyRow = $('tbody tr', $tbWhole)[0];
             if (tbHeadRow.childNodes.length == tbBodyRow.childNodes.length) {
+                var marginThreshold = -2;
+                if ($.fn.modal) {
+                    // If bootstrap is loaded, cell margin was reset
+                    marginThreshold = 1;
+                }
                 for (var z = 0; z < tbBodyRow.childNodes.length; z++) {
                     var headCellWidth = tbHeadRow.childNodes[z].clientWidth + 1;
-                    var bodyCellWidth = tbBodyRow.childNodes[z].clientWidth - 2;
+                    var bodyCellWidth = tbBodyRow.childNodes[z].clientWidth + marginThreshold;
                     if (bodyCellWidth > headCellWidth) {
                         tbHeadRow.childNodes[z].style.width = bodyCellWidth + 'px';
                     } else {
