@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.6.2-pre
+* jQuery appendGrid v1.6.2
 * https://appendgrid.apphb.com/
 *
 * Copyright 2016 Albert L.

@@ -1,3 +1,7 @@
+## 1.6.2 (Feb 21, 2016)
+- Fixed a problem that calculation on column width is wrong when `maxBodyHeight` is used with Bootstrap.
+  (Thanks mrsiva26 for reporting)
+
 ## 1.6.1 (Sep 24, 2015)
 - Fixed a problem that `uniqueIndex` become `undefined` in `afterRowDragged` callback.
   (Thanks rasikrodri for reporting)
