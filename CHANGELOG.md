@@ -1,3 +1,7 @@
+## 1.6.3 (Feb 27, 2017)
+- Fixed a problem that column width is not correct when no command buttons visible at the end of row.
+  (Thanks Ridwan09 for reporting)
+
 ## 1.6.2 (Feb 21, 2016)
 - Fixed a problem that calculation on column width is wrong when `maxBodyHeight` is used with Bootstrap.
   (Thanks mrsiva26 for reporting)

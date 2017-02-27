@@ -1,8 +1,8 @@
 ﻿/*!
-* jQuery appendGrid v1.6.2
+* jQuery appendGrid v1.6.3
 * https://appendgrid.apphb.com/
 *
-* Copyright 2016 Albert L.
+* Copyright 2017 Albert L.
 * Dual licensed under the LGPL (http://www.gnu.org/licenses/lgpl.html)
 * and MIT (http://www.opensource.org/licenses/mit-license.php) licenses.
 *
@@ -1639,22 +1639,21 @@
             $scroller.width('auto');
             // Check the total number of columns
             var tbBodyRow = $('tbody tr', $tbWhole)[0];
-            if (tbHeadRow.childNodes.length == tbBodyRow.childNodes.length) {
-                var marginThreshold = -2;
-                if ($.fn.modal) {
-                    // If bootstrap is loaded, cell margin was reset
-                    marginThreshold = 1;
-                }
-                for (var z = 0; z < tbBodyRow.childNodes.length; z++) {
-                    var headCellWidth = tbHeadRow.childNodes[z].clientWidth + 1;
-                    var bodyCellWidth = tbBodyRow.childNodes[z].clientWidth + marginThreshold;
-                    if (bodyCellWidth > headCellWidth) {
-                        tbHeadRow.childNodes[z].style.width = bodyCellWidth + 'px';
-                    } else {
-                        tbColGp.childNodes[z].style.width = headCellWidth + 'px';
-                    }
-                }
-            }
+			var marginThreshold = -2;
+			if ($.fn.modal) {
+				// If bootstrap is loaded, cell margin was reset
+				marginThreshold = 1;
+			}
+			var colLimit = Math.min(tbHeadRow.childNodes.length, tbBodyRow.childNodes.length);
+			for (var z = 0; z < colLimit; z++) {
+				var headCellWidth = tbHeadRow.childNodes[z].clientWidth + 1;
+				var bodyCellWidth = tbBodyRow.childNodes[z].clientWidth + marginThreshold;
+				if (bodyCellWidth > headCellWidth) {
+					tbHeadRow.childNodes[z].style.width = bodyCellWidth + 'px';
+				} else {
+					tbColGp.childNodes[z].style.width = headCellWidth + 'px';
+				}
+			}
         } else {
             $('table.body,table.foot', tbWrap).width($('table.head').width());
         }
