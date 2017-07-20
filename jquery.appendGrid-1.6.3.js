@@ -342,6 +342,7 @@
                         tbRow.appendChild(tbHeadCellRowButton = document.createElement('td'));
                     }
                     tbHeadCellRowButton.className = 'ui-widget-header last';
+		    tbHeadCellRowButton.id = settings.idPrefix + '_last_td_head';
                     // Add column group for scrolling
                     tbColGp.appendChild(document.createElement('col'));
                 }
@@ -1145,6 +1146,7 @@
                     tbRow.insertBefore(tbCell = document.createElement('td'), tbRow.firstChild);
                 }
                 tbCell.className = 'ui-widget-content last';
+		tbCell.id = settings.idPrefix + '_last_td_' + uniqueIndex;
                 if (settings._hideLastColumn) tbCell.style.display = 'none';
                 // Add standard buttons
                 if (!settings.hideButtons.insert) {
