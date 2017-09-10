@@ -4,7 +4,7 @@
 
 
 ## Demo
-Lots of demo cases are available at [Demo section of **appendGrid** website](https://appendgrid.apphb.com/Demo).
+Lots of demo cases are available on [Demo section](https://appendgrid.apphb.com/Demo) of **appendGrid** website.
 
 
 ## Prerequisite
@@ -22,17 +22,17 @@ For jQuery UI custom build option, you will need extra components as you wanted 
 <!DOCTYPE html>
 <html>
 <head>
-	<!--jQuery and jQuery UI-->
+    <!--jQuery and jQuery UI-->
     <link href="jquery-ui-1.12.1.css" rel="stylesheet"/>
     <script type="text/javascript" src="jquery-1.12.4.js"></script>
-	<script type="text/javascript" src="jquery-ui-1.12.1.js"></script>
-	<!--Reference the CSS and JS files-->
-	<link href="jquery.appendGrid-x.x.x.css" rel="stylesheet"/>
-	<script src="jquery.appendGrid-x.x.x.js"></script>
+    <script type="text/javascript" src="jquery-ui-1.12.1.js"></script>
+    <!--Reference the CSS and JS files-->
+    <link href="jquery.appendGrid-x.x.x.css" rel="stylesheet"/>
+    <script src="jquery.appendGrid-x.x.x.js"></script>
 </head>
 <body>
-	<!--Prepare a table element as the grid-->
-	<table id="tblAppendGrid"></table>
+    <!--Prepare a table element as the grid-->
+    <table id="tblAppendGrid"></table>
 </body>
 </html>
 ```
@@ -42,7 +42,7 @@ $(function() {
 	$('#tblAppendGrid').appendGrid({ /* Initial parameters */ });
 });
 ```
-Still have problems? Try to download a working sample in demo section!
+Still have problems? Try to download a working sample in [demo section](https://appendgrid.apphb.com/Demo)!
 
 
 ## Documentation
