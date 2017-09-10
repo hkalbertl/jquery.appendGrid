@@ -39,14 +39,14 @@ For jQuery UI custom build option, you will need extra components as you wanted 
 ```javascript
 // Initial the grid as you needed
 $(function() {
-	$('#tblAppendGrid').appendGrid({ /* Initial parameters */ });
+    $('#tblAppendGrid').appendGrid({ /* Initial parameters */ });
 });
 ```
 Still have problems? Try to download a working sample in [demo section](https://appendgrid.apphb.com/Demo)!
 
 
 ## Documentation
-The full list of options / methods / callback events are available in the [Documentation section of **appendGrid** website](https://appendgrid.apphb.com/Documentation).
+The full list of options / methods / callback events are available on the [Documentation section](https://appendgrid.apphb.com/Documentation) of **appendGrid** website.
 
 
 ## Wanna help **appendGrid**?
