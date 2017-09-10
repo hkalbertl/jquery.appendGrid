@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.6.3
+* jQuery appendGrid v1.7.0
 * https://appendgrid.apphb.com/
 *
 * Copyright 2017 Albert L.
@@ -7,8 +7,8 @@
 * and MIT (http://www.opensource.org/licenses/mit-license.php) licenses.
 *
 * Depends:
-* jQuery v1.11.1+
-* jQuery UI v1.11.1+
+* jQuery v1.12.4+
+* jQuery UI v1.12.1+
 */
 (function ($) {
     // The default initial options.
@@ -342,6 +342,7 @@
                         tbRow.appendChild(tbHeadCellRowButton = document.createElement('td'));
                     }
                     tbHeadCellRowButton.className = 'ui-widget-header last';
+                    tbHeadCellRowButton.id = settings.idPrefix + '_last_td_head';
                     // Add column group for scrolling
                     tbColGp.appendChild(document.createElement('col'));
                 }
@@ -1145,6 +1146,7 @@
                     tbRow.insertBefore(tbCell = document.createElement('td'), tbRow.firstChild);
                 }
                 tbCell.className = 'ui-widget-content last';
+                tbCell.id = settings.idPrefix + '_last_td_' + uniqueIndex;
                 if (settings._hideLastColumn) tbCell.style.display = 'none';
                 // Add standard buttons
                 if (!settings.hideButtons.insert) {
@@ -1198,7 +1200,7 @@
                 // Handle row dragging
                 if (settings.rowDragging) {
                     var button = $('<div/>').addClass('rowDrag ui-state-default ui-corner-all')
-                        .attr('title', settings._i18n.rowDrag).append($('<div/>').addClass('ui-icon ui-icon-carat-2-n-s').append($('<span/>').addClass('ui-button-text').text('Drag')))
+                        .attr('title', settings._i18n.rowDrag).append($('<div/>').addClass('ui-icon ui-icon-caret-2-n-s').append($('<span/>').addClass('ui-button-text').text('Drag')))
                         .appendTo(tbCell);
                     if (!isEmpty(settings._buttonClasses.rowDrag)) button.addClass(settings._buttonClasses.rowDrag);
                 }
@@ -1576,14 +1578,14 @@
             } else if (param.nodeType) {
                 // Clone the button if it is a DOM element.
                 genButton = $(param).clone();
-            } else if (param.icons) {
-                // Generate jQuery UI Button if it is a plain object with `icons` property.
+            } else if (param.icon || param.label) {
+                // Generate jQuery UI Button if it is a plain object with `icon` or `label` property.
                 genButton = $('<button/>').attr({ type: 'button' }).button(param);
             }
         }
         if (!genButton) {
             // Use default setting (jQuery UI Button) if button is not created.
-            genButton = $('<button/>').attr({ type: 'button' }).button({ icons: { primary: uiIcon }, text: false });
+            genButton = $('<button/>').attr({ type: 'button' }).button({ icon: uiIcon, showLabel: false });
         }
         return genButton;
     }
@@ -1639,21 +1641,21 @@
             $scroller.width('auto');
             // Check the total number of columns
             var tbBodyRow = $('tbody tr', $tbWhole)[0];
-			var marginThreshold = -2;
-			if ($.fn.modal) {
-				// If bootstrap is loaded, cell margin was reset
-				marginThreshold = 1;
-			}
-			var colLimit = Math.min(tbHeadRow.childNodes.length, tbBodyRow.childNodes.length);
-			for (var z = 0; z < colLimit; z++) {
-				var headCellWidth = tbHeadRow.childNodes[z].clientWidth + 1;
-				var bodyCellWidth = tbBodyRow.childNodes[z].clientWidth + marginThreshold;
-				if (bodyCellWidth > headCellWidth) {
-					tbHeadRow.childNodes[z].style.width = bodyCellWidth + 'px';
-				} else {
-					tbColGp.childNodes[z].style.width = headCellWidth + 'px';
-				}
-			}
+            var marginThreshold = -2;
+            if ($.fn.modal) {
+                // If bootstrap is loaded, cell margin was reset
+                marginThreshold = 1;
+            }
+            var colLimit = Math.min(tbHeadRow.childNodes.length, tbBodyRow.childNodes.length);
+            for (var z = 0; z < colLimit; z++) {
+                var headCellWidth = tbHeadRow.childNodes[z].clientWidth + 1;
+                var bodyCellWidth = tbBodyRow.childNodes[z].clientWidth + marginThreshold;
+                if (bodyCellWidth > headCellWidth) {
+                    tbHeadRow.childNodes[z].style.width = bodyCellWidth + 'px';
+                } else {
+                    tbColGp.childNodes[z].style.width = headCellWidth + 'px';
+                }
+            }
         } else {
             $('table.body,table.foot', tbWrap).width($('table.head').width());
         }

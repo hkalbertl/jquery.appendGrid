@@ -8,8 +8,8 @@ Lots of demo cases are available at [Demo section of **appendGrid** website](htt
 
 
 ## Prerequisite
-- [jQuery](http://jquery.com) v1.11.1
-- [jQuery UI](http://jqueryui.com) v1.11.1 with all components, or custom build included:
+- [jQuery](http://jquery.com) v1.12.4
+- [jQuery UI](http://jqueryui.com) v1.12.1 with all components, or custom build included:
   - UI Core - Core
   - UI Core - Widget
   - Widgets - Button
@@ -23,9 +23,9 @@ For jQuery UI custom build option, you will need extra components as you wanted 
 <html>
 <head>
 	<!--jQuery and jQuery UI-->
-    <link href="jquery-ui-1.11.1.css" rel="stylesheet"/>
-    <script type="text/javascript" src="jquery-1.11.1.js"></script>
-	<script type="text/javascript" src="jquery-ui-1.11.1.js"></script>
+    <link href="jquery-ui-1.12.1.css" rel="stylesheet"/>
+    <script type="text/javascript" src="jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="jquery-ui-1.12.1.js"></script>
 	<!--Reference the CSS and JS files-->
 	<link href="jquery.appendGrid-x.x.x.css" rel="stylesheet"/>
 	<script src="jquery.appendGrid-x.x.x.js"></script>

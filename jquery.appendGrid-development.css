@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.6.3
+* jQuery appendGrid v1.7.0
 * https://appendgrid.apphb.com/
 *
 * Copyright 2017 Albert L.
@@ -7,8 +7,8 @@
 * and MIT (http://www.opensource.org/licenses/mit-license.php) licenses.
 *
 * Depends:
-* jQuery v1.11.1+
-* jQuery UI v1.11.1+
+* jQuery v1.12.4+
+* jQuery UI v1.12.1+
 */
 div.appendGrid
 {
@@ -74,7 +74,7 @@ div.appendGrid table tbody td.last button.remove,
 div.appendGrid table tbody td.last button.moveUp,
 div.appendGrid table tbody td.last button.moveDown
 {
-	height: 20px;
+	height: 24px;
     width: 20px;
 }
 div.appendGrid table tbody td.last div.rowDrag

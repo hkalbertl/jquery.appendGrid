@@ -1,3 +1,8 @@
+## 1.7.0 (Sep 10, 2017)
+- Fixed jQuery UI Button issues on jQuery UI v1.12.
+  (Thanks gdevilee for reporting)
+- jQuery UI v1.12 will become minimum requirement as it had some breaking changes that incompatible with its previous version.
+
 ## 1.6.3 (Feb 27, 2017)
 - Fixed a problem that column width is not correct when no command buttons visible at the end of row.
   (Thanks Ridwan09 for reporting)
