@@ -1494,26 +1494,23 @@
         return result;
     }
     function getCtrlValue(settings, colIndex, uniqueIndex) {
-        var ctrl = null, type = settings.columns[colIndex].type, columnName = settings.columns[colIndex].name;
-        if (type == 'checkbox') {
-            ctrl = getCellCtrl(type, settings.idPrefix, columnName, uniqueIndex);
-            if (ctrl == null)
-                return null;
-            else
-                return ctrl.checked ? 1 : 0;
-        }
-        else if (type == 'custom') {
-            if ($.isFunction(settings.columns[colIndex].customGetter))
+        var type = settings.columns[colIndex].type, columnName = settings.columns[colIndex].name;
+        if (type == 'custom') {
+            if ($.isFunction(settings.columns[colIndex].customGetter)) {
                 return settings.columns[colIndex].customGetter(settings.idPrefix, columnName, uniqueIndex);
-            else
+            } else {
                 return null;
-        }
-        else {
-            ctrl = getCellCtrl(type, settings.idPrefix, columnName, uniqueIndex);
-            if (ctrl == null)
+            }
+        } else {
+            var ctrl = getCellCtrl(type, settings.idPrefix, columnName, uniqueIndex);
+            if (ctrl == null) {
                 return null;
-            else
-                return ctrl.value;
+            }
+            else if (type == 'checkbox') {
+                return ctrl.checked ? 1 : 0;
+            } else {
+                return $(ctrl).val();
+            }
         }
     }
     function getCellCtrl(type, idPrefix, columnName, uniqueIndex) {
