@@ -1,3 +1,7 @@
+## 1.7.1 (Sep 13, 2017)
+- Fixed a problem on get/set values on select element with `multiple` attribute
+  (Thanks shahab2058 for reporting)
+
 ## 1.7.0 (Sep 10, 2017)
 - Fixed jQuery UI Button issues on jQuery UI v1.12.
   (Thanks gdevilee for reporting)

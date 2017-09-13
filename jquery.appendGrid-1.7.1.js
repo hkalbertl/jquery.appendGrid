@@ -1,5 +1,5 @@
 ﻿/*!
-* jQuery appendGrid v1.7.0
+* jQuery appendGrid v1.7.1
 * https://appendgrid.apphb.com/
 *
 * Copyright 2017 Albert L.
@@ -1494,26 +1494,23 @@
         return result;
     }
     function getCtrlValue(settings, colIndex, uniqueIndex) {
-        var ctrl = null, type = settings.columns[colIndex].type, columnName = settings.columns[colIndex].name;
-        if (type == 'checkbox') {
-            ctrl = getCellCtrl(type, settings.idPrefix, columnName, uniqueIndex);
-            if (ctrl == null)
-                return null;
-            else
-                return ctrl.checked ? 1 : 0;
-        }
-        else if (type == 'custom') {
-            if ($.isFunction(settings.columns[colIndex].customGetter))
+        var type = settings.columns[colIndex].type, columnName = settings.columns[colIndex].name;
+        if (type == 'custom') {
+            if ($.isFunction(settings.columns[colIndex].customGetter)) {
                 return settings.columns[colIndex].customGetter(settings.idPrefix, columnName, uniqueIndex);
-            else
+            } else {
                 return null;
-        }
-        else {
-            ctrl = getCellCtrl(type, settings.idPrefix, columnName, uniqueIndex);
-            if (ctrl == null)
+            }
+        } else {
+            var ctrl = getCellCtrl(type, settings.idPrefix, columnName, uniqueIndex);
+            if (ctrl == null) {
                 return null;
-            else
-                return ctrl.value;
+            }
+            else if (type == 'checkbox') {
+                return ctrl.checked ? 1 : 0;
+            } else {
+                return $(ctrl).val();
+            }
         }
     }
     function getCellCtrl(type, idPrefix, columnName, uniqueIndex) {
@@ -1522,21 +1519,24 @@
     function setCtrlValue(settings, colIndex, uniqueIndex, data) {
         var type = settings.columns[colIndex].type;
         var columnName = settings.columns[colIndex].name;
-        if (type == 'checkbox') {
-            getCellCtrl(type, settings.idPrefix, columnName, uniqueIndex).checked = (data != null && data != 0);
-        }
-        else if (type == 'custom') {
+        // Handle values by type
+        if (type == 'custom') {
             if ($.isFunction(settings.columns[colIndex].customSetter)) {
                 settings.columns[colIndex].customSetter(settings.idPrefix, columnName, uniqueIndex, data);
+            } else {
+                // `customSetter` is not a function?? Skip handling...
             }
-        }
-        else if (type == 'ui-selectmenu') {
-            var menu = getCellCtrl(type, settings.idPrefix, columnName, uniqueIndex);
-            menu.value = (data == null ? '' : data);
-            $(menu).selectmenu('refresh');
-        }
-        else {
-            getCellCtrl(type, settings.idPrefix, columnName, uniqueIndex).value = (data == null ? '' : data);
+        } else {
+            var element = getCellCtrl(type, settings.idPrefix, columnName, uniqueIndex);
+            if (type == 'checkbox') {
+                element.checked = (data != null && data != 0);
+            } else if (type == 'ui-selectmenu') {
+                element.value = (data == null ? '' : data);
+                $(element).selectmenu('refresh');
+            }
+            else {
+                $(element).val(data == null ? '' : data);
+            }
         }
     }
     function gridRowDragged(tbWhole, isMoveUp, uniqueIndex, tbRowIndex) {
