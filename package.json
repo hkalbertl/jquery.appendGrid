@@ -29,5 +29,8 @@
   "dependencies": {
     "jquery": ">=1.12.x",
     "jquery-ui": ">=1.12.x"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1"
   }
 }
