@@ -1,8 +1,8 @@
 {
   "name": "jquery.appendgrid",
-  "version": "2.0.0-dev",
+  "version": "1.7.1",
   "description": "appendGrid - The dynamic table input jQuery plugin",
-  "main": "dist/jquery.appendGrid.js",
+  "main": "jquery.appendGrid-1.7.1.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

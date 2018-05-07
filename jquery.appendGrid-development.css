@@ -1,0 +1,120 @@
+﻿/*!
+* jQuery appendGrid v1.7.1
+* https://appendgrid.apphb.com/
+*
+* Copyright 2017 Albert L.
+* Dual licensed under the LGPL (http://www.gnu.org/licenses/lgpl.html)
+* and MIT (http://www.opensource.org/licenses/mit-license.php) licenses.
+*
+* Depends:
+* jQuery v1.12.4+
+* jQuery UI v1.12.1+
+*/
+div.appendGrid
+{
+}
+div.appendGrid table.head,
+div.appendGrid table.body,
+div.appendGrid table.foot
+{
+    border-collapse: collapse;
+	width: auto;
+}
+div.appendGrid table.head thead tr.columnHead td
+{
+	width: auto;
+	text-overflow: ellipsis;
+}
+div.appendGrid table td
+{
+    padding: 1px;
+}
+div.appendGrid table.head thead td
+{
+    padding-top: 4px;
+    padding-bottom: 4px;
+    white-space: nowrap;
+}
+div.appendGrid table thead td.caption
+{
+    padding: 4px;
+    font-weight: bold;
+}
+div.appendGrid table tbody input[type=text]
+{
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+div.appendGrid table tbody td
+{
+    white-space: pre-wrap;
+}
+div.appendGrid table td.first
+{
+    text-align: center;
+    vertical-align: middle;
+    min-width: 32px;
+}
+div.appendGrid table td.last
+{
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    min-width: 91px;
+}
+div.appendGrid table tbody td.last button
+{
+	min-height: 20px;
+    margin: 1px;
+}
+div.appendGrid table tbody td.last button.insert,
+div.appendGrid table tbody td.last button.remove,
+div.appendGrid table tbody td.last button.moveUp,
+div.appendGrid table tbody td.last button.moveDown
+{
+	height: 24px;
+    width: 20px;
+}
+div.appendGrid table tbody td.last div.rowDrag
+{
+    display: inline-block;
+    vertical-align: middle;
+    width: 18px;
+    height: 18px;
+    margin: 1px;
+}
+div.appendGrid table tfoot button
+{
+    min-height: 24px;
+    min-width: 28px;
+}
+div.appendGrid table tfoot button.append,
+div.appendGrid table tfoot button.removeLast
+{
+    height: 24px;
+    min-width: 28px;
+}
+div.appendGrid table input.double
+{
+    text-align: right;
+}
+div.appendGrid table tbody tr.empty td
+{
+	text-align: center;
+}
+div.appendGrid table td.invisible
+{
+	display: none;
+}
+div.appendGrid table thead td.resizable
+{
+}
+div.appendGrid div.scroller
+{
+	overflow: auto;
+	display: block;
+	padding: 0px;
+	margin: 0px;
+}
