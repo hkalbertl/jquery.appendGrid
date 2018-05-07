@@ -1,22 +1,17 @@
-﻿/*!
-* jQuery appendGrid v1.7.1
+/*!
+* jQuery appendGrid v2.0.0-pre
 * https://appendgrid.apphb.com/
 *
-* Copyright 2017 Albert L.
+* Copyright 2018 Albert L.
 * Dual licensed under the LGPL (http://www.gnu.org/licenses/lgpl.html)
 * and MIT (http://www.opensource.org/licenses/mit-license.php) licenses.
 *
 * Depends:
-* jQuery v1.12.4+
-* jQuery UI v1.12.1+
+* jQuery v3.1.0+
 */
 (function ($) {
     // The default initial options.
     var _defaultInitOptions = {
-        // The text as table caption, set null to disable caption generation.
-        caption: null,
-        // Tooltip for caption.
-        captionTooltip: null,
         // The total number of empty rows generated when init the grid. This will be ignored if `initData` is assigned.
         initRows: 3,
         // The maximum number of rows allowed in this grid.
@@ -29,8 +24,6 @@
         i18n: null,
         // The ID prefix of controls generated inside the grid. Table ID will be used if not defined.
         idPrefix: null,
-        // Enable row dragging by using jQuery UI sortable on grid rows.
-        rowDragging: false,
         // Hide the buttons at the end of rows or bottom of grid.
         hideButtons: null,
         // Hide the row number column.
@@ -56,7 +49,9 @@
         // The maximum height of grid content, scroll bar will be display when the height is greater than this value.
         maxBodyHeight: 0,
         // Auto calculate the column width when scroll bar on table body is in use.
-        autoColumnWidth: true
+        autoColumnWidth: true,
+        // Use Boostrap `-sm` classes to generate smaller table / inputs / buttons.
+        useSmallTable: true
     };
     var _defaultCallbackContainer = {
         // The callback function for format the HTML name of generated controls.
@@ -112,12 +107,6 @@
         ctrlClass: null,
         // The available option for building `select` type control.
         ctrlOptions: null,
-        // Options for initalize jQuery UI widget.
-        uiOption: null,
-        // Options for initalize jQuery UI tooltip.
-        uiTooltip: null,
-        // Let column resizable by using jQuery UI Resizable Interaction.
-        resizable: false,
         // Show or hide column after initialized.
         invisible: false,
         // The value to compare for indentify this column value is empty.
@@ -127,11 +116,7 @@
         // Callback function to get control value.
         customGetter: null,
         // Callback function to set control value.
-        customSetter: null,
-        // The `OnClick` event callback of control.
-        onClick: null,
-        // The `OnChange` event callback of control.
-        onChange: null
+        customSetter: null
     };
     var _systemMessages = {
         noColumnInfo: 'Cannot initial grid without column information!',
@@ -151,7 +136,7 @@
         rowEmpty: 'This Grid Is Empty'
     };
     var _defaultButtonClasses = { append: null, removeLast: null, insert: null, remove: null, moveUp: null, moveDown: null, rowDrag: null };
-    var _defaultSectionClasses = { caption: null, header: null, body: null, subPanel: null, footer: null };
+    var _defaultSectionClasses = { header: null, body: null, subPanel: null, footer: null };
     var _defaultHideButtons = { append: false, removeLast: false, insert: false, remove: false, moveUp: false, moveDown: false };
     var _methods = {
         init: function (options) {
@@ -224,33 +209,40 @@
                 if (!$.isPlainObject(settings.customGridButtons)) {
                     settings.customGridButtons = {};
                 }
-                // Check rowDragging and useSubPanel option
-                if (settings.useSubPanel && settings.rowDragging) {
-                    settings.rowDragging = false;
-                }
                 // Create thead and tbody
                 tbHead = document.createElement('thead');
-                tbHead.className = 'ui-widget-header';
+                tbHead.className = 'thead-default';
                 tbBody = document.createElement('tbody');
-                tbBody.className = 'ui-widget-content';
                 tbFoot = document.createElement('tfoot');
-                tbFoot.className = 'ui-widget-header';
                 tbColGp = document.createElement('colgroup');
                 // Prepare the table element
                 settings._wrapperId = settings.idPrefix + '-wrapper';
                 tbWrap = document.createElement('div');
                 $(tbWrap).attr('id', settings._wrapperId).addClass('appendGrid').insertAfter(tbWhole);
-                $(tbWhole).empty().addClass('ui-widget').appendTo(tbWrap);
+                $(tbWhole).empty().appendTo(tbWrap)
+                    .addClass($.fn.appendGrid._fw.layout.table)
+                    .addClass($.fn.appendGrid.layout.table);
                 // Check if content scrolling is enabled
+				/*
                 if (settings.maxBodyHeight > 0) {
-                    // Seperate the thead and tfoot from source table
+                    // TODO: Seperate the thead and tfoot from source table
                     $('<table></table>').addClass('ui-widget head').append(tbHead).prependTo(tbWrap);
                     $(tbWhole).addClass('body').wrap($('<div></div>').addClass('scroller').css('max-height', settings.maxBodyHeight)).append(tbColGp, tbBody);
                     $('<table></table>').addClass('ui-widget foot').append(tbFoot).appendTo(tbWrap);
                 } else {
                     // Add thead, tbody and tfoot to the same table
-                    $(tbWhole).addClass('head body foot').append(tbColGp, tbHead, tbBody, tbFoot);
                 }
+				*/
+                // $(tbWhole).addClass('head body foot').append(tbColGp, tbHead, tbBody, tbFoot);
+                $(tbWhole).addClass('head body foot').append(tbColGp, tbHead, tbBody, tbFoot);
+                /*
+                if (0 < settings.maxBodyHeight) {
+                    $(tbWrap).addClass('container');
+                    $(tbWhole).addClass('fixed');
+                    $(tbBody).css('max-height', settings.maxBodyHeight);
+                }
+                */
+
                 // Handle header row
                 var tbHeadCellRowNum, tbHeadCellRowButton;
                 tbHead.appendChild(tbRow = document.createElement('tr'));
@@ -260,8 +252,8 @@
                     tbRow.className = 'columnHead';
                 }
                 if (!settings.hideRowNumColumn) {
-                    tbRow.appendChild(tbHeadCellRowNum = document.createElement('td'));
-                    tbHeadCellRowNum.className = 'ui-widget-header first';
+                    tbRow.appendChild(tbHeadCellRowNum = document.createElement('th'));
+                    tbHeadCellRowNum.className = 'first';
                     // Add column group for scrolling
                     tbColGp.appendChild(document.createElement('col'));
                 }
@@ -279,10 +271,9 @@
                         }
                         // Check skip header colSpan
                         if (pendingSkipCol == 0) {
-                            var className = 'ui-widget-header';
+                            var className = '';
                             if (settings.columns[z].invisible) className += ' invisible';
-                            if (settings.columns[z].resizable) className += ' resizable';
-                            tbRow.appendChild(tbCell = document.createElement('td'));
+                            tbRow.appendChild(tbCell = document.createElement('th'));
                             tbCell.id = settings.idPrefix + '_' + settings.columns[z].name + '_td_head';
                             tbCell.className = className;
                             if (settings.columns[z].displayCss) $(tbCell).css(settings.columns[z].displayCss);
@@ -290,13 +281,15 @@
                                 $(tbCell).attr('colSpan', settings.columns[z].headerSpan);
                                 pendingSkipCol = settings.columns[z].headerSpan - 1;
                             }
-                            // Add tooltip
+                            // TODO: Add tooltip
+							/*
                             if ($.isPlainObject(settings.columns[z].displayTooltip)) {
                                 $(tbCell).tooltip(settings.columns[z].displayTooltip);
                             }
                             else if (!isEmpty(settings.columns[z].displayTooltip)) {
                                 $(tbCell).attr('title', settings.columns[z].displayTooltip).tooltip();
                             }
+							*/
                             // Check to set display text or generate by function
                             if ($.isFunction(settings.columns[z].display)) {
                                 settings.columns[z].display(tbCell);
@@ -310,14 +303,10 @@
                         }
                     }
                 }
-                // Enable columns resizable
-                if (!isEmpty(jQuery.ui.resizable)) {
-                    $('td.resizable', tbHead).resizable({ handles: 'e' });
-                }
                 // Check to hide last column or not
                 if (settings.hideButtons.insert && settings.hideButtons.remove
-                        && settings.hideButtons.moveUp && settings.hideButtons.moveDown
-                        && (!$.isArray(settings.customRowButtons) || settings.customRowButtons.length == 0)) {
+                    && settings.hideButtons.moveUp && settings.hideButtons.moveDown
+                    && (!$.isArray(settings.customRowButtons) || settings.customRowButtons.length == 0)) {
                     settings._hideLastColumn = true;
                 }
                 // Calculate the `_finalColSpan` value
@@ -329,45 +318,18 @@
                     if (settings.rowButtonsInFront) {
                         if (settings.hideRowNumColumn) {
                             // Insert a cell at the front
-                            tbRow.insertBefore(tbHeadCellRowButton = document.createElement('td'), tbRow.firstChild);
+                            tbRow.insertBefore(tbHeadCellRowButton = document.createElement('th'), tbRow.firstChild);
                         } else {
-                            // Span the first cell that across row number and row button cells
-                            // tbHeadCellRowNum.colSpan = 2;
-                            // tbHeadCellRowButton = tbHeadCellRowNum;
-
                             // Insert a cell as the second column
-                            tbRow.insertBefore(tbHeadCellRowButton = document.createElement('td'), tbRow.childnodes[1]);
+                            tbRow.insertBefore(tbHeadCellRowButton = document.createElement('th'), tbRow.childnodes[1]);
                         }
                     } else {
-                        tbRow.appendChild(tbHeadCellRowButton = document.createElement('td'));
+                        tbRow.appendChild(tbHeadCellRowButton = document.createElement('th'));
                     }
-                    tbHeadCellRowButton.className = 'ui-widget-header last';
+                    tbHeadCellRowButton.className = 'last';
                     tbHeadCellRowButton.id = settings.idPrefix + '_last_td_head';
                     // Add column group for scrolling
                     tbColGp.appendChild(document.createElement('col'));
-                }
-                // Add caption when defined
-                if (settings.caption) {
-                    tbHead.insertBefore(tbRow = document.createElement('tr'), tbHead.firstChild);
-                    if (settings._sectionClasses.caption) {
-                        tbRow.className = settings._sectionClasses.caption;
-                    }
-                    tbRow.appendChild(tbCell = document.createElement('td'));
-                    tbCell.id = settings.idPrefix + '_caption_td';
-                    tbCell.className = 'ui-state-active caption';
-                    tbCell.colSpan = settings._finalColSpan;
-                    // Add tooltip
-                    if ($.isPlainObject(settings.captionTooltip)) {
-                        $(tbCell).tooltip(settings.captionTooltip);
-                    } else if (!isEmpty(settings.captionTooltip)) {
-                        $(tbCell).attr('title', settings.captionTooltip).tooltip();
-                    }
-                    // Check to set display text or generate by function
-                    if ($.isFunction(settings.caption)) {
-                        settings.caption(tbCell);
-                    } else {
-                        $(tbCell).text(settings.caption);
-                    }
                 }
                 // Handle footer row
                 tbFoot.appendChild(tbRow = document.createElement('tr'));
@@ -384,77 +346,49 @@
                 }).appendTo(tbCell);
                 // Make row invisible if all buttons are hidden
                 if (settings.hideButtons.append && settings.hideButtons.removeLast
-                        && (!$.isArray(settings.customFooterButtons) || settings.customFooterButtons.length == 0)) {
+                    && (!$.isArray(settings.customFooterButtons) || settings.customFooterButtons.length == 0)) {
                     tbRow.style.display = 'none';
                 } else {
+                    var $btnHolder = null;
+                    // Gerenate button group, if required
+                    if ($.fn.appendGrid._fw.layout.footerButtonGroup) {
+                        $btnHolder = $('<div></div>').appendTo(tbCell)
+                            .addClass($.fn.appendGrid._fw.layout.footerButtonGroup)
+                            .addClass($.fn.appendGrid.layout.footerButtonGroup);
+                    } else {
+                        // No button group defined, add buttons to the table cell
+                        $btnHolder = $(tbCell);
+                    }
                     if (!settings.hideButtons.append) {
-                        var button = createGridButton(settings.customGridButtons.append, 'ui-icon-plusthick')
-						.attr({ title: settings._i18n.append }).addClass('append')
-                        .click(function (evt) {
+                        createGridButton(settings, 'append').on('click', function (evt) {
                             insertRow(tbWhole, 1, null, null);
                             if (evt && evt.preventDefault) evt.preventDefault();
                             return false;
-                        }).appendTo(tbCell);
-                        if (!isEmpty(settings._buttonClasses.append)) button.addClass(settings._buttonClasses.append);
+                        }).appendTo($btnHolder);
                     }
                     if (!settings.hideButtons.removeLast) {
-                        var button = createGridButton(settings.customGridButtons.removeLast, 'ui-icon-closethick')
-						.attr({ title: settings._i18n.removeLast }).addClass('removeLast')
-						.click(function (evt) {
-						    removeRow(tbWhole, null, this.value, false);
-						    if (evt && evt.preventDefault) evt.preventDefault();
-						    return false;
-						}).appendTo(tbCell);
-                        if (!isEmpty(settings._buttonClasses.removeLast)) button.addClass(settings._buttonClasses.removeLast);
+                        createGridButton(settings, 'removeLast').on('click', function (evt) {
+                            removeRow(tbWhole, null, this.value, false);
+                            if (evt && evt.preventDefault) evt.preventDefault();
+                            return false;
+                        }).appendTo($btnHolder);
                     }
                     if (settings.customFooterButtons && settings.customFooterButtons.length) {
                         // Add front buttons
                         for (var y = settings.customFooterButtons.length - 1; y >= 0; y--) {
                             var buttonCfg = settings.customFooterButtons[y];
                             if (buttonCfg && buttonCfg.uiButton && buttonCfg.click && buttonCfg.atTheFront) {
-                                $(tbCell).prepend(makeCustomBottomButton(tbWhole, buttonCfg));
+                                $btnHolder.prepend(makeCustomBottomButton(tbWhole, buttonCfg));
                             }
                         }
                         // Add end buttons
                         for (var y = 0; y < settings.customFooterButtons.length; y++) {
                             var buttonCfg = settings.customFooterButtons[y];
                             if (buttonCfg && buttonCfg.uiButton && buttonCfg.click && !buttonCfg.atTheFront) {
-                                $(tbCell).append(makeCustomBottomButton(tbWhole, buttonCfg));
+                                $btnHolder.append(makeCustomBottomButton(tbWhole, buttonCfg));
                             }
                         }
                     }
-                }
-                // Enable dragging
-                if (settings.rowDragging) {
-                    $(tbBody).sortable({
-                        axis: 'y',
-                        containment: tbWhole,
-                        handle: '.rowDrag',
-                        helper: function (e, tr) {
-                            var org = tr.children();
-                            var helper = tr.clone();
-                            // Fix the cell width of cloned table cell
-                            helper.children().each(function (index) {
-                                $(this).width(org.eq(index).width());
-                                // Set the value of drop down list when drag (Issue #18)
-                                var helperSelect = $('select', this);
-                                if (helperSelect.length > 0) {
-                                    for (var y = 0; y < helperSelect.length; y++) {
-                                        var orgSelect = org.eq(index).find('select');
-                                        if (orgSelect.length > y) {
-                                            helperSelect[y].value = orgSelect[y].value;
-                                        }
-                                    }
-                                }
-                            });
-                            return helper;
-                        },
-                        update: function (event, ui) {
-                            var uniqueIndex = ui.item[0].id.substring(ui.item[0].id.lastIndexOf('_') + 1);
-                            var tbRowIndex = ui.item[0].rowIndex - $('tr', tbHead).length;
-                            gridRowDragged(tbWhole, ui.originalPosition.top > ui.position.top, uniqueIndex, tbRowIndex);
-                        }
-                    });
                 }
                 // Save options
                 $(tbWhole).data('appendGrid', settings);
@@ -966,23 +900,24 @@
             // Add row number
             if (!settings.hideRowNumColumn) {
                 tbRow.appendChild(tbCell = document.createElement('td'));
-                $(tbCell).addClass('ui-widget-content first').text(settings._rowOrder.length);
+                $(tbCell).addClass('first').text(settings._rowOrder.length);
                 if (settings.useSubPanel) tbCell.rowSpan = 2;
             }
             // Process on each columns
+            var defaultCtrlClassName = 'form-control' + (settings.useSmallTable ? ' form-control-sm' : '');
             for (var y = 0; y < settings.columns.length; y++) {
                 // Skip hidden
                 if (settings.columns[y].type == 'hidden') {
                     hidden.push(y);
                     continue;
                 }
-                // Check column invisble
-                var className = 'ui-widget-content';
-                if (settings.columns[y].invisible) className += ' invisible';
+
                 // Insert cell
                 tbRow.appendChild(tbCell = document.createElement('td'));
                 tbCell.id = settings.idPrefix + '_' + settings.columns[y].name + '_td_' + uniqueIndex;
-                tbCell.className = className;
+                // Check column invisble
+                if (settings.columns[y].invisible) tbCell.className = 'invisible';
+                // Style cell
                 if (settings.columns[y].cellCss != null) $(tbCell).css(settings.columns[y].cellCss);
                 // Prepare control id and name
                 var ctrlId = settings.idPrefix + '_' + settings.columns[y].name + '_' + uniqueIndex, ctrlName;
@@ -1001,6 +936,7 @@
                     ctrl = document.createElement('select');
                     ctrl.id = ctrlId;
                     ctrl.name = ctrlName;
+                    ctrl.className = defaultCtrlClassName;
                     // Build option list
                     if ($.isArray(settings.columns[y].ctrlOptions)) {
                         // For array type option list
@@ -1058,16 +994,13 @@
                         settings.columns[y].ctrlOptions(ctrl);
                     }
                     tbCell.appendChild(ctrl);
-                    // Handle UI widget
-                    if (settings.columns[y].type == 'ui-selectmenu') {
-                        $(ctrl).selectmenu(settings.columns[y].uiOption);
-                    }
                 }
                 else if (settings.columns[y].type == 'checkbox') {
                     ctrl = document.createElement('input');
                     ctrl.type = 'checkbox';
                     ctrl.id = ctrlId;
                     ctrl.name = ctrlName;
+                    ctrl.className = defaultCtrlClassName;
                     ctrl.value = 1;
                     tbCell.appendChild(ctrl);
                     tbCell.style.textAlign = 'center';
@@ -1076,6 +1009,7 @@
                     ctrl = document.createElement('textarea');
                     ctrl.id = ctrlId;
                     ctrl.name = ctrlName;
+                    ctrl.className = defaultCtrlClassName;
                     tbCell.appendChild(ctrl);
                 }
                 else if (-1 != settings.columns[y].type.search(/^(color|date|datetime|datetime\-local|email|month|number|range|search|tel|time|url|week)$/)) {
@@ -1086,6 +1020,7 @@
                     catch (err) { /* Not supported type */ }
                     ctrl.id = ctrlId;
                     ctrl.name = ctrlName;
+                    ctrl.className = defaultCtrlClassName;
                     tbCell.appendChild(ctrl);
                 }
                 else {
@@ -1094,15 +1029,8 @@
                     ctrl.type = 'text';
                     ctrl.id = ctrlId;
                     ctrl.name = ctrlName;
+                    ctrl.className = defaultCtrlClassName;
                     tbCell.appendChild(ctrl);
-                    // Handle UI widget
-                    if (settings.columns[y].type == 'ui-datepicker') {
-                        $(ctrl).datepicker(settings.columns[y].uiOption);
-                    } else if (settings.columns[y].type == 'ui-spinner') {
-                        $(ctrl).spinner(settings.columns[y].uiOption);
-                    } else if (settings.columns[y].type == 'ui-autocomplete') {
-                        $(ctrl).autocomplete(settings.columns[y].uiOption);
-                    }
                 }
                 // Add extra control properties
                 if (settings.columns[y].type != 'custom') {
@@ -1145,64 +1073,61 @@
                 } else {
                     tbRow.insertBefore(tbCell = document.createElement('td'), tbRow.firstChild);
                 }
-                tbCell.className = 'ui-widget-content last';
+                tbCell.className = 'last';
                 tbCell.id = settings.idPrefix + '_last_td_' + uniqueIndex;
                 if (settings._hideLastColumn) tbCell.style.display = 'none';
+                // Prepare button group
+                var btnGroup = document.createElement('div');
+                btnGroup.className = 'btn-group' + (settings.useSmallTable ? ' btn-group-sm' : '');
+                tbCell.appendChild(btnGroup);
                 // Add standard buttons
                 if (!settings.hideButtons.insert) {
-                    var button = createGridButton(settings.customGridButtons.insert, 'ui-icon-arrowreturnthick-1-w')
-						.attr({ id: settings.idPrefix + '_Insert_' + uniqueIndex, title: settings._i18n.insert, tabindex: -1 })
-						.addClass('insert').data('appendGrid', { uniqueIndex: uniqueIndex })
-						.click(function (evt) {
-						    var rowUniqueIndex = $(this).data('appendGrid').uniqueIndex;
-						    $(tbWhole).appendGrid('insertRow', 1, null, rowUniqueIndex);
-						    if (evt && evt.preventDefault) evt.preventDefault(settings._buttonClasses.insert);
-						    return false;
-						}).appendTo(tbCell);
-                    if (!isEmpty(settings._buttonClasses.insert)) button.addClass(settings._buttonClasses.insert);
+                    createGridButton(settings, 'insert').data('appendGrid', {
+                        uniqueIndex: uniqueIndex
+                    }).attr({
+                        id: settings.idPrefix + '_Insert_' + uniqueIndex
+                    }).on('click', function (evt) {
+                        var rowUniqueIndex = $(this).data('appendGrid').uniqueIndex;
+                        $(tbWhole).appendGrid('insertRow', 1, null, rowUniqueIndex);
+                        if (evt && evt.preventDefault) evt.preventDefault(settings._buttonClasses.insert);
+                        return false;
+                    }).appendTo(btnGroup);
                 }
                 if (!settings.hideButtons.remove) {
-                    var button = createGridButton(settings.customGridButtons.remove, 'ui-icon-trash')
-						.attr({ id: settings.idPrefix + '_Delete_' + uniqueIndex, title: settings._i18n.remove, tabindex: -1 })
-						.addClass('remove').data('appendGrid', { uniqueIndex: uniqueIndex })
-                        .click(function (evt) {
-                            var rowUniqueIndex = $(this).data('appendGrid').uniqueIndex;
-                            removeRow(tbWhole, null, rowUniqueIndex, false);
-                            if (evt && evt.preventDefault) evt.preventDefault();
-                            return false;
-                        }).appendTo(tbCell);
-                    if (!isEmpty(settings._buttonClasses.remove)) button.addClass(settings._buttonClasses.remove);
+                    createGridButton(settings, 'remove').data('appendGrid', {
+                        uniqueIndex: uniqueIndex
+                    }).attr({
+                        id: settings.idPrefix + '_Delete_' + uniqueIndex
+                    }).on('click', function (evt) {
+                        var rowUniqueIndex = $(this).data('appendGrid').uniqueIndex;
+                        removeRow(tbWhole, null, rowUniqueIndex, false);
+                        if (evt && evt.preventDefault) evt.preventDefault();
+                        return false;
+                    }).appendTo(btnGroup);
                 }
                 if (!settings.hideButtons.moveUp) {
-                    var button = createGridButton(settings.customGridButtons.moveUp, 'ui-icon-arrowthick-1-n')
-						.attr({ id: settings.idPrefix + '_MoveUp_' + uniqueIndex, title: settings._i18n.moveUp, tabindex: -1 })
-						.addClass('moveUp').data('appendGrid', { uniqueIndex: uniqueIndex })
-						.click(function (evt) {
-						    var rowUniqueIndex = $(this).data('appendGrid').uniqueIndex;
-						    $(tbWhole).appendGrid('moveUpRow', null, rowUniqueIndex);
-						    if (evt && evt.preventDefault) evt.preventDefault();
-						    return false;
-						}).appendTo(tbCell);
-                    if (!isEmpty(settings._buttonClasses.moveUp)) button.addClass(settings._buttonClasses.moveUp);
+                    createGridButton(settings, 'moveUp').data('appendGrid', {
+                        uniqueIndex: uniqueIndex
+                    }).attr({
+                        id: settings.idPrefix + '_MoveUp_' + uniqueIndex
+                    }).on('click', function (evt) {
+                        var rowUniqueIndex = $(this).data('appendGrid').uniqueIndex;
+                        $(tbWhole).appendGrid('moveUpRow', null, rowUniqueIndex);
+                        if (evt && evt.preventDefault) evt.preventDefault();
+                        return false;
+                    }).appendTo(btnGroup);
                 }
                 if (!settings.hideButtons.moveDown) {
-                    var button = createGridButton(settings.customGridButtons.moveDown, 'ui-icon-arrowthick-1-s')
-						.attr({ id: settings.idPrefix + '_MoveDown_' + uniqueIndex, title: settings._i18n.moveDown, tabindex: -1 })
-						.addClass('moveDown').data('appendGrid', { uniqueIndex: uniqueIndex })
-						.click(function (evt) {
-						    var rowUniqueIndex = $(this).data('appendGrid').uniqueIndex;
-						    $(tbWhole).appendGrid('moveDownRow', null, rowUniqueIndex);
-						    if (evt && evt.preventDefault) evt.preventDefault();
-						    return false;
-						}).appendTo(tbCell);
-                    if (!isEmpty(settings._buttonClasses.moveDown)) button.addClass(settings._buttonClasses.moveDown);
-                }
-                // Handle row dragging
-                if (settings.rowDragging) {
-                    var button = $('<div/>').addClass('rowDrag ui-state-default ui-corner-all')
-                        .attr('title', settings._i18n.rowDrag).append($('<div/>').addClass('ui-icon ui-icon-caret-2-n-s').append($('<span/>').addClass('ui-button-text').text('Drag')))
-                        .appendTo(tbCell);
-                    if (!isEmpty(settings._buttonClasses.rowDrag)) button.addClass(settings._buttonClasses.rowDrag);
+                    createGridButton(settings, 'moveDown').data('appendGrid', {
+                        uniqueIndex: uniqueIndex
+                    }).attr({
+                        id: settings.idPrefix + '_MoveDown_' + uniqueIndex
+                    }).on('click', function (evt) {
+                        var rowUniqueIndex = $(this).data('appendGrid').uniqueIndex;
+                        $(tbWhole).appendGrid('moveDownRow', null, rowUniqueIndex);
+                        if (evt && evt.preventDefault) evt.preventDefault();
+                        return false;
+                    }).appendTo(btnGroup);
                 }
                 // Add hidden
                 for (var y = 0; y < hidden.length; y++) {
@@ -1230,19 +1155,20 @@
                     for (var y = settings.customRowButtons.length - 1; y >= 0; y--) {
                         var buttonCfg = settings.customRowButtons[y];
                         if (buttonCfg && buttonCfg.uiButton && buttonCfg.click && buttonCfg.atTheFront) {
-                            $(tbCell).prepend(makeCustomRowButton(tbWhole, buttonCfg, uniqueIndex));
+                            $(btnGroup).prepend(makeCustomRowButton(tbWhole, buttonCfg, uniqueIndex));
                         }
                     }
                     // Add end buttons
                     for (var y = 0; y < settings.customRowButtons.length; y++) {
                         var buttonCfg = settings.customRowButtons[y];
                         if (buttonCfg && buttonCfg.uiButton && buttonCfg.click && !buttonCfg.atTheFront) {
-                            $(tbCell).append(makeCustomRowButton(tbWhole, buttonCfg, uniqueIndex));
+                            $(btnGroup).append(makeCustomRowButton(tbWhole, buttonCfg, uniqueIndex));
                         }
                     }
                 }
             }
-            // Create sub panel
+            // TODO: Create sub panel
+			/*
             if (settings.useSubPanel) {
                 tbSubRow.appendChild(tbCell = document.createElement('td'));
                 tbCell.className = 'ui-widget-content';
@@ -1251,8 +1177,10 @@
                     settings.subPanelBuilder(tbCell, uniqueIndex);
                 }
             }
+			*/
         }
-        // Check if re-calculate column width is required
+        // TODO: Check if re-calculate column width is required
+		/*
         if (0 < settings.maxBodyHeight && settings._calculateWidth && !calColWidth) {
             var scroll = $('#' + settings._wrapperId + '>div.scroller')[0];
             if (scroll.scrollHeight > scroll.offsetHeight) {
@@ -1260,6 +1188,7 @@
                 settings._calculateWidth = false;
             }
         }
+		*/
         // Save setting
         saveSetting(tbWhole, settings);
         // Calculate column width
@@ -1291,7 +1220,7 @@
     }
     function makeCustomBottomButton(tbWhole, buttonCfg) {
         var exButton = $('<button/>').attr({ type: 'button', tabindex: -1 })
-        .button(buttonCfg.uiButton).click({ tbWhole: tbWhole }, buttonCfg.click);
+            .button(buttonCfg.uiButton).click({ tbWhole: tbWhole }, buttonCfg.click);
         if (buttonCfg.btnClass) exButton.addClass(buttonCfg.btnClass);
         if (buttonCfg.btnCss) exButton.css(buttonCfg.btnCss);
         if (buttonCfg.btnAttr) exButton.attr(buttonCfg.btnAttr);
@@ -1299,10 +1228,10 @@
     }
     function makeCustomRowButton(tbWhole, buttonCfg, uniqueIndex) {
         var exButton = $('<button/>').val(uniqueIndex).attr({ type: 'button', tabindex: -1 })
-        .button(buttonCfg.uiButton).click({ tbWhole: tbWhole, uniqueIndex: uniqueIndex }, function (evt) {
-            var rowData = $(evt.data.tbWhole).appendGrid('getRowValue', null, evt.data.uniqueIndex);
-            buttonCfg.click(evt, evt.data.uniqueIndex, rowData);
-        });
+            .button(buttonCfg.uiButton).click({ tbWhole: tbWhole, uniqueIndex: uniqueIndex }, function (evt) {
+                var rowData = $(evt.data.tbWhole).appendGrid('getRowValue', null, evt.data.uniqueIndex);
+                buttonCfg.click(evt, evt.data.uniqueIndex, rowData);
+            });
         if (buttonCfg.btnClass) exButton.addClass(buttonCfg.btnClass);
         if (buttonCfg.btnCss) exButton.css(buttonCfg.btnCss);
         if (buttonCfg.btnAttr) exButton.attr(buttonCfg.btnAttr);
@@ -1568,26 +1497,42 @@
             settings.afterRowDragged(tbWhole, tbRowIndex, uniqueIndex);
         }
     }
-    function createGridButton(param, uiIcon) {
+    function createGridButton(settings, action) {
         // Generate the standard grid action button based on its parameter.
-        var genButton = null;
-        if (param) {
-            if ($.isFunction(param)) {
-                // Generate button if it is a function.
-                genButton = $(param());
-            } else if (param.nodeType) {
-                // Clone the button if it is a DOM element.
-                genButton = $(param).clone();
-            } else if (param.icon || param.label) {
-                // Generate jQuery UI Button if it is a plain object with `icon` or `label` property.
-                genButton = $('<button/>').attr({ type: 'button' }).button(param);
+        var $genButton = null, param = null;
+        if (settings.customGridButtons) {
+            // Get the custom setting of button, if any
+            param = settings.customGridButtons[action];
+            if (param) {
+                if ($.isFunction(param)) {
+                    // Generate button by custom function
+                    $genButton = param();
+                } else if (param.nodeType) {
+                    // Clone the button if it is a DOM element.
+                    $genButton = $(param).clone();
+                } else if (typeof (param) == 'string' && param.charAt(0) == '<') {
+                    // Generate button by HTML
+                    $genButton = $(param);
+                }
             }
         }
-        if (!genButton) {
-            // Use default setting (jQuery UI Button) if button is not created.
-            genButton = $('<button/>').attr({ type: 'button' }).button({ icon: uiIcon, showLabel: false });
+        // If no button generated, use the framework button builder
+        if (!$genButton) {
+            $genButton = $.fn.appendGrid._fw.builders.button(action, param);
         }
-        return genButton;
+        // Add extra attributes on generated button
+        if ($genButton) {
+            // Add title and default class
+            $genButton.attr({
+                title: settings._i18n[action],
+                tabindex: -1
+            }).addClass(action);
+            // Add custom class, if any
+            if (settings._buttonClasses && settings._buttonClasses[action]) {
+                $genButton.addClass(settings._buttonClasses[action]);
+            }
+        }
+        return $genButton;
     }
     function isRowEmpty(settings, rowIndex) {
         for (var z = 0; z < settings.columns.length; z++) {
@@ -1677,3 +1622,121 @@
         }
     };
 })(jQuery);
+
+// Make sure appendGrid is defined
+if ($.fn.appendGrid) {
+    // Mandatory CSS classes / settings / functions for this UI framework that should not be changed
+    $.fn.appendGrid._fw = {
+        // The mandatory CSS classes to be added to elements
+        layout: {
+            table: 'table',
+            thead: '',
+            theadRow: '',
+            theadCell: '',
+            theadCellFirst: '',
+            theadCellLast: '',
+            tbody: '',
+            tbodyRow: '',
+            tbodyCell: '',
+            tbodyCellFirst: '',
+            tbodyCellLast: '',
+            tfoot: '',
+            tfootRow: '',
+            tfootCell: '',
+            // The CSS classes on row level button group.
+            rowButtonGroup: 'btn-group',
+            // The CSS classes on footer level button group.
+            footerButtonGroup: 'btn-group',
+            // CSS classes for all buttons.
+            button: 'btn',
+            // CSS classes for all button icons.
+            buttonIcon: null
+        },
+        // Builder functions for different components
+        builders: {
+            // Button builder
+            button: function (action, param) {
+                // Check param
+                var iconName = null, buttonClass = null;
+                if (param) {
+                    if ($.isPlainObject(param)) {
+                        // Read the class name and icon from object
+                        iconName = param.icon;
+                        buttonClass = param.buttonClass;
+                    } else if (typeof (param) == 'string') {
+                        // Assume the string is icon name
+                        iconName = param;
+                    }
+                }
+                // Generate button with default settings
+                var $button = $('<button/>').attr('type', 'button')
+                    .addClass($.fn.appendGrid._fw.layout.button)
+                    .addClass(buttonClass || $.fn.appendGrid.layout.button);
+                // Generate icon and add to button
+                var $icon = $.fn.appendGrid._fw.builders.icon(action, iconName);
+                if ($icon) $icon.appendTo($button);
+                // Return the button generated
+                return $button;
+            },
+            // Icon builder, defined in icon framework such as fontawesome / octicons
+            icon: null
+        }
+    };
+    // Customizable CSS class to be applied to elements
+    $.fn.appendGrid.layout = {
+        // The mandatory CSS classes to be added to table
+        table: 'table-sm',
+        thead: '',
+        theadRow: '',
+        theadCell: '',
+        theadCellFirst: '',
+        theadCellLast: '',
+        tbody: '',
+        tbodyRow: '',
+        tbodyCell: '',
+        tbodyCellFirst: '',
+        tbodyCellLast: '',
+        tfoot: '',
+        tfootRow: '',
+        tfootCell: '',
+        // The CSS classes on row level button group. Leave blank to disable button group generation.
+        rowButtonGroup: 'btn-group-sm',
+        // The CSS classes on footer level button group. Leave blank to disable button group generation.
+        footerButtonGroup: 'btn-group-sm',
+        // CSS classes for all buttons.
+        button: 'btn-outline-secondary',
+        // CSS classes for all button icons.
+        buttonIcon: null
+    };
+}
+
+
+$.fn.appendGrid._fw.layout.buttonIcon = 'fas';
+$.fn.appendGrid._fw.builders.icon = function (action, customIconName) {
+    var iconName = null;
+    if (customIconName) {
+        iconName = customIconName;
+    } else {
+        switch (action) {
+            case 'append':
+                iconName = 'fa-plus';
+                break;
+            case 'removeLast':
+                iconName = 'fa-minus';
+                break;
+            case 'insert':
+                iconName = 'fa-reply';
+                break;
+            case 'remove':
+                iconName = 'fa-trash';
+                break;
+            case 'moveUp':
+                iconName = 'fa-arrow-up';
+                break;
+            case 'moveDown':
+                iconName = 'fa-arrow-down';
+                break;
+        }
+    }
+    return $('<i></i>').addClass($.fn.appendGrid._fw.layout.buttonIcon).addClass(iconName);
+};
