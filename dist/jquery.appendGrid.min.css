@@ -1,0 +1,14 @@
+/*!
+* jQuery appendGrid v2.0.0-pre
+* https://appendgrid.apphb.com/
+*
+* Copyright 2016 Albert L.
+* Dual licensed under the LGPL (http://www.gnu.org/licenses/lgpl.html)
+* and MIT (http://www.opensource.org/licenses/mit-license.php) licenses.
+*
+* Depends:
+* jQuery v3.0.0+
+* Bootstrap v4.0.0+
+* Octicons v4.3.0+
+*/
+div.appendGrid table.fixed{width:100%;display:block}div.appendGrid table.fixed>tbody,div.appendGrid table.fixed>tbody>td,div.appendGrid table.fixed>tbody>tr,div.appendGrid table.fixed>thead,div.appendGrid table.fixed>thead>tr,div.appendGrid table.fixed>thead>tr>th{display:block}div.appendGrid table.fixed>tbody>tr:after,div.appendGrid table.fixed>thead>tr:after{content:' ';display:block;visibility:hidden;clear:both}div.appendGrid table.fixed>tbody{overflow-y:scroll;height:100px}div.appendGrid table.fixed>thead{overflow-y:scroll}div.appendGrid table.fixed>thead::-webkit-scrollbar{background-color:inherit}div.appendGrid table.fixed>tbody>tr>td,div.appendGrid table.fixed>thead>tr>th{float:left}

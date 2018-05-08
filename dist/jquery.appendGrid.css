@@ -1,0 +1,90 @@
+/*!
+* jQuery appendGrid v2.0.0-pre
+* https://appendgrid.apphb.com/
+*
+* Copyright 2016 Albert L.
+* Dual licensed under the LGPL (http://www.gnu.org/licenses/lgpl.html)
+* and MIT (http://www.opensource.org/licenses/mit-license.php) licenses.
+*
+* Depends:
+* jQuery v3.0.0+
+* Bootstrap v4.0.0+
+* Octicons v4.3.0+
+*/
+
+
+/*
+Force table width to 100%
+*/
+div.appendGrid table.fixed {
+  width: 100%;
+}
+
+/*
+Set table elements to block mode.  (Normally they are inline).
+This allows a responsive table, such as one where columns can be stacked
+if the display is narrow.
+*/
+div.appendGrid table.fixed,
+div.appendGrid table.fixed>thead,
+div.appendGrid table.fixed>tbody,
+div.appendGrid table.fixed>thead>tr,
+div.appendGrid table.fixed>tbody>tr,
+div.appendGrid table.fixed>thead>tr>th,
+div.appendGrid table.fixed>tbody>td {
+  display: block;
+}
+
+
+div.appendGrid table.fixed>thead>tr:after,
+div.appendGrid table.fixed>tbody>tr:after {
+  content: ' ';
+  display: block;
+  visibility: hidden;
+  clear: both;
+}
+
+/*
+When scrolling the table, actually it is only the tbody portion of the
+table that scrolls (not the entire table: we want the thead to remain
+fixed).  We must specify an explicit height for the tbody.  We include
+100px as a default, but it can be overridden elsewhere.
+
+Also, we force the scrollbar to always be displayed so that the usable
+width for the table contents doesn't change (such as becoming narrower
+when a scrollbar is visible and wider when it is not).
+*/
+div.appendGrid table.fixed>tbody {
+  overflow-y: scroll;
+  height: 100px;
+}
+
+/*
+We really don't want to scroll the thead contents, but we want to force
+a scrollbar to be displayed anyway so that the usable width of the thead
+will exactly match the tbody.
+*/
+div.appendGrid table.fixed>thead {        
+  overflow-y: scroll;
+}
+
+/*
+For browsers that support it (webkit), we set the background color of
+the unneeded scrollbar in the thead to make it invisible.  (Setting
+visiblity: hidden defeats the purpose, as this alters the usable width
+of the thead.)
+*/
+div.appendGrid table.fixed>thead::-webkit-scrollbar{
+  background-color: inherit;
+}
+
+/*
+We want to set <th> and <td> elements to float left.
+We also must explicitly set the width for each column (both for the <th>
+and the <td>).  We set to 20% here a default placeholder, but it can be
+overridden elsewhere.
+*/
+div.appendGrid table.fixed>thead>tr>th,
+div.appendGrid table.fixed>tbody>tr>td {
+        float: left;
+}
