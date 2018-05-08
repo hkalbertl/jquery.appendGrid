@@ -3,6 +3,10 @@
 **appendGrid** allow you to input structured data row by row such like filling spreadsheets. It allows you to add/remove/insert/delete row in the grid. The generated input/select/textarea controls are well named for submitting to server side applications such as ASP.NET/PHP/JSP. Multiple options and callback events are available to fit every situation.
 
 
+## About verisons
+**appendGrid** is moving to [version 2](../../tree/v2-dev) which support [Bootstrap 4](https://getbootstrap.com/) natively. For [version 1](../../tree/v1-dev) that based on [jQuery UI](https://jqueryui.com/) will provide bug fix only.
+
+
 ## Demo
 Lots of demo cases are available on [Demo section](https://appendgrid.apphb.com/Demo) of **appendGrid** website.
 
@@ -58,7 +62,7 @@ Yeah, you can:
 
 
 ## Changelog
-Changelog is available [here](https://github.com/hkalbertl/jquery.appendGrid/blob/master/CHANGELOG.md).
+Changelog is available [here](CHANGELOG.md).
 
 
 ## License
