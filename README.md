@@ -4,7 +4,7 @@
 
 
 ## About verisons
-**appendGrid** is moving to [version 2](../v2-dev) which support [Bootstrap 4](https://getbootstrap.com/) natively. For [version 1](../v1-dev) that based on [jQuery UI](https://jqueryui.com/) will provide bug fix only.
+**appendGrid** is moving to [version 2](../../tree/v2-dev) which support [Bootstrap 4](https://getbootstrap.com/) natively. For [version 1](../../tree/v1-dev) that based on [jQuery UI](https://jqueryui.com/) will provide bug fix only.
 
 
 ## Demo
