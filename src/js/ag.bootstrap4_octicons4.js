@@ -1,5 +1,5 @@
-﻿$.fn.appendGrid.layout.buttonIcon = 'octicon';
-$.fn.appendGrid.builders.icon = function (action, customIconName) {
+﻿$.fn.appendGrid._fw.layout.buttonIcon = 'octicon';
+$.fn.appendGrid._fw.builders.icon = function (action, customIconName) {
     var iconName = null;
     if (customIconName) {
         iconName = customIconName;
@@ -25,5 +25,5 @@ $.fn.appendGrid.builders.icon = function (action, customIconName) {
                 break;
         }
     }
-    return $('<span></span>').addClass($.fn.appendGrid.layout.buttonIcon).addClass(iconName);
+    return $('<span></span>').addClass($.fn.appendGrid._fw.layout.buttonIcon).addClass(iconName);
 };

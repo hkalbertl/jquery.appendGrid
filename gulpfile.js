@@ -6,11 +6,7 @@ var gulp = require('gulp'),
     uglify = require('gulp-uglify'),
     rename = require('gulp-rename'),
     saveLicense = require('uglify-save-license'),
-    fs = require('fs'),
     del = require('del');
-
-// Read package.json
-// var json = JSON.parse(fs.readFileSync('./package.json'));
 
 // Clean the dist folder
 gulp.task('clean', function () {
@@ -24,15 +20,8 @@ gulp.task('css_bs4', ['clean'], function () {
         .pipe(gulp.dest('dist'));
 });
 
-// Copy bs4 as main css
-gulp.task('css_copy_as_main', ['css_bs4'], function () {
-    return gulp.src('dist/jquery.appendGrid-bs4.css')
-        .pipe(rename('jquery.appendGrid.css'))
-        .pipe(gulp.dest('dist'));
-});
-
 // CSS minify
-gulp.task('csso', ['css_bs4', 'css_copy_as_main'], function () {
+gulp.task('csso', ['css_bs4'], function () {
     return gulp.src('dist/*.css')
         .pipe(csso())
         .pipe(rename({ suffix: '.min' }))
@@ -46,15 +35,15 @@ gulp.task('js_bs4_fa5', ['clean'], function (cb) {
         .pipe(gulp.dest('dist'));
 });
 
-// Copy bs4_fa5 as main js
-gulp.task('js_copy_as_main', ['js_bs4_fa5'], function (cb) {
-    return gulp.src('dist/jquery.appendGrid-bs4_fa5.js')
-        .pipe(rename('jquery.appendGrid.js'))
+// JS for Bootstrap 4 + Octicons 4
+gulp.task('js_bs4_oi4', ['clean'], function (cb) {
+    return gulp.src(['src/js/ag.core.js', 'src/js/ag.bootstrap4.js', 'src/js/ag.bootstrap4_octicons4.js'])
+        .pipe(concat('jquery.appendGrid-bs4_oi4.js'))
         .pipe(gulp.dest('dist'));
 });
 
 // JS minify
-gulp.task('uglify', ['js_bs4_fa5', 'js_copy_as_main'], function (cb) {
+gulp.task('uglify', ['js_bs4_fa5', 'js_bs4_oi4'], function (cb) {
     return gulp.src('dist/*.js')
         .pipe(uglify({
             output: {
@@ -65,5 +54,22 @@ gulp.task('uglify', ['js_bs4_fa5', 'js_copy_as_main'], function (cb) {
         .pipe(gulp.dest('dist'));
 });
 
+// Copy the bs4_fa5 output as main files
+gulp.task('copy_main', ['uglify', 'csso'], function () {
+    return gulp.src(['dist/jquery.appendGrid-bs4_fa5.js', 'dist/jquery.appendGrid-bs4.css'])
+        .pipe(rename(function (path) {
+            path.basename = "jquery.appendGrid";
+        }))
+        .pipe(gulp.dest('dist'));
+});
+gulp.task('copy_main_min', ['uglify', 'csso'], function () {
+    return gulp.src(['dist/jquery.appendGrid-bs4_fa5.min.js', 'dist/jquery.appendGrid-bs4.min.css'])
+        .pipe(rename(function (path) {
+            path.basename = "jquery.appendGrid.min";
+        }))
+        .pipe(gulp.dest('dist'));
+});
+
+
 // The main task
-gulp.task('default', ['clean', 'css_bs4', 'css_copy_as_main', 'csso', 'js_bs4_fa5', 'js_copy_as_main', 'uglify']);
+gulp.task('default', ['clean', 'css_bs4', 'csso', 'js_bs4_fa5', 'js_bs4_oi4', 'uglify', 'copy_main', 'copy_main_min']);

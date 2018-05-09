@@ -14,7 +14,7 @@
 
 
 ## Demo
-Demo website is under construction. You may take a look on the [example](src/example) first.
+Demo website is under construction. You may take a look on the [example](example) first.
 
 
 ## Documentation
