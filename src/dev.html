@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>appendGrid - Basic</title>
+    <!--UI Framework Style Sheets-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+    <!--
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css"
+        integrity="sha256-8B1OaG0zT7uYA572S2xOxWACq9NXYPQ+U5kHPV1bJN4=" crossorigin="anonymous" />
+    -->
+    <!--
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/css/foundation.min.css"
+        integrity="sha256-xpOKVlYXzQ3P03j397+jWFZLMBXLES3IiryeClgU5og=" crossorigin="anonymous" />
+    -->
+
+    <!--Icon Webfont Frameworks-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous" />
+    <!--
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typicons/2.0.9/typicons.min.css"
+        integrity="sha256-hmDtEnmZFvJ3zLsfobp03CSD3/qRCJmY3f7Vqf6zIgA=" crossorigin="anonymous" />
+    -->
+    <!--
+    <link href="https://unpkg.com/ionicons@4.4.4/dist/css/ionicons.min.css" rel="stylesheet" />
+    -->
+    <!--
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic.min.css"
+        integrity="sha256-CfN2r6i/dqkUHVRqpBzO3w21SnIWalwGfj5ScBPVzmI=" crossorigin="anonymous" />
+    -->
+    <!--
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/3.5.95/css/materialdesignicons.min.css" />
+    -->
+</head>
+
+<body class="container">
+    <h1 class="title">Basic appendGrid</h1>
+    <form action="">
+        <table id="tblAppendGrid"></table>
+    </form>
+
+    <!-- Add polyfill for legacy browsers (such as IE) -->
+    <script src="https://polyfill.io/v3/polyfill.min.js"></script>
+
+    <!-- Add optional libraries -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <!--
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/js/foundation.min.js"
+        integrity="sha256-/PFxCnsMh+nTuM0k3VJCRch1gwnCfKjaP8rJNq5SoBg=" crossorigin="anonymous"></script>
+    -->
+
+    <!-- plugin initialization -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Prepare sample data
+            var initData = [{
+                "uid": "d4c74a61-a24e-429f-9db0-3cf3aaa22425",
+                "name": "Monique Zebedee",
+                "company": "Welch LLC",
+                "country": "Japan",
+                "memberSince": "2012-02-18",
+                "orderPlaced": 111,
+                "level": "Bronze",
+                "isNPO": true
+            }, {
+                "uid": "afdf285d-da5c-4fa8-9225-201c858a173d",
+                "name": "Daryle McLaren",
+                "company": "Bogisich Group",
+                "country": "United States",
+                "memberSince": "2016-10-08",
+                "orderPlaced": 261,
+                "level": "Diamond",
+                "isNPO": false
+            }, {
+                "uid": "202a8afb-130b-476b-b415-c659f21a73e7",
+                "name": "Glori Spellecy",
+                "company": "Grady and Sons",
+                "country": "Germany",
+                "memberSince": "2014-07-28",
+                "orderPlaced": 282,
+                "level": "Gold",
+                "isNPO": false
+            }, {
+                "uid": "08c9adee-abdd-43d5-866d-ce540be19be8",
+                "name": "Blondy Boggis",
+                "company": "Eichmann, Parker and Herzog",
+                "country": "Malaysia",
+                "memberSince": "2010-08-17",
+                "orderPlaced": 308,
+                "level": "Platinum",
+                "isNPO": true
+            }, {
+                "uid": "57644023-cd0c-47ec-a556-fd8d4e21a4e7",
+                "name": "Batholomew Zecchii",
+                "company": "Corwin-Fahey",
+                "country": "Malaysia",
+                "memberSince": "2016-09-20",
+                "orderPlaced": 881,
+                "level": "Gold",
+                "isNPO": true
+            }, {
+                "uid": "38e08e8a-c7eb-41eb-9191-6bb2df1fd39b",
+                "name": "Paulie Poel",
+                "company": "MacGyver, Rohan and West",
+                "country": "United Kingdom",
+                "memberSince": "2016-12-26",
+                "orderPlaced": 387,
+                "level": "Silver",
+                "isNPO": false
+            }, {
+                "uid": "d7bf56d4-f955-4dca-b3db-b30eab590028",
+                "name": "Jessica Levett",
+                "company": "Lind, O'Kon and Hamill",
+                "country": "United States",
+                "memberSince": "2015-04-26",
+                "orderPlaced": 984,
+                "level": "Gold",
+                "isNPO": false
+            }, {
+                "uid": "b9075764-5228-4ca7-9435-7c362ce097e5",
+                "name": "Fonsie Spring",
+                "company": "McKenzie, Block and Wiegand",
+                "country": "Japan",
+                "memberSince": "2013-11-08",
+                "orderPlaced": 875,
+                "level": "Silver",
+                "isNPO": false
+            }];
+            // Create instance of AppendGrid
+            window.myAppendGrid = new AppendGrid({
+                element: document.getElementById('tblAppendGrid'),
+                // uiFramework: 'bulma',
+                uiFramework: 'bootstrap4',
+                // uiFramework: 'foundation6',
+                // uiParams: { useButtonGroup: false },
+                iconFramework: 'fontawesome5',
+                // iconFramework: 'ionicon4',
+                // iconFramework: 'typicons2',
+                // iconFramework: 'openiconic',
+                // iconFramework: 'materialdesignicons3',
+                /*
+                sectionClasses: {
+                    table: 'is-narrow',
+                    button: 'is-small',
+                    control: 'is-small'
+                },
+                */
+                sectionClasses: {
+                    table: 'table-sm',
+                    buttonGroup: 'btn-group-sm'
+                },
+                columns: [{
+                    name: 'company',
+                    display: 'Company',
+                    type: 'text',
+                    ctrlAttr: { maxlength: 100 }
+                }, {
+                    name: 'name',
+                    display: 'Contact Person',
+                    type: 'text',
+                    ctrlAttr: { maxlength: 100 }
+                }, {
+                    name: 'country',
+                    display: 'Country',
+                    type: 'select',
+                    ctrlOptions: ['Germany', 'Hong Kong', 'Japan', 'Malaysia', 'Taiwan', 'United Kingdom', 'United States']
+                }, {
+                    name: 'isNPO',
+                    display: 'NPO?',
+                    type: 'checkbox',
+                    cellCss: 'text-center'
+                }, {
+                    name: 'orderPlaced',
+                    display: 'Order Placed',
+                    type: 'number',
+                    ctrlAttr: {
+                        min: 0,
+                        max: 10000
+                    }
+                }, {
+                    name: 'memberSince',
+                    display: 'Member Since',
+                    type: 'date',
+                    ctrlAttr: {
+                        maxlength: 10
+                    }
+                }, {
+                    name: 'uid',
+                    display: '(Hidden)',
+                    type: 'text',
+                    // type: 'hidden',
+                    value: ''
+                }],
+                // initData: null
+                initData: initData
+            });
+        });
+    </script>
+</body>
+
+</html>
