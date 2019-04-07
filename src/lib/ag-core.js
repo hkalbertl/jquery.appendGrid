@@ -351,7 +351,7 @@ class GridCore {
             for (let z = 0; z < self.rowOrder.length; z++) {
                 if (self.rowOrder[z] === callerUniqueIndex) {
                     rowIndex = z;
-                    if (z != 0) parentIndex = z - 1;
+                    if (z !== 0) parentIndex = z - 1;
                     break;
                 }
             }
@@ -433,6 +433,7 @@ class GridCore {
             // Add row number
             if (!settings.hideRowNumColumn) {
                 tbRow.appendChild(tbCell = document.createElement('td'));
+                tbCell.id = settings.idPrefix + '_RowNum_' + uniqueIndex;
                 tbCell.innerText = '' + self.rowOrder.length;
                 // if (settings.useSubPanel) tbCell.rowSpan = 2;
             }
@@ -449,7 +450,7 @@ class GridCore {
                 // Insert cell
                 tbRow.appendChild(tbCell = document.createElement('td'));
                 tbCell.id = settings.idPrefix + '_' + settings.columns[y].name + '_td_' + uniqueIndex;
-                Util.applyClasses(tbCell, uiFramework.getSectionClasses('tbodyCell'),settings.columns[y].cellCss);
+                Util.applyClasses(tbCell, uiFramework.getSectionClasses('tbodyCell'), settings.columns[y].cellCss);
                 // Create wrapper, if required
                 let ctrlHolder = null;
                 if (settings.columns[y].wrapper) {
@@ -662,6 +663,10 @@ class GridCore {
                         let button = uiFramework.generateButton(container, type);
                         button.id = settings.idPrefix + '_' + type + '_' + uniqueIndex;
                         button.dataset.uniqueIndex = uniqueIndex;
+                        button.addEventListener('click', function (evt) {
+                            let callerUniqueIndex = parseInt(evt.currentTarget.dataset.uniqueIndex);
+                            self._rowButtonActions(type, callerUniqueIndex);
+                        });
                     }
                 });
                 /*
@@ -790,6 +795,10 @@ class GridCore {
         // Save setting
         // _state.set(self, state);
 
+        if (!Util.isEmpty(rowIndex)) {
+            self._sortSequence(rowIndex);
+        }
+
         // Calculate column width
         /*
         if (calColWidth && settings.autoColumnWidth && settings.maxBodyHeight > 0) {
@@ -853,7 +862,7 @@ class GridCore {
                 // Save setting
                 // _state.set(self, state);
                 // Sort sequence
-                // sortSequence(tbWhole, rowIndex);
+                self._sortSequence(rowIndex);
                 // Trigger event
                 /*
                 if ($.isFunction(settings.afterRowRemoved)) {
@@ -904,6 +913,115 @@ class GridCore {
             showEmptyMessage(document.getElementById(settings._wrapperId), settings);
         }
         */
+    }
+
+    moveUpRow(rowIndex, uniqueIndex) {
+        let self = this, trAdtTarget, oldIndex = null;
+        let settings = self.settings, tbBody = self.tbBody;
+        if (Util.isNumeric(rowIndex) && rowIndex > 0 && rowIndex < self.rowOrder.length) {
+            oldIndex = rowIndex;
+            uniqueIndex = self.rowOrder[rowIndex];
+        } else if (Util.isNumeric(uniqueIndex)) {
+            oldIndex = self.findRowIndex(uniqueIndex);
+        }
+        if (!Util.isEmpty(oldIndex) && oldIndex > 0) {
+            // Get row to swap
+            let swapUniqueIndex = self.rowOrder[oldIndex - 1];
+            let trTarget = document.getElementById(settings.idPrefix + '_Row_' + uniqueIndex);
+            let trSwap = document.getElementById(settings.idPrefix + '_Row_' + swapUniqueIndex);
+            // Get the sub panel row if used
+            /*
+            if (settings.useSubPanel) {
+                trAdtTarget = document.getElementById(settings.idPrefix + '_SubRow_' + uniqueIndex, tbWhole);
+            }
+            */
+            // Remove current row
+            tbBody.removeChild(trTarget);
+            /*
+            if (settings.useSubPanel) {
+                tbBody.removeChild(trAdtTarget);
+            }
+            */
+            // Insert before the above row
+            tbBody.insertBefore(trTarget, trSwap);
+            /*
+            if (settings.useSubPanel) {
+                tbBody.insertBefore(trAdtTarget, trSwap);
+            }
+            */
+            // Update rowOrder
+            self.rowOrder[oldIndex] = swapUniqueIndex;
+            self.rowOrder[oldIndex - 1] = uniqueIndex;
+            // Update row label
+            let targetRowNumCell = document.getElementById(settings.idPrefix + '_RowNum_' + uniqueIndex);
+            let swapRowNumCell = document.getElementById(settings.idPrefix + '_RowNum_' + swapUniqueIndex);
+            let swapSeq = swapRowNumCell.innerHTML;
+            swapRowNumCell.innerHTML = targetRowNumCell.innerHTML;
+            targetRowNumCell.innerHTML = swapSeq;
+            // Save setting
+            // saveSetting(tbWhole, settings);
+            // Change focus
+            document.getElementById(settings.idPrefix + '_moveUp_' + uniqueIndex).blur();
+            document.getElementById(settings.idPrefix + '_moveUp_' + swapUniqueIndex).focus();
+            // Trigger event
+            /*
+            if (settings.afterRowSwapped) {
+                settings.afterRowSwapped(tbWhole, oldIndex, oldIndex - 1);
+            }
+            */
+        }
+    }
+
+    moveDownRow(rowIndex, uniqueIndex) {
+        let self = this, trAdtTarget, oldIndex = null;
+        let settings = self.settings, tbBody = self.tbBody;
+        if (Util.isNumeric(rowIndex) && rowIndex >= 0 && rowIndex < self.rowOrder.length - 1) {
+            oldIndex = rowIndex;
+            uniqueIndex = self.rowOrder[rowIndex];
+        } else if (Util.isNumeric(uniqueIndex)) {
+            oldIndex = self.findRowIndex(uniqueIndex);
+        }
+        if (!Util.isEmpty(oldIndex) && oldIndex !== self.rowOrder.length - 1) {
+            // Get row to swap
+            let swapUniqueIndex = self.rowOrder[oldIndex + 1];
+            let trTarget = document.getElementById(settings.idPrefix + '_Row_' + uniqueIndex);
+            let trSwap = document.getElementById(settings.idPrefix + '_Row_' + swapUniqueIndex);
+            // Get the sub panel row if used
+            /*
+            if (settings.useSubPanel) {
+                trAdtSwap = document.getElementById(settings.idPrefix + '_SubRow_' + settings._rowOrder[oldIndex + 1], tbWhole);
+            }
+            */
+            // Remove current row
+            tbBody.removeChild(trSwap);
+            // Insert before the above row
+            tbBody.insertBefore(trSwap, trTarget);
+            /*
+            if (settings.useSubPanel) {
+                tbBody.insertBefore(trAdtSwap, trTarget);
+            }
+            */
+            // Update rowOrder
+            self.rowOrder[oldIndex] = swapUniqueIndex;
+            self.rowOrder[oldIndex + 1] = uniqueIndex;
+            // Update row label
+            let targetRowNumCell = document.getElementById(settings.idPrefix + '_RowNum_' + uniqueIndex);
+            let swapRowNumCell = document.getElementById(settings.idPrefix + '_RowNum_' + swapUniqueIndex);
+            let swapSeq = swapRowNumCell.innerHTML;
+            swapRowNumCell.innerHTML = targetRowNumCell.innerHTML;
+            targetRowNumCell.innerHTML = swapSeq;
+            // Save setting
+            // saveSetting(tbWhole, settings);
+            // Change focus
+            document.getElementById(settings.idPrefix + '_moveDown_' + uniqueIndex).blur();
+            document.getElementById(settings.idPrefix + '_moveDown_' + swapUniqueIndex).focus();
+            // Trigger event
+            /*
+            if (settings.afterRowSwapped) {
+                settings.afterRowSwapped(tbWhole, oldIndex, oldIndex + 1);
+            }
+            */
+        }
     }
 
     setCtrlValue(colIndex, uniqueIndex, data) {
@@ -985,6 +1103,38 @@ class GridCore {
         }
         */
         return result;
+    }
+
+    findRowIndex(uniqueIndex) {
+        for (let z = 0; z < this.rowOrder.length; z++) {
+            if (this.rowOrder[z] === uniqueIndex) {
+                return z;
+            }
+        }
+        return null;
+    }
+
+    _sortSequence(startIndex) {
+        let self = this;
+        if (!self.settings.hideRowNumColumn) {
+            self.rowOrder.forEach(function callback(uniqueIndex, index) {
+                let rowNum = document.getElementById(self.settings.idPrefix + '_RowNum_' + uniqueIndex);
+                rowNum.innerText = '' + (index + 1);
+            });
+        }
+    }
+
+    _rowButtonActions(type, uniqueIndex) {
+        let self = this;
+        if (type === 'insert') {
+            self.insertRow(1, null, uniqueIndex);
+        } else if (type === 'remove') {
+            self.removeRow(null, uniqueIndex);
+        } else if (type === 'moveUp') {
+            self.moveUpRow(null, uniqueIndex);
+        } else if (type === 'moveDown') {
+            self.moveDownRow(null, uniqueIndex);
+        }
     }
 }
 

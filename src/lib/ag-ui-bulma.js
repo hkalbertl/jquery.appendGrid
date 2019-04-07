@@ -81,6 +81,14 @@ class UiBulma extends UiBase {
             // Create select
             ctrl = super.generateControl(null, columnOpt, ctrlId, ctrlName);
             wrapper.appendChild(ctrl);
+        } else if (columnOpt.type === 'checkbox') {
+            // Create wrapper
+            let wrapper = Util.createElem('label', null, null, 'checkbox');
+            ctrlHolder.appendChild(wrapper);
+            // Create checkbox
+            ctrl = Util.createElem('input', ctrlId, ctrlName, null, 'checkbox');
+            ctrl.value = 1;
+            wrapper.appendChild(ctrl);
         } else {
             // Create by using default control generation
             ctrl = super.generateControl(ctrlHolder, columnOpt, ctrlId, ctrlName);
