@@ -18,10 +18,10 @@ class UiBootstrap4 extends UiBase {
             control: 'form-control',
             button: 'btn',
             buttonGroup: 'btn-group',
-            append: 'btn-outline-primary',
-            removeLast: 'btn-outline-danger',
-            insert: 'btn-outline-primary',
-            remove: 'btn-outline-danger',
+            append: 'btn-outline-secondary',
+            removeLast: 'btn-outline-secondary',
+            insert: 'btn-outline-secondary',
+            remove: 'btn-outline-secondary',
             moveUp: 'btn-outline-secondary',
             moveDown: 'btn-outline-secondary'
         };

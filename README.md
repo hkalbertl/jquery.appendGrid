@@ -20,13 +20,9 @@ Documentation website is under construction.
 
 
 ## Instructions
-- `npm install` to install dependencies
+- Execute command `npm install` to install development dependencies
 - Execute command `npm run start` for running development server and preview
 - Execute command `npm run build` for creating distribution files
-
-
-## Notes for Windows developers
-You may encounter problem on `"NODE_ENV" is not recognized as an internal or external command, operable command or batch file`. Please check the answer [here](https://stackoverflow.com/a/40967643).
 
 
 ## Others
