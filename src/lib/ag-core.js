@@ -11,88 +11,6 @@ import UiBulma from './ag-ui-bulma';
 import UiFoundation6 from './ag-ui-foundation6';
 import * as Util from './ag-util';
 
-// Default grid options.
-const _defaultGridOptions = {
-    // Required. The table element.
-    element: null,
-    // The name of UI framework, such as 'bootstrap4' and 'bulma'. Default is 'default'.
-    uiFramework: null,
-    uiParams: null,
-    // The name of Icon framework, such as 'fontawesome5'. Default is 'default'.
-    iconFramework: null,
-    iconParams: null,
-    // The total number of empty rows generated when init the grid. This will be ignored if `initData` is assigned.
-    initRows: 3,
-    // The ID prefix of controls generated inside the grid. Table ID will be used if not defined.
-    idPrefix: null,
-    // An array of data to be filled after initialized the grid.
-    initData: null,
-    // Array of column options.
-    columns: [],
-    // Hide the buttons at the end of rows or bottom of grid.
-    hideButtons: null,
-    // Hide the row number column.
-    hideRowNumColumn: false,
-    // Generate row buttom column in the front of input columns.
-    rowButtonsInFront: false,
-    // The variable name of row count used for object mode of getAllValue
-    rowCountName: '_RowCount',
-    // Custom CSS classes to be added to different sections
-    sectionClasses: null
-};
-
-// Default column options.
-const _defaultColumnOptions = {
-    // Type of column control.
-    type: 'text',
-    // Name of column.
-    name: null,
-    // Default value.
-    value: null,
-    // Display text on the header section.
-    display: null,
-    // Extra CSS setting to be added to display text.
-    displayCss: null,
-    // Tooltip for column head.
-    displayTooltip: null,
-    // The `colspan` setting on the column header.
-    headerSpan: 1,
-    // Extra CSS setting to be added to the control container table cell.
-    cellCss: null,
-    // Extra attributes to be added to the control.
-    ctrlAttr: null,
-    // Extra properties to be added to the control.
-    ctrlProp: null,
-    // Extra CSS to be added to the control.
-    ctrlCss: null,
-    // Extra name of class to be added to the control.
-    ctrlClass: null,
-    // The available option for building `select` type control.
-    ctrlOptions: null,
-    // Options for initalize jQuery UI widget.
-    uiOption: null,
-    // Options for initalize jQuery UI tooltip.
-    uiTooltip: null,
-    // Let column resizable by using jQuery UI Resizable Interaction.
-    resizable: false,
-    // Show or hide column after initialized.
-    invisible: false,
-    // The value to compare for indentify this column value is empty.
-    emptyCriteria: null,
-    // Callback function to build custom type control.
-    customBuilder: null,
-    // Callback function to get control value.
-    customGetter: null,
-    // Callback function to set control value.
-    customSetter: null,
-    // The `OnClick` event callback of control.
-    onClick: null,
-    // The `OnChange` event callback of control.
-    onChange: null,
-    // Add wrapper to the input control.
-    wrapper: null
-};
-
 class GridCore {
 
     constructor(options) {
@@ -130,21 +48,7 @@ class GridCore {
         });
 
         // Merge default options
-        let settings = Object.assign({}, _defaultGridOptions, options);
-
-        // Handle hideButtons option
-        let hideButtons = {
-            append: false,
-            removeLast: false,
-            insert: false,
-            remove: false,
-            moveUp: false,
-            moveDown: false
-        };
-        if (settings.hideButtons) {
-            Object.assign(hideButtons, settings.hideButtons);
-        }
-        settings.hideButtons = hideButtons;
+        let settings = Object.assign({}, options);
         self.settings = settings;
         console.debug('ag:Options initialized');
 
@@ -223,10 +127,6 @@ class GridCore {
         let tCell = self.createElement('th', 'theadCell');
         tRow.appendChild(tCell);
         for (let z = 0; z < settings.columns.length; z++) {
-            // Assign default setting
-            let columnOpt = Object.assign({}, _defaultColumnOptions, settings.columns[z]);
-            settings.columns[z] = columnOpt;
-
             tCell = self.createElement('th', 'theadCell');
             tCell.innerText = settings.columns[z].display;
             tRow.appendChild(tCell);
@@ -336,9 +236,9 @@ class GridCore {
     insertRow(numOfRowOrRowArray, rowIndex, callerUniqueIndex) {
         // Define variables
         let self = this;
-        let settings = self.settings, tbWhole = self.tbWhole, uiFramework = self.uiFramework;
-        let tbBody = self.tbBody, tbRow, tbSubRow = null, tbCell, reachMaxRow = false, calColWidth = false;
-        let addedRows = [], parentIndex = null, uniqueIndex, hidden = [];
+        let settings = self.settings, uiFramework = self.uiFramework, tbBody = self.tbBody, tbRow, tbCell;
+        let addedRows = [], parentIndex = null, uniqueIndex, hiddenColumns = [];
+        // let tbWhole = self.tbWhole, tbSubRow = null, reachMaxRow = false, calColWidth = false
         // let oldHeight = 0, oldScroll = 0;
         // Check number of row to be inserted
         let numOfRow = numOfRowOrRowArray, loadData = false;
@@ -377,7 +277,7 @@ class GridCore {
         // Remove empty row
         if (self.rowOrder.length === 0) {
             tbBody.innerHTML = '';
-            calColWidth = true;
+            // calColWidth = true;
         }
         // Add total number of row
         for (let z = 0; z < numOfRow; z++) {
@@ -391,7 +291,7 @@ class GridCore {
             // Update variables
             self.uniqueIndex++;
             uniqueIndex = self.uniqueIndex;
-            hidden.length = 0;
+            hiddenColumns.length = 0;
             // Check row insert index
             if (Util.isNumeric(rowIndex)) {
                 self.rowOrder.splice(rowIndex, 0, uniqueIndex);
@@ -441,7 +341,7 @@ class GridCore {
             for (let y = 0; y < settings.columns.length; y++) {
                 // Skip hidden
                 if (settings.columns[y].type === 'hidden') {
-                    hidden.push(y);
+                    hiddenColumns.push(y);
                     continue;
                 }
                 // Check column invisble
@@ -481,152 +381,33 @@ class GridCore {
                         ctrl = settings.columns[y].customBuilder(ctrlHolder, settings.idPrefix, settings.columns[y].name, uniqueIndex);
                     }
                 } else {
+                    // Generate control
                     ctrl = self.uiFramework.generateControl(ctrlHolder, settings.columns[y], ctrlId, ctrlName);
-                }
-                /*
-                } else if (settings.columns[y].type === 'select') {
-                    ctrl = document.createElement('select');
-                    ctrl.id = ctrlId;
-                    ctrl.name = ctrlName;
-                    // Build option list
-                    if (Array.isArray(settings.columns[y].ctrlOptions)) {
-                        // For array type option list
-                        if (settings.columns[y].ctrlOptions.length > 0) {
-                            if (Util.isPlainObject(settings.columns[y].ctrlOptions[0])) {
-                                // Check to generate optGroup or not
-                                let lastGroupName = null, lastGroupElem = null;
-                                for (let x = 0; x < settings.columns[y].ctrlOptions.length; x++) {
-                                    if (!Util.isEmpty(settings.columns[y].ctrlOptions[x].group)) {
-                                        if (lastGroupName !== settings.columns[y].ctrlOptions[x].group) {
-                                            lastGroupName = settings.columns[y].ctrlOptions[x].group;
-                                            lastGroupElem = document.createElement('optgroup');
-                                            lastGroupElem.label = lastGroupName;
-                                            ctrl.appendChild(lastGroupElem);
-                                        }
-                                    } else {
-                                        lastGroupElem = null;
-                                    }
-                                    let option = document.createElement('option');
-                                    option.value = settings.columns[y].ctrlOptions[x].value;
-                                    option.innerText = settings.columns[y].ctrlOptions[x].label;
-                                    if (!Util.isEmpty(settings.columns[y].ctrlOptions[x].title)) {
-                                        option.setAttribute('title', settings.columns[y].ctrlOptions[x].title);
-                                    }
-                                    if (null === lastGroupElem) {
-                                        option.appendTo(ctrl);
-                                    }
-                                    else {
-                                        option.appendTo(lastGroupElem);
-                                    }
-                                }
-                            }
-                            else {
-                                // Array of values
-                                for (let x = 0; x < settings.columns[y].ctrlOptions.length; x++) {
-                                    let opValue = settings.columns[y].ctrlOptions[x];
-                                    ctrl.options[ctrl.options.length] = new Option(opValue, opValue);
-                                }
-                            }
-                        }
-                    } else if (Util.isPlainObject(settings.columns[y].ctrlOptions)) {
-                        // For plain object type option list
-                        for (let x in settings.columns[y].ctrlOptions) {
-                            ctrl.options[ctrl.options.length] = new Option(settings.columns[y].ctrlOptions[x], x);
-                        }
-                    } else if (typeof (settings.columns[y].ctrlOptions) === 'string') {
-                        // For string type option list
-                        let arrayOpt = settings.columns[y].ctrlOptions.split(';');
-                        for (let x = 0; x < arrayOpt.length; x++) {
-                            let eqIndex = arrayOpt[x].indexOf(':');
-                            if (-1 === eqIndex) {
-                                ctrl.options[ctrl.options.length] = new Option(arrayOpt[x], arrayOpt[x]);
-                            } else {
-                                ctrl.options[ctrl.options.length] = new Option(arrayOpt[x].substring(eqIndex + 1, arrayOpt[x].length), arrayOpt[x].substring(0, eqIndex));
-                            }
-                        }
-                    } else if (typeof (settings.columns[y].ctrlOptions) === 'function') {
-                        // Create options by using custom functions
-                        settings.columns[y].ctrlOptions(ctrl);
-                    }
-                    Util.applyClasses(ctrl, 
-                        self.uiFramework.getSectionClasses('control'), 
-                        self.uiFramework.getSectionClasses('controlSelect'), 
-                        settings.columns[y].ctrlClass);
-                    ctrlHolder.appendChild(ctrl);
-                }
-                else if (settings.columns[y].type === 'checkbox') {
-                    ctrl = document.createElement('input');
-                    ctrl.type = 'checkbox';
-                    ctrl.id = ctrlId;
-                    ctrl.name = ctrlName;
-                    ctrl.value = 1;
-                    Util.applyClasses(ctrl, 
-                        self.uiFramework.getSectionClasses('control'), 
-                        self.uiFramework.getSectionClasses('controlCheckbox'), 
-                        settings.columns[y].ctrlClass);
-                    ctrlHolder.appendChild(ctrl);
-                    // ctrlHolder.style.textAlign = 'center';
-                }
-                else if (settings.columns[y].type === 'textarea') {
-                    ctrl = document.createElement('textarea');
-                    ctrl.id = ctrlId;
-                    ctrl.name = ctrlName;
-                    Util.applyClasses(ctrl, 
-                        self.uiFramework.getSectionClasses('control'), 
-                        self.uiFramework.getSectionClasses('controlTextarea'), 
-                        settings.columns[y].ctrlClass);
-                    ctrlHolder.appendChild(ctrl);
-                }
-                else if (-1 != settings.columns[y].type.search(/^(color|date|datetime|datetime\-local|email|month|number|range|search|tel|time|url|week)$/)) {
-                    ctrl = document.createElement('input');
-                    try {
-                        ctrl.type = settings.columns[y].type;
-                    }
-                    catch (err) { /* Not supported type * / }
-                    ctrl.id = ctrlId;
-                    ctrl.name = ctrlName;
-                    Util.applyClasses(ctrl, 
-                        self.uiFramework.getSectionClasses('control'), 
-                        self.uiFramework.getSectionClasses('controlOther'), 
-                        settings.columns[y].ctrlClass);
-                    ctrlHolder.appendChild(ctrl);
-                }
-                else {
-                    // Generate text input
-                    ctrl = document.createElement('input');
-                    ctrl.type = 'text';
-                    ctrl.id = ctrlId;
-                    ctrl.name = ctrlName;
-                    Util.applyClasses(ctrl, 
-                        self.uiFramework.getSectionClasses('control'), 
-                        self.uiFramework.getSectionClasses('controlOther'), 
-                        settings.columns[y].ctrlClass);
-                    ctrlHolder.appendChild(ctrl);
-                }
-                */
-                // Add extra control properties
-                if (settings.columns[y].type !== 'custom') {
-                    // Add control class as needed
-                    // Util.applyClasses(ctrl, self.uiFramework.getSectionClasses('control'), settings.columns[y].ctrlClass);
                     // Add control attributes as needed
-                    // if (settings.columns[y].ctrlAttr != null) $(ctrl).attr(settings.columns[y].ctrlAttr);
-                    // Add control properties as needed
-                    // if (settings.columns[y].ctrlProp != null) $(ctrl).prop(settings.columns[y].ctrlProp);
+                    if (!Util.isEmpty(settings.columns[y].ctrlAttr)) {
+                        for (let attrName in settings.columns[y].ctrlAttr) {
+                            ctrl.setAttribute(attrName, settings.columns[y].ctrlAttr[attrName]);
+                        }
+                    }
                     // Add control CSS as needed
-                    // if (settings.columns[y].ctrlCss != null) $(ctrl).css(settings.columns[y].ctrlCss);
+                    if (!Util.isEmpty(settings.columns[y].ctrlCss)) {
+                        for (let cssName in settings.columns[y].ctrlCss) {
+                            ctrl.style[cssName] = settings.columns[y].ctrlCss[cssName];
+                        }
+                    }
                     // Add control events as needed
-                    /*
-                    if ($.isFunction(settings.columns[y].onClick)) {
-                        $(ctrl).click({ caller: tbWhole, callback: settings.columns[y].onClick, uniqueIndex: uniqueIndex }, function (evt) {
-                            evt.data.callback(evt, $(evt.data.caller).appendGrid('getRowIndex', evt.data.uniqueIndex));
-                        });
+                    if (settings.columns[y].events) {
+                        ctrl.dataset.columnName = settings.columns[y].name;
+                        ctrl.dataset.uniqueIndex = uniqueIndex;
+                        for (let name in settings.columns[y].events) {
+                            let ctrlHandler = settings.columns[y].events[name];
+                            ctrl.addEventListener(name, function (evt) {
+                                evt.columnName = evt.currentTarget.dataset.columnName;
+                                evt.uniqueIndex = evt.currentTarget.dataset.uniqueIndex;
+                                ctrlHandler(evt);
+                            });
+                        }
                     }
-                    if ($.isFunction(settings.columns[y].onChange)) {
-                        $(ctrl).change({ caller: tbWhole, callback: settings.columns[y].onChange, uniqueIndex: uniqueIndex }, function (evt) {
-                            evt.data.callback(evt, $(evt.data.caller).appendGrid('getRowIndex', evt.data.uniqueIndex));
-                        });
-                    }
-                    */
                 }
                 if (loadData) {
                     // Load data if needed
@@ -660,12 +441,15 @@ class GridCore {
                 // Add standard buttons
                 ['insert', 'remove', 'moveUp', 'moveDown'].forEach(function (type) {
                     if (!settings.hideButtons[type]) {
-                        let button = uiFramework.generateButton(container, type);
-                        button.id = settings.idPrefix + '_' + type + '_' + uniqueIndex;
+                        let buttonId = settings.idPrefix + '_$' + type + '_' + uniqueIndex;
+                        let button = uiFramework.generateButton(container, type, buttonId);
                         button.dataset.uniqueIndex = uniqueIndex;
                         button.addEventListener('click', function (evt) {
                             let callerUniqueIndex = parseInt(evt.currentTarget.dataset.uniqueIndex);
-                            self._rowButtonActions(type, callerUniqueIndex);
+                            self.rowButtonActions(type, callerUniqueIndex);
+                            // Prevent default
+                            evt.preventDefault();
+                            return false;
                         });
                     }
                 });
@@ -728,28 +512,28 @@ class GridCore {
                     if (!isEmpty(settings._buttonClasses.rowDrag)) button.addClass(settings._buttonClasses.rowDrag);
                 }
                 */
-                // Add hidden
-                /*
-                for (var y = 0; y < hidden.length; y++) {
-                    ctrl = document.createElement('input');
-                    ctrl.id = settings.idPrefix + '_' + settings.columns[hidden[y]].name + '_' + uniqueIndex;
-                    if ($.isFunction(settings.nameFormatter)) {
-                        ctrl.name = settings.nameFormatter(settings.idPrefix, settings.columns[y].name, uniqueIndex);
+                // Add hidden controls
+                hiddenColumns.forEach(function (hi) {
+                    // Prepare control ID / name
+                    let hiddenName = settings.columns[hi].name;
+                    let ctrlId = settings.idPrefix + '_' + hiddenName + '_' + uniqueIndex, ctrlName;
+                    if (typeof (settings.nameFormatter) === 'function') {
+                        ctrlName = settings.nameFormatter(settings.idPrefix, hiddenName, uniqueIndex);
                     } else {
-                        ctrl.name = ctrl.id;
+                        ctrlName = ctrlId;
                     }
-                    ctrl.type = 'hidden';
-
+                    // Create hidden element
+                    tbCell.appendChild(Util.createElem('input', ctrlId, ctrlName, null, 'hidden'));
+                    // Assign value
                     if (loadData) {
                         // Load data if needed
-                        ctrl.value = numOfRowOrRowArray[z][settings.columns[hidden[y]].name];
-                    } else if (!isEmpty(settings.columns[hidden[y]].value)) {
+                        self.setCtrlValue(hi, uniqueIndex, numOfRowOrRowArray[z][hiddenName]);
+                    } else if (!Util.isEmpty(settings.columns[hi].value)) {
                         // Set default value
-                        ctrl.value = settings.columns[hidden[y]].value;
+                        self.setCtrlValue(hi, uniqueIndex, settings.columns[hi].value);
                     }
-                    tbCell.appendChild(ctrl);
-                }
-                */
+                });
+
                 // Add extra buttons
                 /*
                 if (settings.customRowButtons && settings.customRowButtons.length) {
@@ -796,7 +580,7 @@ class GridCore {
         // _state.set(self, state);
 
         if (!Util.isEmpty(rowIndex)) {
-            self._sortSequence(rowIndex);
+            self.sortSequence(rowIndex);
         }
 
         // Calculate column width
@@ -836,8 +620,7 @@ class GridCore {
     removeRow(rowIndex, uniqueIndex, force) {
         // Define variables
         let self = this;
-        let settings = self.settings, tbWhole = self.tbWhole;
-        let tbBody = tbWhole.getElementsByTagName('tbody')[0];
+        let settings = self.settings, tbWhole = self.tbWhole, tbBody = self.tbBody;
         if (Util.isNumeric(uniqueIndex)) {
             for (let z = 0; z < self.rowOrder.length; z++) {
                 if (self.rowOrder[z] === uniqueIndex) {
@@ -862,7 +645,7 @@ class GridCore {
                 // Save setting
                 // _state.set(self, state);
                 // Sort sequence
-                self._sortSequence(rowIndex);
+                self.sortSequence(rowIndex);
                 // Trigger event
                 /*
                 if ($.isFunction(settings.afterRowRemoved)) {
@@ -870,8 +653,7 @@ class GridCore {
                 }
                 */
             }
-        }
-        else {
+        } else {
             // Store old window scroll value
             /*
             var oldHeight = 0, oldScroll = 0;
@@ -1114,17 +896,21 @@ class GridCore {
         return null;
     }
 
-    _sortSequence(startIndex) {
+    /**
+     * Update the row number displayed in the front of each row.
+     * @param {*} startIndex 
+     */
+    sortSequence(startIndex) {
         let self = this;
         if (!self.settings.hideRowNumColumn) {
-            self.rowOrder.forEach(function callback(uniqueIndex, index) {
-                let rowNum = document.getElementById(self.settings.idPrefix + '_RowNum_' + uniqueIndex);
-                rowNum.innerText = '' + (index + 1);
-            });
+            for (let z = startIndex || 0; z < self.rowOrder.length; z++) {
+                document.getElementById(self.settings.idPrefix + '_RowNum_' + self.rowOrder[z])
+                    .innerText = '' + (z + 1);
+            }
         }
     }
 
-    _rowButtonActions(type, uniqueIndex) {
+    rowButtonActions(type, uniqueIndex) {
         let self = this;
         if (type === 'insert') {
             self.insertRow(1, null, uniqueIndex);

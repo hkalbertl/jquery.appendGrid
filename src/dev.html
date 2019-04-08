@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>appendGrid - Basic</title>
+
     <!--UI Framework Style Sheets-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
@@ -18,12 +19,12 @@
     -->
 
     <!--Icon Webfont Frameworks-->
+    <!--
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
         integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
-    <!--
+    -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typicons/2.0.9/typicons.min.css"
         integrity="sha256-hmDtEnmZFvJ3zLsfobp03CSD3/qRCJmY3f7Vqf6zIgA=" crossorigin="anonymous" />
-    -->
     <!--
     <link href="https://unpkg.com/ionicons@4.4.4/dist/css/ionicons.min.css" rel="stylesheet" />
     -->
@@ -40,8 +41,8 @@
     <h1 class="title">Basic appendGrid</h1>
     <form action="">
         <table id="tblAppendGrid"></table>
-        <hr/>
-        <button id="serialize" type="button" class="btn btn-success">Serialize</button>
+        <hr />
+        <button id="serialize" type="button" class="btn btn-success btn-sm">Serialize</button>
     </form>
 
     <!-- Add polyfill for legacy browsers (such as IE) -->
@@ -70,9 +71,9 @@
                 uiFramework: 'bootstrap4',
                 // uiFramework: 'foundation6',
                 // uiParams: { useButtonGroup: false },
-                iconFramework: 'fontawesome5',
+                // iconFramework: 'fontawesome5',
                 // iconFramework: 'ionicon4',
-                // iconFramework: 'typicons2',
+                iconFramework: 'typicons2',
                 // iconFramework: 'openiconic',
                 // iconFramework: 'materialdesignicons3',
                 /*
@@ -86,18 +87,30 @@
                 // Optional CSS classes for Bootstrap
                 sectionClasses: {
                     table: 'table-sm',
-                    buttonGroup: 'btn-group-sm'
+                    buttonGroup: 'btn-group-sm',
+                    control: 'form-control-sm',
+                    insert: 'text-primary'
                 },
+                hideButtons: { moveUp: true, moveDown: true },
                 columns: [{
                     name: 'company',
                     display: 'Company',
                     type: 'text',
-                    ctrlAttr: { maxlength: 100 }
+                    ctrlAttr: { maxlength: 100 },
+                    events: {
+                        click: function (e) {
+                            alert(e.uniqueIndex);
+                        },
+                        change: function (e) {
+                            alert(e.columnName);
+                        }
+                    }
                 }, {
                     name: 'name',
                     display: 'Contact Person',
                     type: 'text',
-                    ctrlAttr: { maxlength: 100 }
+                    ctrlAttr: { maxlength: 100 },
+                    ctrlCss: { backgroundColor: '#eeffee' }
                 }, {
                     name: 'country',
                     display: 'Country',
@@ -125,17 +138,15 @@
                     }
                 }, {
                     name: 'uid',
-                    display: '(Hidden)',
-                    type: 'text',
-                    // type: 'hidden',
-                    value: ''
+                    type: 'hidden',
+                    value: '0'
                 }],
                 // Use sample data in `dev-data.js`, if loaded
                 initData: window.myAppendGridInitData || null
                 // initData: null
             });
             // Add serialize button event
-            document.getElementById('serialize').addEventListener('click', function(){
+            document.getElementById('serialize').addEventListener('click', function () {
                 alert(JSON.stringify(window.myAppendGrid.getAllValue()));
             });
         });

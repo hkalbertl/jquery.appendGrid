@@ -58,9 +58,9 @@ class UiBase {
 		return null;
 	}
 
-	generateButton(holder, type) {
+	generateButton(holder, type, buttonId) {
 		// Create the button
-		let button = Util.createElem('button', null, null, null, 'button');
+		let button = Util.createElem('button', buttonId, null, null, 'button');
 		Util.applyClasses(button,
 			this.getSectionClasses('button'),
 			this.getSectionClasses(type));
