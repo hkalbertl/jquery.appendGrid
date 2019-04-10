@@ -14,8 +14,6 @@ class UiBulma extends UiBase {
         // Prepare default section classes
         let libSectionClasses = {
             table: 'table',
-            first: 'is-narrow',
-            last: 'is-narrow',
             control: 'input',
             button: 'button',
             buttonGroup: 'field has-addons',

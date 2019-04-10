@@ -122,53 +122,98 @@ class GridCore {
         // Create thead
         let thead = self.createElement('thead');
         tbWhole.appendChild(thead);
-        let tRow = self.createElement('tr', 'theadRow');
-        thead.appendChild(tRow);
-        let tCell = self.createElement('th', 'theadCell');
-        tRow.appendChild(tCell);
-        for (let z = 0; z < settings.columns.length; z++) {
-            tCell = self.createElement('th', 'theadCell');
-            tCell.innerText = settings.columns[z].display;
-            tRow.appendChild(tCell);
+        let tbRow = self.createElement('tr', 'theadRow'), tbCell;
+        thead.appendChild(tbRow);
+        if (!settings.hideRowNumColumn) {
+            tbCell = self.createElement('th', 'theadCell');
+            tbRow.appendChild(tbCell);
         }
-        tCell = self.createElement('th', 'theadCell');
-        tRow.appendChild(tCell);
+        // Add cell in thead as column display name
+        for (let z = 0; z < settings.columns.length; z++) {
+            // Skip generating column for hidden
+            if (settings.columns[z].type === 'hidden') {
+                continue;
+            }
+            // Add cell for column name in thead section
+            tbCell = self.createElement('th', 'theadCell');
+            // Apply extra classes
+            Util.applyClasses(tbCell, settings.columns[z].displayClass);
+            // Apply style
+            if (!Util.isEmpty(settings.columns[z].displayCss)) {
+                for (let styleName in settings.columns[z].displayCss) {
+                    tbCell.style[styleName] = settings.columns[z].displayCss[styleName];
+                }
+            }
+            tbCell.innerText = settings.columns[z].display;
+            tbRow.appendChild(tbCell);
+        }
+        // Check to hide last column or not
+        tbCell = self.createElement('th', 'theadCell');
+        if (settings.hideButtons.insert && settings.hideButtons.remove && settings.hideButtons.moveUp && settings.hideButtons.moveDown) {
+            // && (!$.isArray(settings.customRowButtons) || settings.customRowButtons.length == 0)
+            self.hideLastColumn = true;
+            tbCell.style.display = 'none';
+        }
+        if (!self.hideLastColumn && settings.rowButtonsInFront) {
+            if (settings.hideRowNumColumn) {
+                // Insert a cell at the front
+                tbRow.insertBefore(tbCell, tbRow.firstChild);
+            } else {
+                // Insert a cell as the second column
+                tbRow.insertBefore(tbCell, tbRow.childnodes[1]);
+            }
+        } else {
+            tbRow.appendChild(tbCell);
+        }
 
         // Create tbody
         let tbBody = self.createElement('tbody');
         tbWhole.appendChild(tbBody);
-        tRow = self.createElement('tr', 'tbodyRow');
-        tbBody.appendChild(tRow);
-        tCell = self.createElement('td', 'tbodyCell');
-        tCell.colSpan = settings.columns.length + 2;
-        tRow.appendChild(tCell);
+        tbRow = self.createElement('tr', 'tbodyRow');
+        tbBody.appendChild(tbRow);
+        tbCell = self.createElement('td', 'tbodyCell');
+        tbCell.colSpan = settings.columns.length + 2;
+        tbRow.appendChild(tbCell);
         self.tbBody = tbBody;
 
         // Create tfoot
         let tfoot = self.createElement('tfoot');
         tbWhole.appendChild(tfoot);
-        tRow = self.createElement('tr', 'tfootRow');
-        tfoot.appendChild(tRow);
-        tCell = self.createElement('td', 'tfootCell');
-        tCell.colSpan = settings.columns.length + 2;
-        tRow.appendChild(tCell);
+        tbRow = self.createElement('tr', 'tfootRow');
+        tfoot.appendChild(tbRow);
+        tbCell = self.createElement('td', 'tfootCell');
+        tbCell.colSpan = settings.columns.length + 2;
+        tbRow.appendChild(tbCell);
 
-        // Create button group, if defined
-        let buttonContainer = self.uiFramework.createButtonGroup();
-        if (buttonContainer) {
-            tCell.appendChild(buttonContainer);
+        // Add hidden for rowOrder
+        let rowOrderName = settings.idPrefix + '_rowOrder';
+        let rowOrderCtrl = Util.createElem('input', rowOrderName, rowOrderName, null, 'hidden');
+        tbCell.appendChild(rowOrderCtrl);
+
+        if (settings.hideButtons.append && settings.hideButtons.removeLast) {
+            // && (!$.isArray(settings.customFooterButtons) || settings.customFooterButtons.length == 0)
+            tbRow.style.display = 'none';
         } else {
-            buttonContainer = tCell;
+            // Create button group, if defined
+            let buttonContainer = self.uiFramework.createButtonGroup();
+            if (buttonContainer) {
+                tbCell.appendChild(buttonContainer);
+            } else {
+                buttonContainer = tbCell;
+            }
+            if (!settings.hideButtons.append) {
+                let appendButton = self.uiFramework.generateButton(buttonContainer, 'append');
+                appendButton.addEventListener('click', function (evt) {
+                    self.insertRow(1);
+                });
+            }
+            if (!settings.hideButtons.removeLast) {
+                let removeLastButton = self.uiFramework.generateButton(buttonContainer, 'removeLast');
+                removeLastButton.addEventListener('click', function (evt) {
+                    self.removeRow();
+                });
+            }
         }
-        let appendButton = self.uiFramework.generateButton(buttonContainer, 'append');
-        appendButton.addEventListener('click', function (evt) {
-            self.insertRow(1);
-        });
-        let removeLastButton = self.uiFramework.generateButton(buttonContainer, 'removeLast');
-        removeLastButton.addEventListener('click', function (evt) {
-            self.removeRow();
-        });
-
         // Save settings
         self.settings = settings;
 
@@ -184,10 +229,9 @@ class GridCore {
         console.debug('ag:Initialized');
     }
 
-    createElement(elementName, sectionName) {
-        let element = document.createElement(elementName);
+    createElement(elementName, sectionName, elementId) {
         let classNames = this.uiFramework.getSectionClasses(sectionName || elementName);
-        Util.applyClasses(element, classNames);
+        let element = Util.createElem(elementName, elementId, null, classNames);
         return element;
     }
 
@@ -237,7 +281,7 @@ class GridCore {
         // Define variables
         let self = this;
         let settings = self.settings, uiFramework = self.uiFramework, tbBody = self.tbBody, tbRow, tbCell;
-        let addedRows = [], parentIndex = null, uniqueIndex, hiddenColumns = [];
+        let addedRows = [], parentIndex = null;
         // let tbWhole = self.tbWhole, tbSubRow = null, reachMaxRow = false, calColWidth = false
         // let oldHeight = 0, oldScroll = 0;
         // Check number of row to be inserted
@@ -288,10 +332,11 @@ class GridCore {
                 break;
             }
             */
-            // Update variables
-            self.uniqueIndex++;
-            uniqueIndex = self.uniqueIndex;
-            hiddenColumns.length = 0;
+            // Prepare variables
+            let uniqueIndex = ++self.uniqueIndex, hiddenColumns = [];
+            // Prepare the table row
+            tbRow = self.createElement('tr', 'tbodyRow', settings.idPrefix + '_$row_' + uniqueIndex);
+            tbRow.dataset.uniqueIndex = uniqueIndex;
             // Check row insert index
             if (Util.isNumeric(rowIndex)) {
                 self.rowOrder.splice(rowIndex, 0, uniqueIndex);
@@ -303,12 +348,12 @@ class GridCore {
                     tbBody.insertBefore(tbRow = document.createElement('tr'), tbBody.childNodes[rowIndex]);
                 }
                 */
-                tbBody.insertBefore(tbRow = document.createElement('tr'), tbBody.childNodes[rowIndex]);
+                tbBody.insertBefore(tbRow, tbBody.childNodes[rowIndex]);
                 addedRows.push(rowIndex);
             }
             else {
                 self.rowOrder.push(uniqueIndex);
-                tbBody.appendChild(tbRow = document.createElement('tr'));
+                tbBody.appendChild(tbRow);
                 /*
                 if (settings.useSubPanel) {
                     tbBody.appendChild(tbSubRow = document.createElement('tr'));
@@ -316,9 +361,6 @@ class GridCore {
                 */
                 addedRows.push(self.rowOrder.length - 1);
             }
-            tbRow.id = settings.idPrefix + '_Row_' + uniqueIndex;
-            tbRow.dataset.uniqueIndex = uniqueIndex;
-            Util.applyClasses(tbRow, uiFramework.getSectionClasses('tbodyRow'));
 
             // Config on the sub panel row
             /*
@@ -332,10 +374,11 @@ class GridCore {
             */
             // Add row number
             if (!settings.hideRowNumColumn) {
-                tbRow.appendChild(tbCell = document.createElement('td'));
-                tbCell.id = settings.idPrefix + '_RowNum_' + uniqueIndex;
+                tbCell = self.createElement('td', 'tbodyCell', settings.idPrefix + '_$rowNum_' + uniqueIndex);
                 tbCell.innerText = '' + self.rowOrder.length;
+                Util.applyClasses(tbCell, uiFramework.getSectionClasses('first'));
                 // if (settings.useSubPanel) tbCell.rowSpan = 2;
+                tbRow.appendChild(tbCell);
             }
             // Process on each columns
             for (let y = 0; y < settings.columns.length; y++) {
@@ -348,9 +391,15 @@ class GridCore {
                 // var className = 'ui-widget-content';
                 // if (settings.columns[y].invisible) className += ' invisible';
                 // Insert cell
-                tbRow.appendChild(tbCell = document.createElement('td'));
-                tbCell.id = settings.idPrefix + '_' + settings.columns[y].name + '_td_' + uniqueIndex;
-                Util.applyClasses(tbCell, uiFramework.getSectionClasses('tbodyCell'), settings.columns[y].cellCss);
+                tbCell = self.createElement('td', 'tbodyCell');
+                tbRow.appendChild(tbCell);
+                // Apply extra CSS classes and styles
+                Util.applyClasses(tbCell, settings.columns[y].cellClass);
+                if (!Util.isEmpty(settings.columns[y].cellCss)) {
+                    for (let styleName in settings.columns[y].cellCss) {
+                        tbCell.style[styleName] = settings.columns[y].cellCss[styleName];
+                    }
+                }
                 // Create wrapper, if required
                 let ctrlHolder = null;
                 if (settings.columns[y].wrapper) {
@@ -418,19 +467,41 @@ class GridCore {
                 }
             }
             // Add button cell if needed
-            if (!self.hideLastColumn || settings.columns.length > self.visibleCount) {
-                if (!settings.rowButtonsInFront) {
-                    tbRow.appendChild(tbCell = document.createElement('td'));
-                } else if (!settings.hideRowNumColumn) {
-                    tbRow.insertBefore(tbCell = document.createElement('td'), tbRow.childNodes[1]);
+            tbCell = self.createElement('td', 'tbodyCell', settings.idPrefix + '_$rowButton_' + uniqueIndex);
+            if (self.hideLastColumn || !settings.rowButtonsInFront) {
+                tbRow.appendChild(tbCell);
+            } else if (!settings.hideRowNumColumn) {
+                tbRow.insertBefore(tbCell, tbRow.childNodes[1]);
+            } else {
+                tbRow.insertBefore(tbCell, tbRow.firstChild);
+            }
+            // Add hidden controls
+            hiddenColumns.forEach(function (hi) {
+                // Prepare control ID / name
+                let hiddenName = settings.columns[hi].name;
+                let ctrlId = settings.idPrefix + '_' + hiddenName + '_' + uniqueIndex, ctrlName;
+                if (typeof (settings.nameFormatter) === 'function') {
+                    ctrlName = settings.nameFormatter(settings.idPrefix, hiddenName, uniqueIndex);
                 } else {
-                    tbRow.insertBefore(tbCell = document.createElement('td'), tbRow.firstChild);
+                    ctrlName = ctrlId;
                 }
-                tbCell.id = settings.idPrefix + '_last_td_' + uniqueIndex;
-                Util.applyClasses(tbCell,
-                    uiFramework.getSectionClasses('tbodyCell'),
-                    uiFramework.getSectionClasses('last'));
-                if (self.hideLastColumn) tbCell.style.display = 'none';
+                // Create hidden element
+                tbCell.appendChild(Util.createElem('input', ctrlId, ctrlName, null, 'hidden'));
+                // Assign value
+                if (loadData) {
+                    // Load data if needed
+                    self.setCtrlValue(hi, uniqueIndex, numOfRowOrRowArray[z][hiddenName]);
+                } else if (!Util.isEmpty(settings.columns[hi].value)) {
+                    // Set default value
+                    self.setCtrlValue(hi, uniqueIndex, settings.columns[hi].value);
+                }
+            });
+            // Check to add row buttons
+            if (self.hideLastColumn) {
+                // Set display = none if not showing the button cell
+                tbCell.style.display = 'none';
+            } else if (settings.columns.length > self.visibleCount) {
+                Util.applyClasses(tbCell, uiFramework.getSectionClasses('last'));
                 // Check to use button group or not
                 let container = uiFramework.createButtonGroup();
                 if (container) {
@@ -447,93 +518,9 @@ class GridCore {
                         button.addEventListener('click', function (evt) {
                             let callerUniqueIndex = parseInt(evt.currentTarget.dataset.uniqueIndex);
                             self.rowButtonActions(type, callerUniqueIndex);
-                            // Prevent default
-                            evt.preventDefault();
-                            return false;
                         });
                     }
                 });
-                /*
-                if (!settings.hideButtons.insert) {
-                    var button = createGridButton(settings.customGridButtons.insert, 'ui-icon-arrowreturnthick-1-w')
-                        .attr({ id: settings.idPrefix + '_Insert_' + uniqueIndex, title: settings._i18n.insert, tabindex: -1 })
-                        .addClass('insert').data('appendGrid', { uniqueIndex: uniqueIndex })
-                        .click(function (evt) {
-                            var rowUniqueIndex = $(this).data('appendGrid').uniqueIndex;
-                            $(tbWhole).appendGrid('insertRow', 1, null, rowUniqueIndex);
-                            if (evt && evt.preventDefault) evt.preventDefault(settings._buttonClasses.insert);
-                            return false;
-                        }).appendTo(tbCell);
-                    if (!isEmpty(settings._buttonClasses.insert)) button.addClass(settings._buttonClasses.insert);
-                }
-                if (!settings.hideButtons.remove) {
-                    var button = createGridButton(settings.customGridButtons.remove, 'ui-icon-trash')
-                        .attr({ id: settings.idPrefix + '_Delete_' + uniqueIndex, title: settings._i18n.remove, tabindex: -1 })
-                        .addClass('remove').data('appendGrid', { uniqueIndex: uniqueIndex })
-                        .click(function (evt) {
-                            var rowUniqueIndex = $(this).data('appendGrid').uniqueIndex;
-                            removeRow(tbWhole, null, rowUniqueIndex, false);
-                            if (evt && evt.preventDefault) evt.preventDefault();
-                            return false;
-                        }).appendTo(tbCell);
-                    if (!isEmpty(settings._buttonClasses.remove)) button.addClass(settings._buttonClasses.remove);
-                }
-                if (!settings.hideButtons.moveUp) {
-                    var button = createGridButton(settings.customGridButtons.moveUp, 'ui-icon-arrowthick-1-n')
-                        .attr({ id: settings.idPrefix + '_MoveUp_' + uniqueIndex, title: settings._i18n.moveUp, tabindex: -1 })
-                        .addClass('moveUp').data('appendGrid', { uniqueIndex: uniqueIndex })
-                        .click(function (evt) {
-                            var rowUniqueIndex = $(this).data('appendGrid').uniqueIndex;
-                            $(tbWhole).appendGrid('moveUpRow', null, rowUniqueIndex);
-                            if (evt && evt.preventDefault) evt.preventDefault();
-                            return false;
-                        }).appendTo(tbCell);
-                    if (!isEmpty(settings._buttonClasses.moveUp)) button.addClass(settings._buttonClasses.moveUp);
-                }
-                if (!settings.hideButtons.moveDown) {
-                    var button = createGridButton(settings.customGridButtons.moveDown, 'ui-icon-arrowthick-1-s')
-                        .attr({ id: settings.idPrefix + '_MoveDown_' + uniqueIndex, title: settings._i18n.moveDown, tabindex: -1 })
-                        .addClass('moveDown').data('appendGrid', { uniqueIndex: uniqueIndex })
-                        .click(function (evt) {
-                            var rowUniqueIndex = $(this).data('appendGrid').uniqueIndex;
-                            $(tbWhole).appendGrid('moveDownRow', null, rowUniqueIndex);
-                            if (evt && evt.preventDefault) evt.preventDefault();
-                            return false;
-                        }).appendTo(tbCell);
-                    if (!isEmpty(settings._buttonClasses.moveDown)) button.addClass(settings._buttonClasses.moveDown);
-                }
-                */
-                // Handle row dragging
-                /*
-                if (settings.rowDragging) {
-                    var button = $('<div/>').addClass('rowDrag ui-state-default ui-corner-all')
-                        .attr('title', settings._i18n.rowDrag).append($('<div/>').addClass('ui-icon ui-icon-caret-2-n-s').append($('<span/>').addClass('ui-button-text').text('Drag')))
-                        .appendTo(tbCell);
-                    if (!isEmpty(settings._buttonClasses.rowDrag)) button.addClass(settings._buttonClasses.rowDrag);
-                }
-                */
-                // Add hidden controls
-                hiddenColumns.forEach(function (hi) {
-                    // Prepare control ID / name
-                    let hiddenName = settings.columns[hi].name;
-                    let ctrlId = settings.idPrefix + '_' + hiddenName + '_' + uniqueIndex, ctrlName;
-                    if (typeof (settings.nameFormatter) === 'function') {
-                        ctrlName = settings.nameFormatter(settings.idPrefix, hiddenName, uniqueIndex);
-                    } else {
-                        ctrlName = ctrlId;
-                    }
-                    // Create hidden element
-                    tbCell.appendChild(Util.createElem('input', ctrlId, ctrlName, null, 'hidden'));
-                    // Assign value
-                    if (loadData) {
-                        // Load data if needed
-                        self.setCtrlValue(hi, uniqueIndex, numOfRowOrRowArray[z][hiddenName]);
-                    } else if (!Util.isEmpty(settings.columns[hi].value)) {
-                        // Set default value
-                        self.setCtrlValue(hi, uniqueIndex, settings.columns[hi].value);
-                    }
-                });
-
                 // Add extra buttons
                 /*
                 if (settings.customRowButtons && settings.customRowButtons.length) {
@@ -576,10 +563,12 @@ class GridCore {
             }
         }
         */
-        // Save setting
-        // _state.set(self, state);
 
-        if (!Util.isEmpty(rowIndex)) {
+        // Save setting
+        self.saveSetting();
+
+        // Sort row number
+        if (!self.hideRowNumColumn && !Util.isEmpty(rowIndex)) {
             self.sortSequence(rowIndex);
         }
 
@@ -643,9 +632,11 @@ class GridCore {
                 */
                 tbBody.removeChild(tbBody.childNodes[rowIndex]);
                 // Save setting
-                // _state.set(self, state);
+                self.saveSetting();
                 // Sort sequence
-                self.sortSequence(rowIndex);
+                if (!self.hideRowNumColumn) {
+                    self.sortSequence(rowIndex);
+                }
                 // Trigger event
                 /*
                 if ($.isFunction(settings.afterRowRemoved)) {
@@ -672,7 +663,7 @@ class GridCore {
                 }
                 */
                 // Save setting
-                // _state.set(self, state);
+                self.saveSetting();
                 // Trigger event
                 /*
                 if ($.isFunction(settings.afterRowRemoved)) {
@@ -709,8 +700,8 @@ class GridCore {
         if (!Util.isEmpty(oldIndex) && oldIndex > 0) {
             // Get row to swap
             let swapUniqueIndex = self.rowOrder[oldIndex - 1];
-            let trTarget = document.getElementById(settings.idPrefix + '_Row_' + uniqueIndex);
-            let trSwap = document.getElementById(settings.idPrefix + '_Row_' + swapUniqueIndex);
+            let trTarget = document.getElementById(settings.idPrefix + '_$row_' + uniqueIndex);
+            let trSwap = document.getElementById(settings.idPrefix + '_$row_' + swapUniqueIndex);
             // Get the sub panel row if used
             /*
             if (settings.useSubPanel) {
@@ -735,16 +726,18 @@ class GridCore {
             self.rowOrder[oldIndex] = swapUniqueIndex;
             self.rowOrder[oldIndex - 1] = uniqueIndex;
             // Update row label
-            let targetRowNumCell = document.getElementById(settings.idPrefix + '_RowNum_' + uniqueIndex);
-            let swapRowNumCell = document.getElementById(settings.idPrefix + '_RowNum_' + swapUniqueIndex);
-            let swapSeq = swapRowNumCell.innerHTML;
-            swapRowNumCell.innerHTML = targetRowNumCell.innerHTML;
-            targetRowNumCell.innerHTML = swapSeq;
+            if (!self.hideRowNumColumn) {
+                let targetRowNumCell = document.getElementById(settings.idPrefix + '_$rowNum_' + uniqueIndex);
+                let swapRowNumCell = document.getElementById(settings.idPrefix + '_$rowNum_' + swapUniqueIndex);
+                let swapSeq = swapRowNumCell.innerHTML;
+                swapRowNumCell.innerHTML = targetRowNumCell.innerHTML;
+                targetRowNumCell.innerHTML = swapSeq;
+            }
             // Save setting
-            // saveSetting(tbWhole, settings);
+            self.saveSetting();
             // Change focus
-            document.getElementById(settings.idPrefix + '_moveUp_' + uniqueIndex).blur();
-            document.getElementById(settings.idPrefix + '_moveUp_' + swapUniqueIndex).focus();
+            document.getElementById(settings.idPrefix + '_$moveUp_' + uniqueIndex).blur();
+            document.getElementById(settings.idPrefix + '_$moveUp_' + swapUniqueIndex).focus();
             // Trigger event
             /*
             if (settings.afterRowSwapped) {
@@ -766,8 +759,8 @@ class GridCore {
         if (!Util.isEmpty(oldIndex) && oldIndex !== self.rowOrder.length - 1) {
             // Get row to swap
             let swapUniqueIndex = self.rowOrder[oldIndex + 1];
-            let trTarget = document.getElementById(settings.idPrefix + '_Row_' + uniqueIndex);
-            let trSwap = document.getElementById(settings.idPrefix + '_Row_' + swapUniqueIndex);
+            let trTarget = document.getElementById(settings.idPrefix + '_$row_' + uniqueIndex);
+            let trSwap = document.getElementById(settings.idPrefix + '_$row_' + swapUniqueIndex);
             // Get the sub panel row if used
             /*
             if (settings.useSubPanel) {
@@ -787,16 +780,18 @@ class GridCore {
             self.rowOrder[oldIndex] = swapUniqueIndex;
             self.rowOrder[oldIndex + 1] = uniqueIndex;
             // Update row label
-            let targetRowNumCell = document.getElementById(settings.idPrefix + '_RowNum_' + uniqueIndex);
-            let swapRowNumCell = document.getElementById(settings.idPrefix + '_RowNum_' + swapUniqueIndex);
-            let swapSeq = swapRowNumCell.innerHTML;
-            swapRowNumCell.innerHTML = targetRowNumCell.innerHTML;
-            targetRowNumCell.innerHTML = swapSeq;
+            if (!self.hideRowNumColumn) {
+                let targetRowNumCell = document.getElementById(settings.idPrefix + '_$rowNum_' + uniqueIndex);
+                let swapRowNumCell = document.getElementById(settings.idPrefix + '_$rowNum_' + swapUniqueIndex);
+                let swapSeq = swapRowNumCell.innerHTML;
+                swapRowNumCell.innerHTML = targetRowNumCell.innerHTML;
+                targetRowNumCell.innerHTML = swapSeq;
+            }
             // Save setting
-            // saveSetting(tbWhole, settings);
+            self.saveSetting();
             // Change focus
-            document.getElementById(settings.idPrefix + '_moveDown_' + uniqueIndex).blur();
-            document.getElementById(settings.idPrefix + '_moveDown_' + swapUniqueIndex).focus();
+            document.getElementById(settings.idPrefix + '_$moveDown_' + uniqueIndex).blur();
+            document.getElementById(settings.idPrefix + '_$moveDown_' + swapUniqueIndex).focus();
             // Trigger event
             /*
             if (settings.afterRowSwapped) {
@@ -896,17 +891,20 @@ class GridCore {
         return null;
     }
 
+    saveSetting() {
+        let self = this;
+        document.getElementById(self.settings.idPrefix + '_rowOrder').value = self.rowOrder.join();
+    }
+
     /**
      * Update the row number displayed in the front of each row.
      * @param {*} startIndex 
      */
     sortSequence(startIndex) {
         let self = this;
-        if (!self.settings.hideRowNumColumn) {
-            for (let z = startIndex || 0; z < self.rowOrder.length; z++) {
-                document.getElementById(self.settings.idPrefix + '_RowNum_' + self.rowOrder[z])
-                    .innerText = '' + (z + 1);
-            }
+        for (let z = startIndex || 0; z < self.rowOrder.length; z++) {
+            document.getElementById(self.settings.idPrefix + '_$rowNum_' + self.rowOrder[z])
+                .innerText = '' + (z + 1);
         }
     }
 

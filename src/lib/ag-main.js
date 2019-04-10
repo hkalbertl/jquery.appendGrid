@@ -43,14 +43,18 @@ const _defaultColumnOptions = {
     value: null,
     // Display text on the header section.
     display: null,
-    // Extra CSS setting to be added to display text.
+    // Extra CSS setting to be added to display text cell (thead > tr > th).
     displayCss: null,
+    // Extra name of class to be added to display text cell (thead > tr > th).
+    displayClass: null,
     // Tooltip for column head.
     displayTooltip: null,
     // The `colspan` setting on the column header.
     headerSpan: 1,
-    // Extra CSS setting to be added to the control container table cell.
+    // Extra CSS setting to be added to the control container table cell (tbody > tr > td).
     cellCss: null,
+    // Extra name of class to be added to the control container table cell (tbody > tr > td).
+    cellClass: null,
     // Extra attributes to be added to the control.
     ctrlAttr: null,
     // Extra properties to be added to the control.
@@ -130,7 +134,7 @@ class AppendGrid {
         });
         // For object mode, save the number of rows
         if (objectMode) {
-            result[grid.settings.rowCountName] = grid.settings.rowOrder.length;
+            result[grid.settings.rowCountName] = grid.rowOrder.length;
         }
         return result;
     }
