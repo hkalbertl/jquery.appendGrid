@@ -120,7 +120,7 @@ class AppendGrid {
     }
 
     load(records) {
-        _grid.get(this).loadData(records, true);
+        _grid.get(this).loadData(records);
     }
 
     getAllValue(objectMode) {

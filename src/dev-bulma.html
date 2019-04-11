@@ -116,6 +116,67 @@
                         maxlength: 10
                     }
                 }, {
+                    name: 'time',
+                    display: 'Time',
+                    type: 'custom',
+                    customBuilder: function (ctrlHolder, idPrefix, name, uniqueIndex) {
+                        var wrapper = document.createElement('div');
+                        wrapper.id = idPrefix + '_' + name + '_' + uniqueIndex;
+                        wrapper.classList.add('field', 'has-addons', 'is-small');
+                        ctrlHolder.appendChild(wrapper);
+
+                        var hourWrapper1 = document.createElement('div');
+                        hourWrapper1.classList.add('control');
+                        wrapper.appendChild(hourWrapper1);
+
+                        var hourWrapper2 = document.createElement('div');
+                        hourWrapper2.classList.add('select');
+                        hourWrapper1.appendChild(hourWrapper2);
+
+                        var hourElem = document.createElement('select');
+                        hourElem.id = idPrefix + '_' + name + '_hour_' + '_' + uniqueIndex;
+                        hourElem.name = hourElem.id;
+                        hourElem.classList.add('form-control');
+                        hourWrapper2.appendChild(hourElem);
+                        for (var h = 0; h < 24; h++) {
+                            var option = document.createElement('option');
+                            option.value = (h < 10 ? '0' : '') + h;
+                            option.innerText = option.value;
+                            hourElem.appendChild(option);
+                        }
+
+                        var minuteWrapper1 = document.createElement('div');
+                        minuteWrapper1.classList.add('control');
+                        wrapper.appendChild(minuteWrapper1);
+
+                        var minuteWrapper2 = document.createElement('div');
+                        minuteWrapper2.classList.add('select');
+                        minuteWrapper1.appendChild(minuteWrapper2);
+
+                        var minuteElem = document.createElement('select');
+                        minuteElem.id = idPrefix + '_' + name + '_minute_' + '_' + uniqueIndex;
+                        minuteElem.name = minuteElem.id;
+                        minuteElem.classList.add('form-control');
+                        minuteWrapper2.appendChild(minuteElem);
+                        for (var m = 0; m < 60; m += 5) {
+                            var option = document.createElement('option');
+                            option.value = (m < 10 ? '0' : '') + m;
+                            option.innerText = option.value;
+                            minuteElem.appendChild(option);
+                        }
+                    },
+                    customGetter: function (idPrefix, columnName, uniqueIndex) {
+                        var hour = document.getElementById(idPrefix + '_' + columnName + '_hour_' + '_' + uniqueIndex).value;
+                        var minute = document.getElementById(idPrefix + '_' + columnName + '_minute_' + '_' + uniqueIndex).value;
+                        return hour + ':' + minute;
+                    },
+                    customSetter: function (idPrefix, columnName, uniqueIndex, data) {
+                        if (data && 0 === data.search(/^[0-9]{2}\:[0-9]{2}$/g)) {
+                            document.getElementById(idPrefix + '_' + columnName + '_hour_' + '_' + uniqueIndex).value = data.substring(0, 2);
+                            document.getElementById(idPrefix + '_' + columnName + '_minute_' + '_' + uniqueIndex).value = data.substring(3);
+                        }
+                    }
+                }, {
                     name: 'uid',
                     type: 'hidden',
                     value: '0'

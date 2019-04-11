@@ -33,13 +33,19 @@
     <h1>appendGrid - Bootstrap 4</h1>
     <form id="form" action="">
         <table id="tblAppendGrid"></table>
-        <hr />
-        <button type="button" id="getAllValue1" class="btn btn-success btn-sm">getAllValue (Array mode)</button>
-        <button type="button" id="getAllValue2" class="btn btn-success btn-sm">getAllValue (Object mode)</button>
-        <button type="button" id="serialize" class="btn btn-success btn-sm">jQuery serialize()</button>
-        <hr />
-        <h5>Output</h5>
-        <code id="output"></code>
+        <div class="card">
+            <div class="card-header">
+                Debug Output
+                <div class="float-right">
+                    <button type="button" id="getAllValue1" class="btn btn-success btn-sm">getAllValue (Array)</button>
+                    <button type="button" id="getAllValue2" class="btn btn-success btn-sm">getAllValue (Object)</button>
+                    <button type="button" id="serialize" class="btn btn-success btn-sm">jQuery serialize()</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <code id="output"></code>
+            </div>
+        </div>
     </form>
 
     <!-- Add polyfill for legacy browsers (such as IE) -->
@@ -79,8 +85,9 @@
                     insert: 'text-primary'
                 },
                 // hideRowNumColumn: true,
-                rowButtonsInFront: true,
-                hideButtons: { insert: true, remove: true, moveUp: true, moveDown: true },
+                // rowButtonsInFront: true,
+                // hideButtons: { insert: true, remove: true, moveUp: true, moveDown: true },
+                // nameFormatter: function (idPrefix, colName, uniqueIndex) { return colName + '-' + uniqueIndex; },
                 columns: [{
                     name: 'company',
                     display: 'Company',
@@ -105,7 +112,7 @@
                     display: 'Country',
                     type: 'select',
                     cellCss: { backgroundColor: '#ffeeee' },
-                    ctrlOptions: ['Germany', 'Hong Kong', 'Japan', 'Malaysia', 'Taiwan', 'United Kingdom', 'United States']
+                    ctrlOptions: ['', 'Germany', 'Hong Kong', 'Japan', 'Malaysia', 'Taiwan', 'United Kingdom', 'United States']
                 }, {
                     name: 'isNPO',
                     display: 'NPO?',
@@ -128,6 +135,51 @@
                     ctrlAttr: {
                         maxlength: 10
                     }
+                    /*
+                }, {
+                    name: 'time',
+                    display: 'Time',
+                    type: 'custom',
+                    customBuilder: function (ctrlHolder, idPrefix, name, uniqueIndex) {
+                        var wrapper = document.createElement('div');
+                        wrapper.id = idPrefix + '_' + name + '_' + uniqueIndex;
+                        wrapper.classList.add('input-group', 'input-group-sm');
+                        ctrlHolder.appendChild(wrapper);
+                        var hourElem = document.createElement('select');
+                        hourElem.id = idPrefix + '_' + name + '_hour_' + '_' + uniqueIndex;
+                        hourElem.name = hourElem.id;
+                        hourElem.classList.add('form-control');
+                        wrapper.appendChild(hourElem);
+                        for (var h = 0; h < 24; h++) {
+                            var option = document.createElement('option');
+                            option.value = (h < 10 ? '0' : '') + h;
+                            option.innerText = option.value;
+                            hourElem.appendChild(option);
+                        }
+                        var minuteElem = document.createElement('select');
+                        minuteElem.id = idPrefix + '_' + name + '_minute_' + '_' + uniqueIndex;
+                        minuteElem.name = minuteElem.id;
+                        minuteElem.classList.add('form-control');
+                        wrapper.appendChild(minuteElem);
+                        for (var m = 0; m < 60; m += 5) {
+                            var option = document.createElement('option');
+                            option.value = (m < 10 ? '0' : '') + m;
+                            option.innerText = option.value;
+                            minuteElem.appendChild(option);
+                        }
+                    },
+                    customGetter: function (idPrefix, columnName, uniqueIndex) {
+                        var hour = document.getElementById(idPrefix + '_' + columnName + '_hour_' + '_' + uniqueIndex).value;
+                        var minute = document.getElementById(idPrefix + '_' + columnName + '_minute_' + '_' + uniqueIndex).value;
+                        return hour + ':' + minute;
+                    },
+                    customSetter: function (idPrefix, columnName, uniqueIndex, data) {
+                        if (data && 0 === data.search(/^[0-9]{2}\:[0-9]{2}$/g)) {
+                            document.getElementById(idPrefix + '_' + columnName + '_hour_' + '_' + uniqueIndex).value = data.substring(0, 2);
+                            document.getElementById(idPrefix + '_' + columnName + '_minute_' + '_' + uniqueIndex).value = data.substring(3);
+                        }
+                    }
+                    */
                 }, {
                     name: 'uid',
                     type: 'hidden',

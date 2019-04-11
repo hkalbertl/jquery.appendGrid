@@ -160,7 +160,7 @@ class GridCore {
                 tbRow.insertBefore(tbCell, tbRow.firstChild);
             } else {
                 // Insert a cell as the second column
-                tbRow.insertBefore(tbCell, tbRow.childnodes[1]);
+                tbRow.insertBefore(tbCell, tbRow.childNodes[1]);
             }
         } else {
             tbRow.appendChild(tbCell);
@@ -235,13 +235,13 @@ class GridCore {
         return element;
     }
 
-    loadData(records, isInit) {
+    loadData(records, isInit = false) {
         if (!Array.isArray(records) || !records.length) {
             throw '*records* should be in array format!';
         }
 
         // Clear existing content
-        let self = this;
+        const self = this;
         let settings = self.settings;
         // let tbRow, tbCell;
         self.tbBody.innerHTML = '';
@@ -279,7 +279,7 @@ class GridCore {
 
     insertRow(numOfRowOrRowArray, rowIndex, callerUniqueIndex) {
         // Define variables
-        let self = this;
+        const self = this;
         let settings = self.settings, uiFramework = self.uiFramework, tbBody = self.tbBody, tbRow, tbCell;
         let addedRows = [], parentIndex = null;
         // let tbWhole = self.tbWhole, tbSubRow = null, reachMaxRow = false, calColWidth = false
@@ -409,6 +409,9 @@ class GridCore {
                     } else if (settings.columns[y].wrapper.tagName) {
                         // Clone the wrapper element
                         ctrlHolder = settings.columns[y].wrapper.cloneNode(true);
+                    } else {
+                        // Unknown wrapper parameter?
+                        throw 'Unsupported *wrapper* value.';
                     }
                 }
                 if (ctrlHolder) {
@@ -608,7 +611,7 @@ class GridCore {
 
     removeRow(rowIndex, uniqueIndex, force) {
         // Define variables
-        let self = this;
+        const self = this;
         let settings = self.settings, tbWhole = self.tbWhole, tbBody = self.tbBody;
         if (Util.isNumeric(uniqueIndex)) {
             for (let z = 0; z < self.rowOrder.length; z++) {
@@ -689,8 +692,8 @@ class GridCore {
     }
 
     moveUpRow(rowIndex, uniqueIndex) {
-        let self = this, trAdtTarget, oldIndex = null;
-        let settings = self.settings, tbBody = self.tbBody;
+        const self = this;
+        let settings = self.settings, tbBody = self.tbBody, oldIndex = null; // trAdtTarget
         if (Util.isNumeric(rowIndex) && rowIndex > 0 && rowIndex < self.rowOrder.length) {
             oldIndex = rowIndex;
             uniqueIndex = self.rowOrder[rowIndex];
@@ -748,8 +751,8 @@ class GridCore {
     }
 
     moveDownRow(rowIndex, uniqueIndex) {
-        let self = this, trAdtTarget, oldIndex = null;
-        let settings = self.settings, tbBody = self.tbBody;
+        const self = this;
+        let settings = self.settings, tbBody = self.tbBody, oldIndex = null; // trAdtTarget
         if (Util.isNumeric(rowIndex) && rowIndex >= 0 && rowIndex < self.rowOrder.length - 1) {
             oldIndex = rowIndex;
             uniqueIndex = self.rowOrder[rowIndex];
@@ -802,7 +805,7 @@ class GridCore {
     }
 
     setCtrlValue(colIndex, uniqueIndex, data) {
-        let self = this;
+        const self = this;
         let settings = self.settings,
             type = settings.columns[colIndex].type,
             columnName = settings.columns[colIndex].name;
@@ -854,7 +857,7 @@ class GridCore {
     }
 
     getRowValue(uniqueIndex, loopIndex) {
-        let self = this;
+        const self = this;
         let result = {}, suffix = (Util.isEmpty(loopIndex) ? '' : '_' + loopIndex);
         self.settings.columns.forEach(function (column, colIndex) {
             let keyName = column.name + suffix;
@@ -892,7 +895,7 @@ class GridCore {
     }
 
     saveSetting() {
-        let self = this;
+        const self = this;
         document.getElementById(self.settings.idPrefix + '_rowOrder').value = self.rowOrder.join();
     }
 
@@ -901,7 +904,7 @@ class GridCore {
      * @param {*} startIndex 
      */
     sortSequence(startIndex) {
-        let self = this;
+        const self = this;
         for (let z = startIndex || 0; z < self.rowOrder.length; z++) {
             document.getElementById(self.settings.idPrefix + '_$rowNum_' + self.rowOrder[z])
                 .innerText = '' + (z + 1);
@@ -909,7 +912,7 @@ class GridCore {
     }
 
     rowButtonActions(type, uniqueIndex) {
-        let self = this;
+        const self = this;
         if (type === 'insert') {
             self.insertRow(1, null, uniqueIndex);
         } else if (type === 'remove') {
