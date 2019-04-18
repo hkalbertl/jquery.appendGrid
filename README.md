@@ -12,7 +12,7 @@
 
 
 ## Demo
-Demo website is under construction. You may take a look on the [example](example) first.
+Demo website is under construction. You may take a look on this [example](https://appendgrid.apphb.com/Ver2) or [pen](https://codepen.io/hkalbertl/pen/GLrLva) first.
 
 
 ## Documentation

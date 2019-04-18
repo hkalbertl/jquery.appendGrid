@@ -69,7 +69,7 @@
         $(function () {
             // Create instance of AppendGrid
             window.myAppendGrid = new AppendGrid({
-                element: document.getElementById('tblAppendGrid'),
+                element: 'tblAppendGrid',
                 uiFramework: 'bootstrap4',
                 // uiParams: { useButtonGroup: false, sectionClasses: { remove: 'btn-danger' } },
                 iconFramework: 'fontawesome5',
@@ -185,6 +185,28 @@
                     type: 'hidden',
                     value: '0'
                 }],
+                // Events handling
+                dataLoaded: function (element, records) {
+                    console.log('agd: Data loaded.');
+                },
+                rowDataLoaded: function (element, record, dataIndex, uniqueIndex) {
+                    console.log('agd: Row Data loaded. UQIDX=' + uniqueIndex);
+                },
+                afterRowAppended: function (element, parentIndex, addedRows) {
+                    console.log('agd: Row appended.');
+                },
+                afterRowInserted: function (element, parentIndex, addedRows) {
+                    console.log('agd: Row inserted.');
+                },
+                afterRowSwapped: function (element, oldRowIndex, newRowIndex) {
+                    console.log('agd: Row swapped.');
+                },
+                beforeRowRemove: function (element, rowIndex) {
+                    return confirm('Are you sure to remove this row?');
+                },
+                afterRowRemoved: function(caller, rowIndex){
+                    console.log('agd: Row removed. RIDX=' + rowIndex);
+                },
                 // Use sample data in `dev-data.js`, if loaded
                 initData: window.myAppendGridInitData || null
                 // initData: null

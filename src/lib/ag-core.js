@@ -53,7 +53,12 @@ class GridCore {
         console.debug('ag:Options initialized');
 
         // Check the table element
-        let tbWhole = settings.element;
+        let tbWhole = null;
+        if (typeof settings.element === 'string'){
+            tbWhole = document.getElementById(settings.element);
+        } else {
+            tbWhole = settings.element;
+        }
         if (!tbWhole || !tbWhole.tagName || tbWhole.tagName !== 'TABLE') {
             throw '*element* is not defined or is not a table DOM element.';
         }
@@ -256,11 +261,9 @@ class GridCore {
             for (let c = 0; c < settings.columns.length; c++) {
                 self.setCtrlValue(c, self.rowOrder[r], records[r][settings.columns[c].name]);
             }
-            /*
-            if ($.isFunction(settings.rowDataLoaded)) {
-                settings.rowDataLoaded(tbWhole, records[r], r, settings._rowOrder[r]);
+            if (typeof settings.rowDataLoaded === 'function') {
+                settings.rowDataLoaded(self.tbWhole, records[r], r, self.rowOrder[r]);
             }
-            */
         }
 
         // Save setting
@@ -270,11 +273,9 @@ class GridCore {
         if (isInit) self.settings.initData = null;
 
         // Trigger data loaded event
-        /*
-        if ($.isFunction(settings.dataLoaded)) {
-            settings.dataLoaded(tbWhole, records);
+        if (typeof settings.dataLoaded === 'function') {
+            settings.dataLoaded(self.tbWhole, records);
         }
-        */
     }
 
     insertRow(numOfRowOrRowArray, rowIndex, callerUniqueIndex) {
@@ -403,7 +404,7 @@ class GridCore {
                 // Create wrapper, if required
                 let ctrlHolder = null;
                 if (settings.columns[y].wrapper) {
-                    if (typeof (settings.columns[y].wrapper) === 'function') {
+                    if (typeof settings.columns[y].wrapper === 'function') {
                         // Create wrapper by custom function
                         ctrlHolder = settings.columns[y].wrapper();
                     } else if (settings.columns[y].wrapper.tagName) {
@@ -421,7 +422,7 @@ class GridCore {
                 }
                 // Prepare control id and name
                 let ctrlId = settings.idPrefix + '_' + settings.columns[y].name + '_' + uniqueIndex, ctrlName;
-                if (typeof (settings.nameFormatter) === 'function') {
+                if (typeof settings.nameFormatter === 'function') {
                     ctrlName = settings.nameFormatter(settings.idPrefix, settings.columns[y].name, uniqueIndex);
                 } else {
                     ctrlName = ctrlId;
@@ -429,7 +430,7 @@ class GridCore {
                 // Check control type
                 let ctrl = null;
                 if (settings.columns[y].type === 'custom') {
-                    if (typeof (settings.columns[y].customBuilder) === 'function') {
+                    if (typeof settings.columns[y].customBuilder === 'function') {
                         ctrl = settings.columns[y].customBuilder(ctrlHolder, settings.idPrefix, settings.columns[y].name, uniqueIndex);
                     }
                 } else {
@@ -483,7 +484,7 @@ class GridCore {
                 // Prepare control ID / name
                 let hiddenName = settings.columns[hi].name;
                 let ctrlId = settings.idPrefix + '_' + hiddenName + '_' + uniqueIndex, ctrlName;
-                if (typeof (settings.nameFormatter) === 'function') {
+                if (typeof settings.nameFormatter === 'function') {
                     ctrlName = settings.nameFormatter(settings.idPrefix, hiddenName, uniqueIndex);
                 } else {
                     ctrlName = ctrlId;
@@ -582,17 +583,17 @@ class GridCore {
         }
         */
         // Trigger events
-        /*
-        if ($.isNumeric(rowIndex)) {
-            if ($.isFunction(settings.afterRowInserted)) {
-                settings.afterRowInserted(tbWhole, parentIndex, addedRows);
+        if (Util.isNumeric(rowIndex)) {
+            if (typeof settings.afterRowInserted === 'function' ) {
+                settings.afterRowInserted(self.tbWhole, parentIndex, addedRows);
             }
         }
         else {
-            if ($.isFunction(settings.afterRowAppended)) {
-                settings.afterRowAppended(tbWhole, parentIndex, addedRows);
+            if (typeof settings.afterRowAppended === 'function' ) {
+                settings.afterRowAppended(self.tbWhole, parentIndex, addedRows);
             }
         }
+        /*
         if (reachMaxRow && $.isFunction(settings.maxNumRowsReached)) {
             settings.maxNumRowsReached();
         }
@@ -623,7 +624,7 @@ class GridCore {
         }
         if (Util.isNumeric(rowIndex)) {
             // Remove middle row
-            if (force || typeof (settings.beforeRowRemove) !== 'function' || settings.beforeRowRemove(tbWhole, rowIndex)) {
+            if (force || typeof settings.beforeRowRemove !== 'function' || settings.beforeRowRemove(tbWhole, rowIndex)) {
                 self.rowOrder.splice(rowIndex, 1);
                 /*
                 if (settings.useSubPanel) {
@@ -641,11 +642,9 @@ class GridCore {
                     self.sortSequence(rowIndex);
                 }
                 // Trigger event
-                /*
-                if ($.isFunction(settings.afterRowRemoved)) {
+                if (typeof settings.afterRowRemoved === 'function') {
                     settings.afterRowRemoved(tbWhole, rowIndex);
                 }
-                */
             }
         } else {
             // Store old window scroll value
@@ -657,7 +656,7 @@ class GridCore {
             }
             */
             // Remove last row
-            if (force || typeof (settings.beforeRowRemove) !== 'function' || settings.beforeRowRemove(tbWhole, self.rowOrder.length - 1)) {
+            if (force || typeof settings.beforeRowRemove !== 'function' || settings.beforeRowRemove(tbWhole, self.rowOrder.length - 1)) {
                 uniqueIndex = self.rowOrder.pop();
                 tbBody.removeChild(tbBody.lastChild);
                 /*
@@ -668,11 +667,9 @@ class GridCore {
                 // Save setting
                 self.saveSetting();
                 // Trigger event
-                /*
-                if ($.isFunction(settings.afterRowRemoved)) {
+                if (typeof settings.afterRowRemoved === 'function') {
                     settings.afterRowRemoved(tbWhole, null);
                 }
-                */
             }
             // Scroll the page when append row
             /*
@@ -742,11 +739,9 @@ class GridCore {
             document.getElementById(settings.idPrefix + '_$moveUp_' + uniqueIndex).blur();
             document.getElementById(settings.idPrefix + '_$moveUp_' + swapUniqueIndex).focus();
             // Trigger event
-            /*
-            if (settings.afterRowSwapped) {
-                settings.afterRowSwapped(tbWhole, oldIndex, oldIndex - 1);
+            if (typeof settings.afterRowSwapped === 'function') {
+                settings.afterRowSwapped(self.tbWhole, oldIndex, oldIndex - 1);
             }
-            */
         }
     }
 
@@ -796,11 +791,9 @@ class GridCore {
             document.getElementById(settings.idPrefix + '_$moveDown_' + uniqueIndex).blur();
             document.getElementById(settings.idPrefix + '_$moveDown_' + swapUniqueIndex).focus();
             // Trigger event
-            /*
-            if (settings.afterRowSwapped) {
-                settings.afterRowSwapped(tbWhole, oldIndex, oldIndex + 1);
+            if (typeof settings.afterRowSwapped === 'function') {
+                settings.afterRowSwapped(self.tbWhole, oldIndex, oldIndex + 1);
             }
-            */
         }
     }
 
@@ -811,7 +804,7 @@ class GridCore {
             columnName = settings.columns[colIndex].name;
         // Handle values by type
         if (type === 'custom') {
-            if (typeof (settings.columns[colIndex].customSetter) === 'function') {
+            if (typeof settings.columns[colIndex].customSetter === 'function') {
                 settings.columns[colIndex].customSetter(settings.idPrefix, columnName, uniqueIndex, data);
             } else {
                 // `customSetter` is not a function?? Skip handling...
@@ -837,7 +830,7 @@ class GridCore {
         const column = settings.columns[colIndex];
         // let type = self.settings.columns[colIndex].type, columnName = settings.columns[colIndex].name;
         if (column.type === 'custom') {
-            if (typeof (column.customGetter) === 'function') {
+            if (typeof column.customGetter === 'function') {
                 return column.customGetter(settings.idPrefix, column.name, uniqueIndex);
             } else {
                 // customGetter is not defined
