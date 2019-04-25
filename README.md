@@ -4,67 +4,30 @@
 
 
 ## About verisons
-**appendGrid** is moving to [version 2](../../tree/v2-dev) which support [Bootstrap 4](https://getbootstrap.com/) natively. For [version 1](../../tree/v1-dev) that based on [jQuery UI](https://jqueryui.com/) will provide bug fix only.
-
-
-## Demo
-Lots of demo cases are available on [Demo section](https://appendgrid.apphb.com/Demo) of **appendGrid** website.
+**appendGrid** is moving to [version 2](../../tree/v2-dev) that will remove dependency on jQuery and jQuery UI. The new code is rewritten by using ES6. It will compatible with modern web frameworks such as [Bootstrap 4](https://getbootstrap.com/) and [Bulma](https://bulma.io/) natively. For [version 1](../../tree/v1-dev) that based on [jQuery UI](https://jqueryui.com/) will provide bug fix only.
 
 
 ## Prerequisite
-- [jQuery](http://jquery.com) v1.12.4
-- [jQuery UI](http://jqueryui.com) v1.12.1 with all components, or custom build included:
-  - UI Core - Core
-  - UI Core - Widget
-  - Widgets - Button
-
-For jQuery UI custom build option, you will need extra components as you wanted to use other jQuery widgets such as datepicker.
+- Hopefully no in the final release ;)
 
 
-## How to use?
-```html
-<!DOCTYPE html>
-<html>
-<head>
-    <!--jQuery and jQuery UI-->
-    <link href="jquery-ui-1.12.1.css" rel="stylesheet"/>
-    <script type="text/javascript" src="jquery-1.12.4.js"></script>
-    <script type="text/javascript" src="jquery-ui-1.12.1.js"></script>
-    <!--Reference the CSS and JS files-->
-    <link href="jquery.appendGrid-x.x.x.css" rel="stylesheet"/>
-    <script src="jquery.appendGrid-x.x.x.js"></script>
-</head>
-<body>
-    <!--Prepare a table element as the grid-->
-    <table id="tblAppendGrid"></table>
-</body>
-</html>
-```
-```javascript
-// Initial the grid as you needed
-$(function() {
-    $('#tblAppendGrid').appendGrid({ /* Initial parameters */ });
-});
-```
-Still have problems? Try to download a working sample in [demo section](https://appendgrid.apphb.com/Demo)!
+## Demo
+Demo website is under construction. You may take a look on this [example](https://appendgrid.apphb.com/Ver2) or [pen](https://codepen.io/hkalbertl/pen/GLrLva) first.
 
 
 ## Documentation
-The full list of options / methods / callback events are available on the [Documentation section](https://appendgrid.apphb.com/Documentation) of **appendGrid** website.
+Documentation website is under construction.
 
 
-## Wanna help **appendGrid**?
-Yeah, you can:
-- Add more unit test cases
-- Suggest enhancements
-- Report issues
-- And more?
+## Instructions
+- Execute command `npm install` to install development dependencies
+- Execute command `npm run start` for running development server and preview
+- Execute command `npm run build` for creating distribution files
 
 
-## Changelog
-Changelog is available [here](CHANGELOG.md).
+## Others
+- Project structure is based on [js-plugin-starter](https://github.com/thatisuday/js-plugin-starter)
 
 
 ## License
-Dual licensed under the [LGPL](http://www.gnu.org/licenses/lgpl.html)
-and [MIT](http://www.opensource.org/licenses/mit-license.php) licenses.
+Licensed under the [MIT](http://www.opensource.org/licenses/mit-license.php) license.

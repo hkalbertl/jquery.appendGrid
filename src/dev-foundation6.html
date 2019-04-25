@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>appendGrid - Foundation 6</title>
+
+    <!--UI Framework Style Sheets-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/css/foundation.min.css"
+        integrity="sha256-xpOKVlYXzQ3P03j397+jWFZLMBXLES3IiryeClgU5og=" crossorigin="anonymous" />
+
+    <!--Icon Webfont Frameworks-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+        integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
+    <!--
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typicons/2.0.9/typicons.min.css"
+        integrity="sha256-hmDtEnmZFvJ3zLsfobp03CSD3/qRCJmY3f7Vqf6zIgA=" crossorigin="anonymous" />
+    -->
+    <!--
+    <link href="https://unpkg.com/ionicons@4.4.4/dist/css/ionicons.min.css" rel="stylesheet" />
+    -->
+    <!--
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic.min.css"
+        integrity="sha256-CfN2r6i/dqkUHVRqpBzO3w21SnIWalwGfj5ScBPVzmI=" crossorigin="anonymous" />
+    -->
+    <!--
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/3.5.95/css/materialdesignicons.min.css" />
+    -->
+</head>
+
+<body class="grid-container">
+    <h1>appendGrid - Foundation 6</h1>
+    <form id="form" action="">
+        <table id="tblAppendGrid"></table>
+        <hr />
+        <button type="button" id="getAllValue1" class="button success">getAllValue (Array mode)</button>
+        <button type="button" id="getAllValue2" class="button success">getAllValue (Object mode)</button>
+        <button type="button" id="serialize" class="button success">jQuery serialize()</button>
+        <hr />
+        <h5>Output</h5>
+        <code id="output"></code>
+    </form>
+
+    <!-- Add polyfill for legacy browsers (such as IE) -->
+    <script src="https://polyfill.io/v3/polyfill.min.js"></script>
+
+    <!-- Add optional libraries -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/what-input/5.2.1/what-input.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/js/foundation.min.js"
+        integrity="sha256-/PFxCnsMh+nTuM0k3VJCRch1gwnCfKjaP8rJNq5SoBg=" crossorigin="anonymous"></script>
+
+    <!-- plugin initialization -->
+    <script>
+        $(function () {
+            // Init foundation by using the guide here: https://foundation.zurb.com/sites/docs/installation.html
+            $(document).foundation();
+
+            // Create instance of AppendGrid
+            window.myAppendGrid = new AppendGrid({
+                element: document.getElementById('tblAppendGrid'),
+                uiFramework: 'foundation6',
+                // uiParams: { useButtonGroup: false, sectionClasses: { remove: 'btn-danger' } },
+                iconFramework: 'fontawesome5',
+                // iconFramework: 'ionicon4',
+                // iconFramework: 'typicons2',
+                // iconFramework: 'openiconic',
+                // iconFramework: 'materialdesignicons3',
+                // hideButtons: { moveUp: true, moveDown: true },
+                columns: [{
+                    name: 'company',
+                    display: 'Company',
+                    type: 'text',
+                    ctrlAttr: { maxlength: 100 },
+                    events: {
+                        click: function (e) {
+                            alert(e.uniqueIndex);
+                        },
+                        change: function (e) {
+                            alert(e.columnName);
+                        }
+                    }
+                }, {
+                    name: 'name',
+                    display: 'Contact Person',
+                    type: 'text',
+                    ctrlAttr: { maxlength: 100 },
+                    ctrlCss: { backgroundColor: '#eeffee' }
+                }, {
+                    name: 'country',
+                    display: 'Country',
+                    type: 'select',
+                    cellCss: { backgroundColor: '#ffeeee' },
+                    ctrlOptions: ['Germany', 'Hong Kong', 'Japan', 'Malaysia', 'Taiwan', 'United Kingdom', 'United States']
+                }, {
+                    name: 'isNPO',
+                    display: 'NPO?',
+                    type: 'checkbox',
+                    cellClass: 'text-center',
+                    displayCss: { color: '#ff9900' }
+                }, {
+                    name: 'orderPlaced',
+                    display: 'Order Placed',
+                    type: 'number',
+                    ctrlAttr: {
+                        min: 0,
+                        max: 10000
+                    },
+                    displayClass: 'bg-light'
+                }, {
+                    name: 'memberSince',
+                    display: 'Member Since',
+                    type: 'date',
+                    ctrlAttr: {
+                        maxlength: 10
+                    }
+                }, {
+                    name: 'uid',
+                    type: 'hidden',
+                    value: '0'
+                }],
+                // Use sample data in `dev-data.js`, if loaded
+                initData: window.myAppendGridInitData || null
+                // initData: null
+            });
+            // Add button event
+            $('#getAllValue1').on('click', function () {
+                $('#output').text(JSON.stringify(window.myAppendGrid.getAllValue()));
+            });
+            $('#getAllValue2').on('click', function () {
+                $('#output').text(JSON.stringify(window.myAppendGrid.getAllValue(true)));
+            });
+            $('#serialize').on('click', function () {
+                $('#output').text($('#form').serialize());
+            });
+        });
+    </script>
+</body>
+
+</html>

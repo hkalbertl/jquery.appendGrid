@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>appendGrid - Bootstrap 4</title>
+
+    <!--UI Framework Style Sheets-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+
+    <!--Icon Webfont Frameworks-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+        integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
+    <!--
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typicons/2.0.9/typicons.min.css"
+        integrity="sha256-hmDtEnmZFvJ3zLsfobp03CSD3/qRCJmY3f7Vqf6zIgA=" crossorigin="anonymous" />
+    -->
+    <!--
+    <link href="https://unpkg.com/ionicons@4.4.4/dist/css/ionicons.min.css" rel="stylesheet" />
+    -->
+    <!--
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/open-iconic/1.1.1/font/css/open-iconic.min.css"
+        integrity="sha256-CfN2r6i/dqkUHVRqpBzO3w21SnIWalwGfj5ScBPVzmI=" crossorigin="anonymous" />
+    -->
+    <!--
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/3.5.95/css/materialdesignicons.min.css" />
+    -->
+</head>
+
+<body class="container">
+    <h1>appendGrid - Bootstrap 4</h1>
+    <form id="form" action="">
+        <table id="tblAppendGrid"></table>
+        <div class="card">
+            <div class="card-header">
+                Debug Output
+                <div class="float-right">
+                    <button type="button" id="getAllValue1" class="btn btn-success btn-sm">getAllValue (Array)</button>
+                    <button type="button" id="getAllValue2" class="btn btn-success btn-sm">getAllValue (Object)</button>
+                    <button type="button" id="serialize" class="btn btn-success btn-sm">jQuery serialize()</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <code id="output"></code>
+            </div>
+        </div>
+    </form>
+
+    <!-- Add polyfill for legacy browsers (such as IE) -->
+    <script src="https://polyfill.io/v3/polyfill.min.js"></script>
+
+    <!-- Add optional libraries -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+    <!--
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/js/foundation.min.js"
+        integrity="sha256-/PFxCnsMh+nTuM0k3VJCRch1gwnCfKjaP8rJNq5SoBg=" crossorigin="anonymous"></script>
+    -->
+
+    <!-- plugin initialization -->
+    <script>
+        $(function () {
+            // Create instance of AppendGrid
+            window.myAppendGrid = new AppendGrid({
+                element: 'tblAppendGrid',
+                uiFramework: 'bootstrap4',
+                // uiParams: { useButtonGroup: false, sectionClasses: { remove: 'btn-danger' } },
+                iconFramework: 'fontawesome5',
+                // iconFramework: 'ionicon4',
+                // iconFramework: 'typicons2',
+                // iconFramework: 'openiconic',
+                // iconFramework: 'materialdesignicons3',
+                // Optional CSS classes for Bootstrap
+                sectionClasses: {
+                    table: 'table-sm',
+                    buttonGroup: 'btn-group-sm',
+                    control: 'form-control-sm',
+                    insert: 'text-primary'
+                },
+                // hideRowNumColumn: true,
+                // rowButtonsInFront: true,
+                // hideButtons: { insert: true, remove: true, moveUp: true, moveDown: true },
+                // nameFormatter: function (idPrefix, colName, uniqueIndex) { return colName + '-' + uniqueIndex; },
+                columns: [{
+                    name: 'company',
+                    display: 'Company',
+                    type: 'text',
+                    ctrlAttr: { maxlength: 100 },
+                    events: {
+                        click: function (e) {
+                            alert(e.uniqueIndex);
+                        },
+                        change: function (e) {
+                            alert(e.columnName);
+                        }
+                    }
+                }, {
+                    name: 'name',
+                    display: 'Contact Person',
+                    type: 'text',
+                    ctrlAttr: { maxlength: 100 },
+                    ctrlCss: { backgroundColor: '#eeffee' }
+                }, {
+                    name: 'country',
+                    display: 'Country',
+                    type: 'select',
+                    cellCss: { backgroundColor: '#ffeeee' },
+                    ctrlOptions: ['', 'Germany', 'Hong Kong', 'Japan', 'Malaysia', 'Taiwan', 'United Kingdom', 'United States']
+                }, {
+                    name: 'isNPO',
+                    display: 'NPO?',
+                    type: 'checkbox',
+                    cellClass: 'text-center',
+                    displayCss: { color: '#ff9900' }
+                }, {
+                    name: 'orderPlaced',
+                    display: 'Order Placed',
+                    type: 'number',
+                    ctrlAttr: {
+                        min: 0,
+                        max: 10000
+                    },
+                    displayClass: 'bg-light'
+                }, {
+                    name: 'memberSince',
+                    display: 'Member Since',
+                    type: 'date',
+                    ctrlAttr: {
+                        maxlength: 10
+                    }
+                    /*
+                }, {
+                    name: 'time',
+                    display: 'Time',
+                    type: 'custom',
+                    customBuilder: function (ctrlHolder, idPrefix, name, uniqueIndex) {
+                        var wrapper = document.createElement('div');
+                        wrapper.id = idPrefix + '_' + name + '_' + uniqueIndex;
+                        wrapper.classList.add('input-group', 'input-group-sm');
+                        ctrlHolder.appendChild(wrapper);
+                        var hourElem = document.createElement('select');
+                        hourElem.id = idPrefix + '_' + name + '_hour_' + '_' + uniqueIndex;
+                        hourElem.name = hourElem.id;
+                        hourElem.classList.add('form-control');
+                        wrapper.appendChild(hourElem);
+                        for (var h = 0; h < 24; h++) {
+                            var option = document.createElement('option');
+                            option.value = (h < 10 ? '0' : '') + h;
+                            option.innerText = option.value;
+                            hourElem.appendChild(option);
+                        }
+                        var minuteElem = document.createElement('select');
+                        minuteElem.id = idPrefix + '_' + name + '_minute_' + '_' + uniqueIndex;
+                        minuteElem.name = minuteElem.id;
+                        minuteElem.classList.add('form-control');
+                        wrapper.appendChild(minuteElem);
+                        for (var m = 0; m < 60; m += 5) {
+                            var option = document.createElement('option');
+                            option.value = (m < 10 ? '0' : '') + m;
+                            option.innerText = option.value;
+                            minuteElem.appendChild(option);
+                        }
+                    },
+                    customGetter: function (idPrefix, columnName, uniqueIndex) {
+                        var hour = document.getElementById(idPrefix + '_' + columnName + '_hour_' + '_' + uniqueIndex).value;
+                        var minute = document.getElementById(idPrefix + '_' + columnName + '_minute_' + '_' + uniqueIndex).value;
+                        return hour + ':' + minute;
+                    },
+                    customSetter: function (idPrefix, columnName, uniqueIndex, data) {
+                        if (data && 0 === data.search(/^[0-9]{2}\:[0-9]{2}$/g)) {
+                            document.getElementById(idPrefix + '_' + columnName + '_hour_' + '_' + uniqueIndex).value = data.substring(0, 2);
+                            document.getElementById(idPrefix + '_' + columnName + '_minute_' + '_' + uniqueIndex).value = data.substring(3);
+                        }
+                    }
+                    */
+                }, {
+                    name: 'uid',
+                    type: 'hidden',
+                    value: '0',
+                    emptyCriteria: function(value){
+                        var numeric = parseFloat(value);
+                        if (!isNaN(numeric) && !isFinite(numeric)){
+                            // `value` is number and greater than 0
+                            return numeric > 0;
+                        } else if (typeof value ==='string'){
+                            // `value` is text and not empty
+                            return value !== '';
+                        }
+                        // `value` is empty
+                        return true;
+                    }
+                }],
+                // Events handling
+                dataLoaded: function (element, records) {
+                    console.log('agd: Data loaded.');
+                },
+                rowDataLoaded: function (element, record, dataIndex, uniqueIndex) {
+                    console.log('agd: Row Data loaded. UQIDX=' + uniqueIndex);
+                },
+                afterRowAppended: function (element, parentIndex, addedRows) {
+                    console.log('agd: Row appended.');
+                },
+                afterRowInserted: function (element, parentIndex, addedRows) {
+                    console.log('agd: Row inserted.');
+                },
+                afterRowSwapped: function (element, oldRowIndex, newRowIndex) {
+                    console.log('agd: Row swapped.');
+                },
+                beforeRowRemove: function (element, rowIndex) {
+                    return confirm('Are you sure to remove this row?');
+                },
+                afterRowRemoved: function(caller, rowIndex){
+                    console.log('agd: Row removed. RIDX=' + rowIndex);
+                },
+                // Use sample data in `dev-data.js`, if loaded
+                initData: window.myAppendGridInitData || null
+                // initData: null
+            });
+            // Add button event
+            $('#getAllValue1').on('click', function () {
+                $('#output').text(JSON.stringify(window.myAppendGrid.getAllValue()));
+            });
+            $('#getAllValue2').on('click', function () {
+                $('#output').text(JSON.stringify(window.myAppendGrid.getAllValue(true)));
+            });
+            $('#serialize').on('click', function () {
+                $('#output').text($('#form').serialize());
+            });
+        });
+    </script>
+</body>
+
+</html>

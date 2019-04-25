@@ -1,0 +1,44 @@
+{
+  "name": "jquery.appendgrid",
+  "version": "2.0.0",
+  "description": "appendGrid - The dynamic table input JavaScript plugin",
+  "main": "dist/AppendGrid.js",
+  "scripts": {
+    "build": "webpack --config webpack.prod.js",
+    "start": "webpack-dev-server --open --config webpack.dev.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hkalbertl/jquery.appendGrid"
+  },
+  "keywords": [
+    "ui",
+    "header-detail",
+    "master-detail",
+    "edit",
+    "table",
+    "input",
+    "grid"
+  ],
+  "author": "Albert L. <hkalbertl@outlook.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hkalbertl/jquery.appendGrid/issues"
+  },
+  "homepage": "https://github.com/hkalbertl/jquery.appendGrid",
+  "devDependencies": {
+    "@babel/cli": "^7.4.3",
+    "@babel/core": "^7.4.3",
+    "@babel/node": "^7.2.2",
+    "@babel/preset-env": "^7.4.3",
+    "babel-loader": "^8.0.5",
+    "clean-webpack-plugin": "^2.0.1",
+    "html-webpack-include-assets-plugin": "^1.0.7",
+    "html-webpack-plugin": "^3.2.0",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-server": "^3.2.1",
+    "webpack-merge": "^4.2.1"
+  },
+  "dependencies": {}
+}
