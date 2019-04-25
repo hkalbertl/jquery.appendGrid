@@ -2,8 +2,8 @@
 import UiBase from './ag-ui-base';
 
 class UiBootstrap4 extends UiBase {
-    constructor(uiParams, iconFramework) {
-        super(iconFramework);
+    constructor(uiParams, i18n, iconFramework) {
+        super(i18n, iconFramework);
         this.name = 'ui-bootstrap4';
         // Prepare default options
         let libParams = {

@@ -22,6 +22,8 @@ const _defaultGridOptions = {
     initData: null,
     // Array of column options.
     columns: [],
+    // Labels or messages used in grid.
+    i18n: null,
     // Hide the buttons at the end of rows or bottom of grid.
     hideButtons: null,
     // Hide the row number column.
@@ -87,6 +89,21 @@ class AppendGrid {
     constructor(options) {
         // Merge default options
         let params = Object.assign({}, _defaultGridOptions, options);
+
+        // Handle i18n option
+        let i18n = {
+            append: 'Append Row',
+            removeLast: 'Remove Last Row',
+            insert: 'Insert Row Above',
+            remove: 'Remove Current Row',
+            moveUp: 'Move Up',
+            moveDown: 'Move Down',
+            rowEmpty: 'This Grid Is Empty'
+        };
+        if (params.i18n) {
+            Object.assign(i18n, params.i18n);
+        }
+        params.i18n = i18n;
 
         // Handle hideButtons option
         let hideButtons = {

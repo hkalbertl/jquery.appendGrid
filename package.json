@@ -1,7 +1,7 @@
 {
   "name": "jquery.appendgrid",
   "version": "2.0.0",
-  "description": "appendGrid - The dynamic table input plugin with or without jQuery",
+  "description": "appendGrid - The dynamic table input JavaScript plugin",
   "main": "dist/AppendGrid.js",
   "scripts": {
     "build": "webpack --config webpack.prod.js",

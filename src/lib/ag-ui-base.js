@@ -1,8 +1,9 @@
 ﻿import * as Util from './ag-util';
 
 class UiBase {
-	constructor(iconFramework) {
+	constructor(i18n, iconFramework) {
 		// Save options
+		this.i18n = i18n;
 		this.iconFramework = iconFramework;
 		this.sectionClasses = {
 			wrapper: 'ag-wrapper',
@@ -61,6 +62,7 @@ class UiBase {
 	generateButton(holder, type, buttonId) {
 		// Create the button
 		let button = Util.createElem('button', buttonId, null, null, 'button');
+		button.title = this.i18n[type];
 		Util.applyClasses(button,
 			this.getSectionClasses('button'),
 			this.getSectionClasses(type));

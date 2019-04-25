@@ -86,13 +86,13 @@ class GridCore {
 
         // Check UI framework
         if (settings.uiFramework === 'bootstrap4') {
-            self.uiFramework = new UiBootstrap4(settings.uiParams, self.iconFramework);
+            self.uiFramework = new UiBootstrap4(settings.uiParams, settings.i18n, self.iconFramework);
         } else if (settings.uiFramework === 'bulma') {
-            self.uiFramework = new UiBulma(settings.uiParams, self.iconFramework);
+            self.uiFramework = new UiBulma(settings.uiParams, settings.i18n, self.iconFramework);
         } else if (settings.uiFramework === 'foundation6') {
-            self.uiFramework = new UiFoundation6(settings.uiParams, self.iconFramework);
+            self.uiFramework = new UiFoundation6(settings.uiParams, settings.i18n, self.iconFramework);
         } else if (!settings.uiFramework || settings.uiFramework === 'default') {
-            self.uiFramework = new UiDefault(settings.uiParams, self.iconFramework);
+            self.uiFramework = new UiDefault(settings.uiParams, settings.i18n, self.iconFramework);
         } else {
             throw `Unknown UI framework *${settings.uiFramework}*.`;
         }

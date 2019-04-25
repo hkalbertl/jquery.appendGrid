@@ -2,8 +2,8 @@
 import UiBase from './ag-ui-base';
 
 class UiBulma extends UiBase {
-    constructor(uiParams, iconFramework) {
-        super(iconFramework);
+    constructor(uiParams, i18n, iconFramework) {
+        super(i18n, iconFramework);
         this.name = 'ui-bulma';
         // Prepare default options
         let libParams = {
@@ -31,12 +31,13 @@ class UiBulma extends UiBase {
         this.uiParams = libParams;
     }
 
-    generateButton(holder, type) {
+    generateButton(holder, type, buttonId) {
         // Create the button
-        let button = document.createElement('button');
-        button.type = 'button';
-        Util.applyClasses(button, this.getSectionClasses('button'));
-        Util.applyClasses(button, this.getSectionClasses(type));
+        let button = Util.createElem('button', buttonId, null, null, 'button');
+        button.title = this.i18n[type];
+        Util.applyClasses(button,
+            this.getSectionClasses('button'),
+            this.getSectionClasses(type));
         // Create related icon and append to button
         let container = null;
         if (this.iconFramework.isTextBased) {
