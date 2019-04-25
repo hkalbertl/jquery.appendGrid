@@ -4,7 +4,7 @@
 
 
 ## About verisons
-**appendGrid** is moving to [version 2](../../tree/v2-dev) that will remove dependency on jQuery and jQuery UI. The new code is a complete rewrite by using ES6. It will compatible with modern web frameworks such as [Bootstrap 4](https://getbootstrap.com/) and [Bulma](https://bulma.io/) natively. For [version 1](../../tree/v1-dev) that based on [jQuery UI](https://jqueryui.com/) will provide bug fix only.
+**appendGrid** is moving to [version 2](../../tree/v2-dev) that will remove dependency on jQuery and jQuery UI. The new code is rewritten by using ES6. It will compatible with modern web frameworks such as [Bootstrap 4](https://getbootstrap.com/) and [Bulma](https://bulma.io/) natively. For [version 1](../../tree/v1-dev) that based on [jQuery UI](https://jqueryui.com/) will provide bug fix only.
 
 
 ## Prerequisite

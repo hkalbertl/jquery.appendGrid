@@ -1,4 +1,5 @@
 ﻿import GridCore from './ag-core'
+import * as Util from './ag-util'
 
 // WeakMap object for keeping private grid data
 const _grid = new WeakMap();
@@ -112,11 +113,23 @@ class AppendGrid {
     }
 
     appendRow(numOfRowOrRowArray) {
-        _grid.get(this).appendRow(numOfRowOrRowArray);
+        _grid.get(this).insertRow(numOfRowOrRowArray || 1);
     }
 
-    insertRow(numOfRowOrRowArray, rowIndex, callerUniqueIndex) {
-        _grid.get(this).insertRow(numOfRowOrRowArray, rowIndex, callerUniqueIndex);
+    insertRow(numOfRowOrRowArray, rowIndex) {
+        _grid.get(this).insertRow(numOfRowOrRowArray, rowIndex);
+    }
+
+    removeRow(rowIndex) {
+        _grid.get(this).removeRow(rowIndex);
+    }
+
+    moveUpRow(rowIndex) {
+        _grid.get(this).moveUpRow(rowIndex);
+    }
+
+    moveDownRow(rowIndex) {
+        _grid.get(this).moveDownRow(rowIndex);
     }
 
     load(records) {
@@ -139,9 +152,87 @@ class AppendGrid {
         return result;
     }
 
+    getUniqueIndex(rowIndex) {
+        const rowOrder = _grid.get(this).rowOrder;
+        if (rowIndex >= 0 && rowIndex < rowOrder.length) {
+            return rowOrder[rowIndex];
+        }
+        return null;
+    }
+
+    getRowIndex(uniqueIndex) {
+        const rowOrder = _grid.get(this).rowOrder;
+        for (let r = 0; r < rowOrder.length; r++) {
+            if (rowOrder[r] === uniqueIndex) {
+                return r;
+            }
+        }
+        return null;
+    }
+
+    getRowCount() {
+        return _grid.get(this).rowOrder.length;
+    }
+
     getRowOrder() {
         // Return a copy of `Row Order` array
         return _grid.get(this).rowOrder.slice();
+    }
+
+    getRowValue(rowIndex) {
+        return _grid.get(this).getRowValue(rowIndex);
+    }
+
+    getCtrlValue(name, rowIndex) {
+        const colIndex = _grid.get(this).getColumnIndex(name);
+        const uniqueIndex = this.getUniqueIndex(rowIndex);
+        if (colIndex !== null && uniqueIndex !== null) {
+            return _grid.get(this).getCtrlValue(colIndex, uniqueIndex);
+        }
+        return null;
+    }
+
+    setCtrlValue(name, rowIndex, value) {
+        const colIndex = _grid.get(this).getColumnIndex(name);
+        const uniqueIndex = this.getUniqueIndex(rowIndex);
+        if (colIndex !== null && uniqueIndex !== null) {
+            return _grid.get(this).setCtrlValue(colIndex, uniqueIndex, value);
+        }
+    }
+
+    getColumns() {
+        return _grid.get(this).settings.columns.slice();
+    }
+
+    getCellCtrl(name, rowIndex) {
+        const uniqueIndex = this.getUniqueIndex(rowIndex);
+        return this.getCellCtrlByUniqueIndex(name, uniqueIndex);
+    }
+
+    getCellCtrlByUniqueIndex(name, uniqueIndex) {
+        const grid = _grid.get(this);
+        const colIndex = grid.getColumnIndex(name);
+        if (colIndex !== null && Util.isNumeric(uniqueIndex)) {
+            return grid.getCellCtrl(grid.settings.idPrefix, name, uniqueIndex);
+        }
+        return null;
+    }
+
+    isRowEmpty(rowIndex) {
+        const uniqueIndex = this.getUniqueIndex(rowIndex);
+        if (uniqueIndex !== null) {
+            return _grid.get(this).isRowEmpty(uniqueIndex);
+        }
+        return true;
+    }
+
+    removeEmptyRows() {
+        const grid = _grid.get(this), rowOrder = this.getRowOrder();
+        for (let r = 0; r < rowOrder.length; r++) {
+            if (grid.isRowEmpty(rowOrder[r])) {
+                grid.removeRow(null, rowOrder[r], true);
+            }
+        }
     }
 }
 

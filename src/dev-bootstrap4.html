@@ -183,7 +183,19 @@
                 }, {
                     name: 'uid',
                     type: 'hidden',
-                    value: '0'
+                    value: '0',
+                    emptyCriteria: function(value){
+                        var numeric = parseFloat(value);
+                        if (!isNaN(numeric) && !isFinite(numeric)){
+                            // `value` is number and greater than 0
+                            return numeric > 0;
+                        } else if (typeof value ==='string'){
+                            // `value` is text and not empty
+                            return value !== '';
+                        }
+                        // `value` is empty
+                        return true;
+                    }
                 }],
                 // Events handling
                 dataLoaded: function (element, records) {

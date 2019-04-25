@@ -54,7 +54,7 @@ class GridCore {
 
         // Check the table element
         let tbWhole = null;
-        if (typeof settings.element === 'string'){
+        if (typeof settings.element === 'string') {
             tbWhole = document.getElementById(settings.element);
         } else {
             tbWhole = settings.element;
@@ -584,12 +584,12 @@ class GridCore {
         */
         // Trigger events
         if (Util.isNumeric(rowIndex)) {
-            if (typeof settings.afterRowInserted === 'function' ) {
+            if (typeof settings.afterRowInserted === 'function') {
                 settings.afterRowInserted(self.tbWhole, parentIndex, addedRows);
             }
         }
         else {
-            if (typeof settings.afterRowAppended === 'function' ) {
+            if (typeof settings.afterRowAppended === 'function') {
                 settings.afterRowAppended(self.tbWhole, parentIndex, addedRows);
             }
         }
@@ -810,9 +810,15 @@ class GridCore {
                 // `customSetter` is not a function?? Skip handling...
             }
         } else {
-            let element = self.getCellCtrl(type, settings.idPrefix, columnName, uniqueIndex);
+            let element = self.getCellCtrl(settings.idPrefix, columnName, uniqueIndex);
             if (type === 'checkbox') {
-                element.checked = (data !== null && data !== 0);
+                if (typeof data === 'boolean') {
+                    element.checked = data;
+                } else if (Util.isNumeric(data)) {
+                    element.checked = data !== 0;
+                } else {
+                    element.checked = !Util.isEmpty(data);
+                }
             }
             else {
                 element.value = data || '';
@@ -820,7 +826,7 @@ class GridCore {
         }
     }
 
-    getCellCtrl(type, idPrefix, columnName, uniqueIndex) {
+    getCellCtrl(idPrefix, columnName, uniqueIndex) {
         return document.getElementById(idPrefix + '_' + columnName + '_' + uniqueIndex);
     }
 
@@ -837,7 +843,7 @@ class GridCore {
                 throw `*customGetter* of column *${column.name}* is not defined.`;
             }
         } else {
-            let ctrl = self.getCellCtrl(column.type, settings.idPrefix, column.name, uniqueIndex);
+            let ctrl = self.getCellCtrl(settings.idPrefix, column.name, uniqueIndex);
             if (ctrl === null) {
                 return null;
             }
@@ -876,6 +882,57 @@ class GridCore {
         }
         */
         return result;
+    }
+
+    getColumnIndex(name) {
+        const columns = this.settings.columns;
+        for (let c = 0; c < columns.length; c++) {
+            if (columns[c].name === name) {
+                return c;
+            }
+        }
+        return null;
+    }
+
+    isRowEmpty(uniqueIndex) {
+        const self = this;
+        const columns = self.settings.columns;
+        for (let c = 0; c < columns.length; c++) {
+            const emptyCriteria = columns[c].emptyCriteria;
+            let currentValue = self.getCtrlValue(c, uniqueIndex);
+            // Check the empty criteria is function
+            if (typeof emptyCriteria === 'function') {
+                if (!emptyCriteria(currentValue)) {
+                    return false;
+                }
+            } else {
+                // Find the default value
+                let defaultValue = null;
+                if (!Util.isEmpty(emptyCriteria)) {
+                    defaultValue = emptyCriteria;
+                } else {
+                    // Check default value based on its type
+                    const colType = columns[c].type;
+                    if (colType === 'checkbox') {
+                        defaultValue = 0;
+                    } else if (colType === 'select') {
+                        const options = self.getCellCtrl(self.settings.idPrefix, columns[c].name, uniqueIndex).options;
+                        if (options.length > 0) {
+                            defaultValue = options[0].value;
+                        } else {
+                            defaultValue = '';
+                        }
+                    } else {
+                        defaultValue = '';
+                    }
+                }
+                // Compare with the default value
+                if (currentValue !== defaultValue) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     findRowIndex(uniqueIndex) {
