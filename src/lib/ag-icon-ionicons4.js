@@ -2,21 +2,27 @@
 import IconBase from './ag-icon-base';
 
 class IconIonicons4 extends IconBase {
-    constructor(icons) {
+    constructor(iconParams) {
         super('icon-ionicon4');
+        // Prepare default options
+        let libParams = {
+            icons: null
+        };
+        Object.assign(libParams, iconParams);
         // Set default CSS class as icon
-        Object.assign(this.icons, {
+        let icons = {
             append: 'icon ion-md-add',
             removeLast: 'icon ion-md-remove',
             insert: 'icon ion-md-undo',
             remove: 'icon ion-md-close',
             moveUp: 'icon ion-md-arrow-dropup',
             moveDown: 'icon ion-md-arrow-dropdown'
-        });
+        };
         // Override default icons if defined
-        if (icons) {
-            Object.assign(this.icons, icons);
+        if (libParams.icons) {
+            Object.assign(icons, libParams.icons);
         }
+        this.icons = icons;
     }
 
     generateIcon(container, type) {

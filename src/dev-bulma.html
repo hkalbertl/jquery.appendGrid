@@ -11,12 +11,12 @@
         integrity="sha256-8B1OaG0zT7uYA572S2xOxWACq9NXYPQ+U5kHPV1bJN4=" crossorigin="anonymous" />
 
     <!--Icon Webfont Frameworks-->
+    <!--
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
         integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
-    <!--
+    -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typicons/2.0.9/typicons.min.css"
         integrity="sha256-hmDtEnmZFvJ3zLsfobp03CSD3/qRCJmY3f7Vqf6zIgA=" crossorigin="anonymous" />
-    -->
     <!--
     <link href="https://unpkg.com/ionicons@4.4.4/dist/css/ionicons.min.css" rel="stylesheet" />
     -->
@@ -58,11 +58,16 @@
                 // uiFramework: 'bootstrap4',
                 // uiFramework: 'foundation6',
                 // uiParams: { useButtonGroup: false, sectionClasses: { remove: 'btn-danger' } },
-                iconFramework: 'fontawesome5',
-                // iconFramework: 'ionicon4',
-                // iconFramework: 'typicons2',
-                // iconFramework: 'openiconic',
+                // iconFramework: 'fontawesome5',
                 // iconFramework: 'materialdesignicons3',
+                iconFramework: 'typicons2',
+                // iconFramework: 'openiconic',
+                iconParams: {
+                    icons: {
+                        append: 'typcn typcn-social-twitter',
+                        removeLast: 'typcn typcn-social-skype'
+                    }
+                },
                 // Optional CSS classes for Bulma
                 sectionClasses: {
                     table: 'is-narrow is-fullwidth'

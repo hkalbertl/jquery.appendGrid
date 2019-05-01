@@ -2,21 +2,27 @@
 import IconBase from './ag-icon-base';
 
 class IconMaterialDesignIcons3 extends IconBase {
-    constructor(icons) {
+    constructor(iconParams) {
         super('icon-materialdesignicons3');
+        // Prepare default options
+        let libParams = {
+            icons: null
+        };
+        Object.assign(libParams, iconParams);
         // Set default CSS class as icon
-        Object.assign(this.icons, {
+        let icons = {
             append: 'mdi mdi-plus',
             removeLast: 'mdi mdi-minus',
             insert: 'mdi mdi-reply',
             remove: 'mdi mdi-close',
             moveUp: 'mdi mdi-chevron-up',
             moveDown: 'mdi mdi-chevron-down'
-        });
+        };
         // Override default icons if defined
-        if (icons) {
-            Object.assign(this.icons, icons);
+        if (libParams.icons) {
+            Object.assign(icons, libParams.icons);
         }
+        this.icons = icons;
     }
 
     generateIcon(container, type) {
