@@ -141,6 +141,7 @@ class GridCore {
             }
             // Add cell for column name in thead section
             tbCell = self.createElement('th', 'theadCell');
+            tbRow.appendChild(tbCell);
             // Apply extra classes
             Util.applyClasses(tbCell, settings.columns[z].displayClass);
             // Apply style
@@ -149,8 +150,14 @@ class GridCore {
                     tbCell.style[styleName] = settings.columns[z].displayCss[styleName];
                 }
             }
-            tbCell.innerText = settings.columns[z].display;
-            tbRow.appendChild(tbCell);
+            // Add the display text
+            if (typeof settings.columns[z].display === 'function') {
+                // Add column display text by function
+                settings.columns[z].display(tbCell);
+            } else if (settings.columns[z].display) {
+                // Add column display text
+                tbCell.innerText = settings.columns[z].display;
+            }
         }
         // Check to hide last column or not
         tbCell = self.createElement('th', 'theadCell');
