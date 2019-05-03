@@ -1,3 +1,8 @@
+## 2.0.1 (XXX XX, XXXX)
+- Added `iconParams` for customize icons used within the grid.
+- Modified to support `display` as callback method.
+- Reimplemented `headerSpan` from v1.
+
 ## 2.0.0 (Apr 24, 2019)
 - Removed dependency on jQuery and jQuery UI and compatible with modern web frameworks such as Bootstrap 4.
 

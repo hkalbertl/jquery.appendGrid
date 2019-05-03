@@ -77,6 +77,8 @@
                     name: 'company',
                     display: 'Company',
                     type: 'text',
+                    // headerSpan: 2,
+                    // displayClass: 'has-text-centered',
                     ctrlAttr: { maxlength: 100 },
                     events: {
                         click: function (e) {
@@ -97,7 +99,7 @@
                     display: 'Country',
                     type: 'select',
                     cellCss: { backgroundColor: '#ffeeee' },
-                    ctrlOptions: ['Germany', 'Hong Kong', 'Japan', 'Malaysia', 'Taiwan', 'United Kingdom', 'United States']
+                    ctrlOptions: ['', 'Germany', 'Hong Kong', 'Japan', 'Malaysia', 'Taiwan', 'United Kingdom', 'United States']
                 }, {
                     name: 'isNPO',
                     display: 'NPO?',
@@ -111,6 +113,15 @@
                     ctrlAttr: {
                         min: 0,
                         max: 10000
+                    },
+                    emptyCriteria: function (value) {
+                        // Empty or value equals to 0 will consider as empty.
+                        var numeric = parseFloat(value);
+                        if (!isNaN(numeric) && numeric > 0) {
+                            // Value is numeric and greater than zero
+                            return false;
+                        }
+                        return true;
                     },
                     displayClass: 'has-background-warning'
                 }, {
@@ -185,8 +196,7 @@
                     */
                 }, {
                     name: 'uid',
-                    type: 'hidden',
-                    value: '0'
+                    type: 'hidden'
                 }],
                 // Use sample data in `dev-data.js`, if loaded
                 initData: window.myAppendGridInitData || null

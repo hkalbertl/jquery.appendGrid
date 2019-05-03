@@ -134,29 +134,39 @@ class GridCore {
             tbRow.appendChild(tbCell);
         }
         // Add cell in thead as column display name
+        let pendingSkipCol = 0;
         for (let z = 0; z < settings.columns.length; z++) {
             // Skip generating column for hidden
             if (settings.columns[z].type === 'hidden') {
                 continue;
             }
-            // Add cell for column name in thead section
-            tbCell = self.createElement('th', 'theadCell');
-            tbRow.appendChild(tbCell);
-            // Apply extra classes
-            Util.applyClasses(tbCell, settings.columns[z].displayClass);
-            // Apply style
-            if (!Util.isEmpty(settings.columns[z].displayCss)) {
-                for (let styleName in settings.columns[z].displayCss) {
-                    tbCell.style[styleName] = settings.columns[z].displayCss[styleName];
+            // Check skip header colSpan
+            if (pendingSkipCol === 0) {
+                // Add cell for column name in thead section
+                tbCell = self.createElement('th', 'theadCell');
+                tbRow.appendChild(tbCell);
+                // Apply extra classes
+                Util.applyClasses(tbCell, settings.columns[z].displayClass);
+                // Apply style
+                if (!Util.isEmpty(settings.columns[z].displayCss)) {
+                    for (let styleName in settings.columns[z].displayCss) {
+                        tbCell.style[styleName] = settings.columns[z].displayCss[styleName];
+                    }
                 }
-            }
-            // Add the display text
-            if (typeof settings.columns[z].display === 'function') {
-                // Add column display text by function
-                settings.columns[z].display(tbCell);
-            } else if (settings.columns[z].display) {
-                // Add column display text
-                tbCell.innerText = settings.columns[z].display;
+                if (settings.columns[z].headerSpan > 1) {
+                    tbCell.setAttribute('colSpan', settings.columns[z].headerSpan);
+                    pendingSkipCol = settings.columns[z].headerSpan - 1;
+                }
+                // Add the display text
+                if (typeof settings.columns[z].display === 'function') {
+                    // Add column display text by function
+                    settings.columns[z].display(tbCell);
+                } else if (settings.columns[z].display) {
+                    // Add column display text
+                    tbCell.innerText = settings.columns[z].display;
+                }
+            } else {
+                pendingSkipCol--;
             }
         }
         // Check to hide last column or not
