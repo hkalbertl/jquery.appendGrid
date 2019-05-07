@@ -36,6 +36,25 @@ const _defaultGridOptions = {
     sectionClasses: null
 };
 
+const _defaultCallbackContainer = {
+    // The callback function for format the HTML name of generated controls.
+    nameFormatter: null,
+    // The callback function to be triggered after all data loaded to grid.
+    dataLoaded: null,
+    // The callback function to be triggered after data loaded to a row.
+    rowDataLoaded: null,
+    // The callback function to be triggered after new row appended.
+    afterRowAppended: null,
+    // The callback function to be triggered after new row inserted.
+    afterRowInserted: null,
+    // The callback function to be triggered after grid row swapped.
+    afterRowSwapped: null,
+    // The callback function to be triggered before grid row remove.
+    beforeRowRemove: null,
+    // The callback function to be triggered after grid row removed.
+    afterRowRemoved: null
+};
+
 // Default column options.
 const _defaultColumnOptions = {
     // Type of column control.
@@ -88,7 +107,7 @@ class AppendGrid {
 
     constructor(options) {
         // Merge default options
-        let params = Object.assign({}, _defaultGridOptions, options);
+        let params = Object.assign({}, _defaultGridOptions, _defaultCallbackContainer, options);
 
         // Handle i18n option
         let i18n = {

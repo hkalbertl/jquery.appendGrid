@@ -129,9 +129,11 @@ class GridCore {
         tbWhole.appendChild(thead);
         let tbRow = self.createElement('tr', 'theadRow'), tbCell;
         thead.appendChild(tbRow);
+        let visibleCount = 0;
         if (!settings.hideRowNumColumn) {
             tbCell = self.createElement('th', 'theadCell');
             tbRow.appendChild(tbCell);
+            visibleCount++;
         }
         // Add cell in thead as column display name
         let pendingSkipCol = 0;
@@ -168,6 +170,7 @@ class GridCore {
             } else {
                 pendingSkipCol--;
             }
+            visibleCount++;
         }
         // Check to hide last column or not
         tbCell = self.createElement('th', 'theadCell');
@@ -175,6 +178,8 @@ class GridCore {
             // && (!$.isArray(settings.customRowButtons) || settings.customRowButtons.length == 0)
             self.hideLastColumn = true;
             tbCell.style.display = 'none';
+        } else {
+            visibleCount++;
         }
         if (!self.hideLastColumn && settings.rowButtonsInFront) {
             if (settings.hideRowNumColumn) {
@@ -187,6 +192,8 @@ class GridCore {
         } else {
             tbRow.appendChild(tbCell);
         }
+        // Calculate the `finalColSpan` value
+        self.finalColSpan = visibleCount;
 
         // Create tbody
         let tbBody = self.createElement('tbody');
@@ -630,7 +637,7 @@ class GridCore {
     removeRow(rowIndex, uniqueIndex, force) {
         // Define variables
         const self = this;
-        let settings = self.settings, tbWhole = self.tbWhole, tbBody = self.tbBody;
+        let settings = self.settings, tbBody = self.tbBody;
         if (Util.isNumeric(uniqueIndex)) {
             for (let z = 0; z < self.rowOrder.length; z++) {
                 if (self.rowOrder[z] === uniqueIndex) {
@@ -641,7 +648,7 @@ class GridCore {
         }
         if (Util.isNumeric(rowIndex)) {
             // Remove middle row
-            if (force || typeof settings.beforeRowRemove !== 'function' || settings.beforeRowRemove(tbWhole, rowIndex)) {
+            if (force || typeof settings.beforeRowRemove !== 'function' || settings.beforeRowRemove(self.tbWhole, rowIndex)) {
                 self.rowOrder.splice(rowIndex, 1);
                 /*
                 if (settings.useSubPanel) {
@@ -660,7 +667,7 @@ class GridCore {
                 }
                 // Trigger event
                 if (typeof settings.afterRowRemoved === 'function') {
-                    settings.afterRowRemoved(tbWhole, rowIndex);
+                    settings.afterRowRemoved(self.tbWhole, rowIndex);
                 }
             }
         } else {
@@ -673,7 +680,7 @@ class GridCore {
             }
             */
             // Remove last row
-            if (force || typeof settings.beforeRowRemove !== 'function' || settings.beforeRowRemove(tbWhole, self.rowOrder.length - 1)) {
+            if (force || typeof settings.beforeRowRemove !== 'function' || settings.beforeRowRemove(self.tbWhole, self.rowOrder.length - 1)) {
                 uniqueIndex = self.rowOrder.pop();
                 tbBody.removeChild(tbBody.lastChild);
                 /*
@@ -685,7 +692,7 @@ class GridCore {
                 self.saveSetting();
                 // Trigger event
                 if (typeof settings.afterRowRemoved === 'function') {
-                    settings.afterRowRemoved(tbWhole, null);
+                    settings.afterRowRemoved(self.tbWhole, null);
                 }
             }
             // Scroll the page when append row
@@ -698,11 +705,9 @@ class GridCore {
             */
         }
         // Add empty row
-        /*
-        if (settings._rowOrder.length == 0) {
-            showEmptyMessage(document.getElementById(settings._wrapperId), settings);
+        if (self.rowOrder.length === 0) {
+            self.showEmptyMessage();
         }
-        */
     }
 
     moveUpRow(rowIndex, uniqueIndex) {
@@ -964,6 +969,28 @@ class GridCore {
     saveSetting() {
         const self = this;
         document.getElementById(self.settings.idPrefix + '_rowOrder').value = self.rowOrder.join();
+    }
+
+    showEmptyMessage(skipWidthCalculation) {
+        const self = this;
+        const tbRow = self.createElement('tr', 'tbodyRow');
+        self.tbBody.appendChild(tbRow);
+        const tbCell = self.createElement('td', 'tbodyCell');
+        tbCell.setAttribute('colspan', self.finalColSpan);
+        Util.applyClasses(tbCell, self.uiFramework.getSectionClasses('empty'));
+        tbCell.innerText = self.settings.i18n.rowEmpty;
+        tbRow.appendChild(tbCell);
+        /*
+        if (!skipWidthCalculation && settings.maxBodyHeight > 0) {
+            // Check scrolling enabled
+            if (settings.autoColumnWidth) {
+                calculateColumnWidth(tbWrap);
+            } else {
+                // Set the width of empty message cell to the thead width
+                $emptyCell.width($('table.head', tbWrap).width() - 4);
+            }
+        }
+        */
     }
 
     /**
