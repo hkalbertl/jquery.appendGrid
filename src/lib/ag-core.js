@@ -473,7 +473,7 @@ class GridCore {
                             let ctrlHandler = settings.columns[y].events[name];
                             ctrl.addEventListener(name, function (evt) {
                                 evt.columnName = evt.currentTarget.dataset.columnName;
-                                evt.uniqueIndex = evt.currentTarget.dataset.uniqueIndex;
+                                evt.uniqueIndex = parseInt(evt.currentTarget.dataset.uniqueIndex);
                                 ctrlHandler(evt);
                             });
                         }
