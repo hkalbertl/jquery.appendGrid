@@ -1,6 +1,3 @@
-## 2.0.2 (May 8, 2019)
-- Fixed a problem on generating unusable AppendGrid.js file.
-
 ## 2.0.1 (May 8, 2019)
 - Added `iconParams` for customize icons used within the grid.
 - Modified to support `display` as callback method.
