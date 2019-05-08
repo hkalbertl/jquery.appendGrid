@@ -22,7 +22,8 @@ class UiBulma extends UiBase {
             insert: 'is-outlined',
             remove: 'is-outlined',
             moveUp: 'is-outlined',
-            moveDown: 'is-outlined'
+            moveDown: 'is-outlined',
+            empty: 'has-text-centered'
         };
         if (libParams.sectionClasses) {
             Object.assign(libSectionClasses, libParams.sectionClasses);

@@ -27,7 +27,8 @@ class UiBase {
 			insert: null,
 			remove: null,
 			moveUp: null,
-			moveDown: null
+			moveDown: null,
+			empty: null
 		};
 		// Check methods defined
 		/*

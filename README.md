@@ -1,22 +1,24 @@
-# jquery.appendGrid
+# AppendGrid
 
-**appendGrid** allow you to input structured data row by row such like filling spreadsheets. It allows you to add/remove/insert/delete row in the grid. The generated input/select/textarea controls are well named for submitting to server side applications such as ASP.NET/PHP/JSP. Multiple options and callback events are available to fit every situation.
+**AppendGrid** allow you to input structured data row by row such like filling spreadsheets. It allows you to add/remove/insert/delete row in the grid. The generated input/select/textarea controls are well named for submitting to server side applications such as ASP.NET/PHP/JSP. Multiple options and callback events are available to fit every situation.
 
 
 ## About verisons
-**appendGrid** is moving to [version 2](../../tree/v2-dev) that will remove dependency on jQuery and jQuery UI. The new code is rewritten by using ES6. It will compatible with modern web frameworks such as [Bootstrap 4](https://getbootstrap.com/) and [Bulma](https://bulma.io/) natively. For [version 1](../../tree/v1-dev) that based on [jQuery UI](https://jqueryui.com/) will provide bug fix only.
+You may find that the project name on GitHub is still "jquery.appendGrid". It is just a historical reason that [version 1](../../tree/v1-dev) required jQuery but it is not required in [version 2](../../tree/v2-dev) anymore. In order to keep GitHub project URL so the repository was not changed.
+
+The new code is rewritten by using ES6. It will compatible with modern web frameworks such as [Bootstrap 4](https://getbootstrap.com/) and [Bulma](https://bulma.io/) natively. For [version 1](../../tree/v1-dev) that based on [jQuery UI](https://jqueryui.com/) will provide bug fix only.
 
 
 ## Prerequisite
-- Hopefully no in the final release ;)
+- Nope, just need a modern web browser that can run JavaScript!
 
 
 ## Demo
-Demo website is under construction. You may take a look on this [example](https://appendgrid.apphb.com/Ver2) or [pen](https://codepen.io/hkalbertl/pen/GLrLva) first.
+Lots of demo cases are available on [Demo section](https://appendgrid.apphb.com/Demo) of **AppendGrid** website.
 
 
 ## Documentation
-Documentation website is under construction.
+The full list of options / methods / callback events are available on the [Documentation section](https://appendgrid.apphb.com/Documentation) of **AppendGrid** website.
 
 
 ## Instructions

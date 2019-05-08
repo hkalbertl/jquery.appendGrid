@@ -1,3 +1,11 @@
+## 2.0.1 (May 8, 2019)
+- Added `iconParams` for customize icons used within the grid.
+- Modified to support `display` as callback method.
+- Modified the data type of `uniqueIndex` of event callback argument to number format.
+- Reimplemented `headerSpan` from v1.
+- Reimplemented grid callbacks from v1.
+- Reimplemented empty grid message from v1.
+
 ## 2.0.0 (Apr 24, 2019)
 - Removed dependency on jQuery and jQuery UI and compatible with modern web frameworks such as Bootstrap 4.
 

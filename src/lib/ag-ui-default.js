@@ -1,7 +1,7 @@
 ﻿import UiBase from './ag-ui-base';
 
 class UiDefault extends UiBase {
-	constructor(uiOptions, i18n, iconFramework) {
+	constructor(uiParams, i18n, iconFramework) {
 		super(i18n, iconFramework);
 		this.name = 'ui-default';
 	}

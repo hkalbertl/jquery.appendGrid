@@ -23,7 +23,8 @@ class UiBootstrap4 extends UiBase {
             insert: 'btn-outline-secondary',
             remove: 'btn-outline-secondary',
             moveUp: 'btn-outline-secondary',
-            moveDown: 'btn-outline-secondary'
+            moveDown: 'btn-outline-secondary',
+            empty: 'text-center'
         };
         if (libParams.sectionClasses) {
             Object.assign(libSectionClasses, libParams.sectionClasses);

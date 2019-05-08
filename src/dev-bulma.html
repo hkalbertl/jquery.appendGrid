@@ -11,12 +11,12 @@
         integrity="sha256-8B1OaG0zT7uYA572S2xOxWACq9NXYPQ+U5kHPV1bJN4=" crossorigin="anonymous" />
 
     <!--Icon Webfont Frameworks-->
+    <!--
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
         integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
-    <!--
+    -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typicons/2.0.9/typicons.min.css"
         integrity="sha256-hmDtEnmZFvJ3zLsfobp03CSD3/qRCJmY3f7Vqf6zIgA=" crossorigin="anonymous" />
-    -->
     <!--
     <link href="https://unpkg.com/ionicons@4.4.4/dist/css/ionicons.min.css" rel="stylesheet" />
     -->
@@ -40,7 +40,7 @@
             serialize() [Not available]</button>
         <hr />
         <h5 class="subtitle">Output</h5>
-        <code id="output"></code>
+        <pre><code id="output"></code></pre>
     </form>
 
     <!-- Add polyfill for legacy browsers (such as IE) -->
@@ -58,20 +58,28 @@
                 // uiFramework: 'bootstrap4',
                 // uiFramework: 'foundation6',
                 // uiParams: { useButtonGroup: false, sectionClasses: { remove: 'btn-danger' } },
-                iconFramework: 'fontawesome5',
-                // iconFramework: 'ionicon4',
-                // iconFramework: 'typicons2',
-                // iconFramework: 'openiconic',
+                // iconFramework: 'fontawesome5',
                 // iconFramework: 'materialdesignicons3',
+                iconFramework: 'typicons2',
+                // iconFramework: 'openiconic',
+                iconParams: {
+                    icons: {
+                        append: 'typcn typcn-social-twitter',
+                        removeLast: 'typcn typcn-social-skype'
+                    }
+                },
                 // Optional CSS classes for Bulma
                 sectionClasses: {
-                    table: 'is-narrow is-fullwidth'
+                    table: 'is-narrow is-fullwidth',
+                    empty: 'has-background-warning'
                 },
                 // hideButtons: { moveUp: true, moveDown: true },
                 columns: [{
                     name: 'company',
                     display: 'Company',
                     type: 'text',
+                    // headerSpan: 2,
+                    // displayClass: 'has-text-centered',
                     ctrlAttr: { maxlength: 100 },
                     events: {
                         click: function (e) {
@@ -92,7 +100,7 @@
                     display: 'Country',
                     type: 'select',
                     cellCss: { backgroundColor: '#ffeeee' },
-                    ctrlOptions: ['Germany', 'Hong Kong', 'Japan', 'Malaysia', 'Taiwan', 'United Kingdom', 'United States']
+                    ctrlOptions: ['', 'Germany', 'Hong Kong', 'Japan', 'Malaysia', 'Taiwan', 'United Kingdom', 'United States']
                 }, {
                     name: 'isNPO',
                     display: 'NPO?',
@@ -107,6 +115,15 @@
                         min: 0,
                         max: 10000
                     },
+                    emptyCriteria: function (value) {
+                        // Empty or value equals to 0 will consider as empty.
+                        var numeric = parseFloat(value);
+                        if (!isNaN(numeric) && numeric > 0) {
+                            // Value is numeric and greater than zero
+                            return false;
+                        }
+                        return true;
+                    },
                     displayClass: 'has-background-warning'
                 }, {
                     name: 'memberSince',
@@ -115,6 +132,7 @@
                     ctrlAttr: {
                         maxlength: 10
                     }
+                    /*
                 }, {
                     name: 'time',
                     display: 'Time',
@@ -176,21 +194,54 @@
                             document.getElementById(idPrefix + '_' + columnName + '_minute_' + '_' + uniqueIndex).value = data.substring(3);
                         }
                     }
+                    */
                 }, {
                     name: 'uid',
-                    type: 'hidden',
-                    value: '0'
+                    type: 'hidden'
                 }],
+                // The callback function for format the HTML name of generated controls.
+                nameFormatter: function (idPrefix, name, uniqueIndex) {
+                    return name + '-' + uniqueIndex;
+                },
+                // The callback function to be triggered after all data loaded to grid.
+                dataLoaded: function (table, records) {
+                    console.log('agc: [' + table.id + ']dataLoaded=' + records.length);
+                },
+                // The callback function to be triggered after data loaded to a row.
+                rowDataLoaded: function (table, record, rowIndex, uniqueIndex) {
+                    console.log('agc: [' + table.id + ']rowDataLoaded=' + JSON.stringify(record));
+                },
+                // The callback function to be triggered after new row appended.
+                afterRowAppended: function (table, rowIndex) {
+                    console.log('agc: [' + table.id + ']afterRowAppended=' + rowIndex);
+                },
+                // The callback function to be triggered after new row inserted.
+                afterRowInserted: function (table, rowIndex) {
+                    console.log('agc: [' + table.id + ']afterRowInserted=' + rowIndex);
+                },
+                // The callback function to be triggered after grid row swapped.
+                afterRowSwapped: function (table, oldRowIndex, newRowIndex) {
+                    console.log('agc: [' + table.id + ']afterRowSwapped=' + oldRowIndex + ',' + newRowIndex);
+                },
+                // The callback function to be triggered before grid row remove.
+                beforeRowRemove: function (table, rowIndex) {
+                    // return confirm('agc: [' + table.id + ']Are you sure to remove this row?');
+                    return true;
+                },
+                // The callback function to be triggered after grid row removed.
+                afterRowRemoved: function (table, rowIndex) {
+                    console.log('agc: [' + table.id + ']afterRowRemoved=' + rowIndex);
+                },
                 // Use sample data in `dev-data.js`, if loaded
-                initData: window.myAppendGridInitData || null
-                // initData: null
+                // initData: window.myAppendGridInitData || null
+                initData: null
             });
             // Add button event
             document.getElementById('getAllValue1').addEventListener('click', function () {
-                document.getElementById('output').innerText = JSON.stringify(window.myAppendGrid.getAllValue());
+                document.getElementById('output').innerText = JSON.stringify(window.myAppendGrid.getAllValue(), null, '  ');
             });
             document.getElementById('getAllValue2').addEventListener('click', function () {
-                document.getElementById('output').innerText = JSON.stringify(window.myAppendGrid.getAllValue(true));
+                document.getElementById('output').innerText = JSON.stringify(window.myAppendGrid.getAllValue(true), null, '  ');
             });
         });
     </script>
