@@ -1,12 +1,20 @@
 const merge = require('webpack-merge');
 const common = require('./webpack.common.js');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const ClearConsoleWebpackPlugin = require('webpack-clear-console').WebpackClearConsole;
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = merge(common, {
 	mode: 'production',
 	plugins: [
-		new ClearConsoleWebpackPlugin(),
 		new CleanWebpackPlugin()
-	]
+	],
+	optimization: {
+		minimizer: [new UglifyJsPlugin({
+			uglifyOptions: {
+				compress: {
+					drop_console: true,
+				}
+			}
+		})],
+	}
 });
