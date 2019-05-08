@@ -1,6 +1,6 @@
 {
   "name": "jquery.appendgrid",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "AppendGrid - The dynamic table input JavaScript plugin",
   "main": "dist/AppendGrid.js",
   "scripts": {
@@ -35,8 +35,8 @@
     "clean-webpack-plugin": "^2.0.1",
     "html-webpack-include-assets-plugin": "^1.0.7",
     "html-webpack-plugin": "^3.2.0",
+    "uglifyjs-webpack-plugin": "^2.1.2",
     "webpack": "^4.29.6",
-    "webpack-clear-console": "^1.0.3",
     "webpack-cli": "^3.3.0",
     "webpack-dev-server": "^3.2.1",
     "webpack-merge": "^4.2.1"
