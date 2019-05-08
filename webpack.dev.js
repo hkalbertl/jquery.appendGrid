@@ -14,8 +14,8 @@ module.exports = merge(common, {
     },
 	plugins: [
 		new HTMLWebpackPlugin({
-			// template: path.resolve(__dirname, 'src/dev-bootstrap4.html')
-			template: path.resolve(__dirname, 'src/dev-bulma.html')
+			template: path.resolve(__dirname, 'src/dev-bootstrap4.html')
+			// template: path.resolve(__dirname, 'src/dev-bulma.html')
 			// template: path.resolve(__dirname, 'src/dev-foundation6.html')
 		}),
 		new HtmlWebpackIncludeAssetsPlugin({

@@ -1,4 +1,4 @@
-## 2.0.1 (XXX XX, XXXX)
+## 2.0.1 (May 8, 2019)
 - Added `iconParams` for customize icons used within the grid.
 - Modified to support `display` as callback method.
 - Modified the data type of `uniqueIndex` of event callback argument to number format.

@@ -970,6 +970,7 @@ class GridCore {
 
     showEmptyMessage(skipWidthCalculation) {
         const self = this;
+        self.tbBody.innerHTML = '';
         const tbRow = self.createElement('tr', 'tbodyRow');
         self.tbBody.appendChild(tbRow);
         const tbCell = self.createElement('td', 'tbodyCell');

@@ -43,7 +43,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <code id="output"></code>
+                <pre><code id="output"></code></pre>
             </div>
         </div>
     </form>
@@ -184,12 +184,12 @@
                     name: 'uid',
                     type: 'hidden',
                     value: '0',
-                    emptyCriteria: function(value){
+                    emptyCriteria: function (value) {
                         var numeric = parseFloat(value);
-                        if (!isNaN(numeric) && !isFinite(numeric)){
+                        if (!isNaN(numeric) && !isFinite(numeric)) {
                             // `value` is number and greater than 0
                             return numeric > 0;
-                        } else if (typeof value ==='string'){
+                        } else if (typeof value === 'string') {
                             // `value` is text and not empty
                             return value !== '';
                         }
@@ -214,9 +214,10 @@
                     console.log('agd: Row swapped.');
                 },
                 beforeRowRemove: function (element, rowIndex) {
-                    return confirm('Are you sure to remove this row?');
+                    // return confirm('Are you sure to remove this row?');
+                    return true;
                 },
-                afterRowRemoved: function(caller, rowIndex){
+                afterRowRemoved: function (caller, rowIndex) {
                     console.log('agd: Row removed. RIDX=' + rowIndex);
                 },
                 // Use sample data in `dev-data.js`, if loaded
@@ -225,10 +226,10 @@
             });
             // Add button event
             $('#getAllValue1').on('click', function () {
-                $('#output').text(JSON.stringify(window.myAppendGrid.getAllValue()));
+                $('#output').text(JSON.stringify(window.myAppendGrid.getAllValue(), null, '  '));
             });
             $('#getAllValue2').on('click', function () {
-                $('#output').text(JSON.stringify(window.myAppendGrid.getAllValue(true)));
+                $('#output').text(JSON.stringify(window.myAppendGrid.getAllValue(true), null, '  '));
             });
             $('#serialize').on('click', function () {
                 $('#output').text($('#form').serialize());
