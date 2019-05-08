@@ -198,11 +198,6 @@ class GridCore {
         // Create tbody
         let tbBody = self.createElement('tbody');
         tbWhole.appendChild(tbBody);
-        tbRow = self.createElement('tr', 'tbodyRow');
-        tbBody.appendChild(tbRow);
-        tbCell = self.createElement('td', 'tbodyCell');
-        tbCell.colSpan = settings.columns.length + 2;
-        tbRow.appendChild(tbCell);
         self.tbBody = tbBody;
 
         // Create tfoot
@@ -211,7 +206,7 @@ class GridCore {
         tbRow = self.createElement('tr', 'tfootRow');
         tfoot.appendChild(tbRow);
         tbCell = self.createElement('td', 'tfootCell');
-        tbCell.colSpan = settings.columns.length + 2;
+        tbCell.colSpan = self.finalColSpan;
         tbRow.appendChild(tbCell);
 
         // Add hidden for rowOrder
@@ -250,11 +245,13 @@ class GridCore {
         if (Array.isArray(settings.initData)) {
             // Load data if initData is array
             self.loadData(settings.initData, true);
-        } else {
+        } else if (settings.initRows > 0) {
             // Add empty rows
             self.insertRow(settings.initRows);
+        } else {
+            // Show empty grid message
+            this.showEmptyMessage();
         }
-
         console.debug('ag:Initialized');
     }
 
