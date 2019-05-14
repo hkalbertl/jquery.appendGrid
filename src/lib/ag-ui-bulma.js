@@ -89,6 +89,17 @@ class UiBulma extends UiBase {
             ctrl = Util.createElem('input', ctrlId, ctrlName, null, 'checkbox');
             ctrl.value = 1;
             wrapper.appendChild(ctrl);
+        } else if (columnOpt.type === 'readonly') {
+            // Create a readonly text input without border
+            ctrl = Util.createElem('input', ctrlId, ctrlName, null, 'text');
+            // Apply classes
+            Util.applyClasses(ctrl, this.getSectionClasses('control'), columnOpt.ctrlClass);
+            // Add is-static class
+            ctrl.classList.add('is-static');
+            // Set readonly
+            ctrl.readOnly = true;
+            // Add to holder
+            ctrlHolder.appendChild(ctrl);
         } else {
             // Create by using default control generation
             ctrl = super.generateControl(ctrlHolder, columnOpt, ctrlId, ctrlName);

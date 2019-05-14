@@ -238,20 +238,12 @@ class GridCore {
                 });
             }
         }
+
+        // Show empty grid message
+        this.showEmptyMessage();
+
         // Save settings
         self.settings = settings;
-
-        // Load init data if defined
-        if (Array.isArray(settings.initData)) {
-            // Load data if initData is array
-            self.loadData(settings.initData, true);
-        } else if (settings.initRows > 0) {
-            // Add empty rows
-            self.insertRow(settings.initRows);
-        } else {
-            // Show empty grid message
-            this.showEmptyMessage();
-        }
         console.debug('ag:Initialized');
     }
 
@@ -831,6 +823,7 @@ class GridCore {
         } else {
             let element = self.getCellCtrl(settings.idPrefix, columnName, uniqueIndex);
             if (type === 'checkbox') {
+                // For checkbox type, check the data type of value
                 if (typeof data === 'boolean') {
                     element.checked = data;
                 } else if (Util.isNumeric(data)) {
@@ -838,9 +831,9 @@ class GridCore {
                 } else {
                     element.checked = !Util.isEmpty(data);
                 }
-            }
-            else {
-                element.value = data || '';
+            } else {
+                // For other input types
+                element.value = Util.isEmpty(data) ? '' : data;
             }
         }
     }

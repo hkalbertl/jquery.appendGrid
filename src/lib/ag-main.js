@@ -146,6 +146,17 @@ class AppendGrid {
 
         // Save the core grid to WeakMap 
         _grid.set(this, new GridCore(params));
+
+        // Handle initData or initRows
+        if (Array.isArray(params.initData)) {
+            setTimeout(function (caller, records) {
+                _grid.get(caller).loadData(records, true);
+            }, 10, this, params.initData);
+        } else if (params.initRows > 0) {
+            setTimeout(function (caller, rows) {
+                _grid.get(caller).appendRow(rows);
+            }, 10, this, params.initData);
+        }
     }
 
     appendRow(numOfRowOrRowArray) {

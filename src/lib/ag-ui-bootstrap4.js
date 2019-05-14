@@ -54,6 +54,18 @@ class UiBootstrap4 extends UiBase {
             ctrl.type = 'checkbox';
             ctrl.value = 1;
             wrapper.appendChild(ctrl);
+        } else if (columnOpt.type === 'readonly') {
+            // Create a readonly text input without border
+            ctrl = Util.createElem('input', ctrlId, ctrlName, null, 'text');
+            // Apply classes
+            Util.applyClasses(ctrl, this.getSectionClasses('control'), columnOpt.ctrlClass);
+            // Remove form-control and add form-control-plaintext
+            ctrl.classList.remove('form-control');
+            ctrl.classList.add('form-control-plaintext');
+            // Set readonly
+            ctrl.readOnly = true;
+            // Add to holder
+            ctrlHolder.appendChild(ctrl);
         } else {
             // Create by using default control generation
             ctrl = super.generateControl(ctrlHolder, columnOpt, ctrlId, ctrlName);

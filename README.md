@@ -1,10 +1,10 @@
 # AppendGrid
 
-**AppendGrid** allow you to input structured data row by row such like filling spreadsheets. It allows you to add/remove/insert/delete row in the grid. The generated input/select/textarea controls are well named for submitting to server side applications such as ASP.NET/PHP/JSP. Multiple options and callback events are available to fit every situation.
+**AppendGrid** allow you to input structured data row by row such like filling spreadsheets. It allows you to add/remove/insert/delete row in the grid. The generated input/select/textarea controls are well named for submitting to server side applications such as ASP.NET/PHP/JSP. Multiple options and callback events are available to fit different situations.
 
 
 ## About verisons
-You may find that the project name on GitHub is still "jquery.appendGrid". It is just a historical reason that [version 1](../../tree/v1-dev) required jQuery but it is not required in [version 2](../../tree/v2-dev) anymore. In order to keep GitHub project URL so the repository was not changed.
+You may find that the project name on GitHub is still "jquery.appendGrid". It is just a historical reason that [version 1](../../tree/v1-dev) required jQuery but it is not required in [version 2](../../tree/v2-dev) anymore. In order to keep GitHub project URL so the repository name was not changed.
 
 The new code is rewritten by using ES6. It will compatible with modern web frameworks such as [Bootstrap 4](https://getbootstrap.com/) and [Bulma](https://bulma.io/) natively. For [version 1](../../tree/v1-dev) that based on [jQuery UI](https://jqueryui.com/) will provide bug fix only.
 
