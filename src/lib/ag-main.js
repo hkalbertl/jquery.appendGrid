@@ -144,18 +144,21 @@ class AppendGrid {
             params.columns[z] = columnOpt;
         }
 
-        // Save the core grid to WeakMap 
-        _grid.set(this, new GridCore(params));
+        // Save the core grid to WeakMap
+        const gridCore = new GridCore(params);
+        _grid.set(this, gridCore);
 
         // Handle initData or initRows
         if (Array.isArray(params.initData)) {
+            // Load initData
             setTimeout(function (caller, records) {
-                _grid.get(caller).loadData(records, true);
-            }, 10, this, params.initData);
+                caller.loadData(records, true);
+            }, 10, gridCore, params.initData);
         } else if (params.initRows > 0) {
+            // Append initRows
             setTimeout(function (caller, rows) {
-                _grid.get(caller).appendRow(rows);
-            }, 10, this, params.initData);
+                caller.insertRow(rows);
+            }, 10, gridCore, params.initRows);
         }
     }
 
