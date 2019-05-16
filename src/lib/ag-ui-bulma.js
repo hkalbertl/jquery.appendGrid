@@ -8,7 +8,8 @@ class UiBulma extends UiBase {
         // Prepare default options
         let libParams = {
             useButtonGroup: true,
-            sectionClasses: null
+            sectionClasses: null,
+            sizing: 'normal'
         };
         Object.assign(libParams, uiParams);
         // Prepare default section classes
@@ -25,6 +26,22 @@ class UiBulma extends UiBase {
             moveDown: 'is-outlined',
             empty: 'has-text-centered'
         };
+        // Apply sizing classes, if defined
+        if (libParams.sizing === 'small') {
+            // For small
+            libSectionClasses.table += ' is-narrow';
+            libSectionClasses.control += ' is-small';
+            libSectionClasses.button += ' is-small';
+        } else if (libParams.sizing === 'medium') {
+            // For medium
+            libSectionClasses.control += ' is-medium';
+            libSectionClasses.button += ' is-medium';
+        } else if (libParams.sizing === 'large') {
+            // For large
+            libSectionClasses.control += ' is-large';
+            libSectionClasses.button += ' is-large';
+        }
+        // Override default classes if user defined
         if (libParams.sectionClasses) {
             Object.assign(libSectionClasses, libParams.sectionClasses);
         }
@@ -77,6 +94,13 @@ class UiBulma extends UiBase {
         if (columnOpt.type === 'select') {
             // Create wrapper
             let wrapper = Util.createElem('div', null, null, 'select');
+            if (this.uiParams.sizing === 'small'){
+                wrapper.classList.add('is-small');
+            } else if (this.uiParams.sizing === 'medium'){
+                wrapper.classList.add('is-medium');
+            } else if (this.uiParams.sizing === 'large'){
+                wrapper.classList.add('is-large');
+            }
             ctrlHolder.appendChild(wrapper);
             // Create select
             ctrl = super.generateControl(null, columnOpt, ctrlId, ctrlName);

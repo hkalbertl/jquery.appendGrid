@@ -31,10 +31,6 @@ class GridCore {
             finalColSpan: 0,
             // Indicate to hide last column or not
             hideLastColumn: false,
-            // The element ID of the `appendGrid` wrapper
-            wrapperId: null,
-            // Indicate calculate width or not
-            // calculateWidth: true,
             // Settings
             settings: null,
             // The table element
@@ -118,11 +114,6 @@ class GridCore {
 
         // Config table element
         Util.applyClasses(tbWhole, self.uiFramework.getSectionClasses('table'));
-
-        // Create wrapper
-        let wrapper = self.createElement('div', 'wrapper');
-        tbWhole.parentNode.insertBefore(wrapper, tbWhole);
-        wrapper.appendChild(tbWhole);
 
         // Create thead
         let thead = self.createElement('thead');
@@ -570,16 +561,6 @@ class GridCore {
             }
             */
         }
-        // Check if re-calculate column width is required
-        /*
-        if (0 < settings.maxBodyHeight && this._calculateWidth && !calColWidth) {
-            let scroll = $('#' + settings._wrapperId + '>div.scroller')[0];
-            if (scroll.scrollHeight > scroll.offsetHeight) {
-                calColWidth = true;
-                settings._calculateWidth = false;
-            }
-        }
-        */
 
         // Save setting
         self.saveSetting();
@@ -589,19 +570,12 @@ class GridCore {
             self.sortSequence(rowIndex);
         }
 
-        // Calculate column width
-        /*
-        if (calColWidth && settings.autoColumnWidth && settings.maxBodyHeight > 0) {
-            calculateColumnWidth(document.getElementById(settings._wrapperId));
-        }
-        */
-        // Trigger events
+        // Trigger grid callbacks
         if (Util.isNumeric(rowIndex)) {
             if (typeof settings.afterRowInserted === 'function') {
                 settings.afterRowInserted(self.tbWhole, parentIndex, addedRows);
             }
-        }
-        else {
+        } else {
             if (typeof settings.afterRowAppended === 'function') {
                 settings.afterRowAppended(self.tbWhole, parentIndex, addedRows);
             }
@@ -961,7 +935,7 @@ class GridCore {
         document.getElementById(self.settings.idPrefix + '_rowOrder').value = self.rowOrder.join();
     }
 
-    showEmptyMessage(skipWidthCalculation) {
+    showEmptyMessage() {
         const self = this;
         self.tbBody.innerHTML = '';
         const tbRow = self.createElement('tr', 'tbodyRow');
@@ -971,17 +945,6 @@ class GridCore {
         Util.applyClasses(tbCell, self.uiFramework.getSectionClasses('empty'));
         tbCell.innerText = self.settings.i18n.rowEmpty;
         tbRow.appendChild(tbCell);
-        /*
-        if (!skipWidthCalculation && settings.maxBodyHeight > 0) {
-            // Check scrolling enabled
-            if (settings.autoColumnWidth) {
-                calculateColumnWidth(tbWrap);
-            } else {
-                // Set the width of empty message cell to the thead width
-                $emptyCell.width($('table.head', tbWrap).width() - 4);
-            }
-        }
-        */
     }
 
     /**

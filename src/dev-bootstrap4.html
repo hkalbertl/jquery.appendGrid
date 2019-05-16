@@ -71,7 +71,11 @@
             window.myAppendGrid = new AppendGrid({
                 element: 'tblAppendGrid',
                 uiFramework: 'bootstrap4',
-                // uiParams: { useButtonGroup: false, sectionClasses: { remove: 'btn-danger' } },
+                uiParams: {
+                    // useButtonGroup: false,
+                    // sectionClasses: { remove: 'btn-danger' },
+                    sizing: 'small'
+                },
                 iconFramework: 'fontawesome5',
                 // iconFramework: 'ionicon4',
                 // iconFramework: 'typicons2',
@@ -79,9 +83,6 @@
                 // iconFramework: 'materialdesignicons3',
                 // Optional CSS classes for Bootstrap
                 sectionClasses: {
-                    table: 'table-sm',
-                    buttonGroup: 'btn-group-sm',
-                    control: 'form-control-sm',
                     insert: 'text-primary'
                 },
                 // hideRowNumColumn: true,

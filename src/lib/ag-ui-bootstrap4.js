@@ -8,7 +8,8 @@ class UiBootstrap4 extends UiBase {
         // Prepare default options
         let libParams = {
             useButtonGroup: true,
-            sectionClasses: null
+            sectionClasses: null,
+            sizing: 'normal'
         };
         Object.assign(libParams, uiParams);
         // Prepare default section classes
@@ -26,6 +27,18 @@ class UiBootstrap4 extends UiBase {
             moveDown: 'btn-outline-secondary',
             empty: 'text-center'
         };
+        // Apply sizing classes, if defined
+        if (libParams.sizing === 'small') {
+            // For small
+            libSectionClasses.table += ' table-sm';
+            libSectionClasses.buttonGroup += ' btn-group-sm';
+            libSectionClasses.control += ' form-control-sm';
+        } else if (libParams.sizing === 'large') {
+            // For large
+            libSectionClasses.buttonGroup += ' btn-group-lg';
+            libSectionClasses.control += ' form-control-lg';
+        }
+        // Override default classes if user defined
         if (libParams.sectionClasses) {
             Object.assign(libSectionClasses, libParams.sectionClasses);
         }

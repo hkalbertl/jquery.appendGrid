@@ -6,7 +6,6 @@ class UiBase {
 		this.i18n = i18n;
 		this.iconFramework = iconFramework;
 		this.sectionClasses = {
-			wrapper: 'ag-wrapper',
 			table: null,
 			thead: null,
 			theadRow: null,
