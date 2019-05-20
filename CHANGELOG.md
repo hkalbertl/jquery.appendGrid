@@ -1,9 +1,11 @@
-## 2.0.3 (XXX XX, 20XX)
+## 2.0.3 (May 21, 2019)
 - `initData` or `initRows` will be handled after grid initialized.
 - Fixed a problem that numeric zero value cannot be set by using setCtrlValue method.
 - Added `readonly` column type for `bootstrap4` and `bulma` UI framework.
 - Removed wrapper DIV element on table. It was used for `Fixed Header` feature but we can use other libraries such as [jquery.floatThead](https://mkoryak.github.io/floatThead/) for that.
 - Added `sizing` uiParams for `bootstrap4` and `bulma` UI framework.
+- Added `ctrlAdded` callback function that to be executed after control generated and added to table cell.
+- Removed `wrapper` which can be done by using `ctrlAdded`.
 
 ## 2.0.2 (May 8, 2019)
 - Fixed a problem on generating unusable AppendGrid.js file.

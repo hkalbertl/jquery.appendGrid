@@ -27,6 +27,7 @@
     <!--
     <link rel="stylesheet" href="https://cdn.materialdesignicons.com/3.5.95/css/materialdesignicons.min.css" />
     -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gijgo@1.9.13/css/gijgo.min.css" />
 </head>
 
 <body class="container">
@@ -59,10 +60,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
-    <!--
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.5.3/js/foundation.min.js"
-        integrity="sha256-/PFxCnsMh+nTuM0k3VJCRch1gwnCfKjaP8rJNq5SoBg=" crossorigin="anonymous"></script>
-    -->
+    <script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.13/js/gijgo.min.js"></script>
 
     <!-- plugin initialization -->
     <script>
@@ -132,9 +130,15 @@
                 }, {
                     name: 'memberSince',
                     display: 'Member Since',
-                    type: 'date',
+                    // type: 'date',
                     ctrlAttr: {
                         maxlength: 10
+                    },
+                    ctrlAdded: function (element) {
+                        $(element).datepicker({
+                            uiLibrary: 'bootstrap4',
+                            format: 'yyyy-mm-dd'
+                        });
                     }
                     /*
                 }, {
@@ -222,9 +226,9 @@
                     console.log('agd: Row removed. RIDX=' + rowIndex);
                 },
                 // Use sample data in `dev-data.js`, if loaded
-                // initData: window.myAppendGridInitData || null
+                initData: window.myAppendGridInitData || null
                 // initData: null
-                initRows: 5
+                // initRows: 5
             });
             // Add button event
             $('#getAllValue1').on('click', function () {

@@ -99,8 +99,8 @@ const _defaultColumnOptions = {
     customSetter: null,
     // An object that contains event callbacks of control.
     events: null,
-    // Add wrapper to the input control.
-    wrapper: null
+    // Callback function when control added
+    ctrlAdded: null
 };
 
 class AppendGrid {
@@ -151,14 +151,10 @@ class AppendGrid {
         // Handle initData or initRows
         if (Array.isArray(params.initData)) {
             // Load initData
-            setTimeout(function (caller, records) {
-                caller.loadData(records, true);
-            }, 10, gridCore, params.initData);
+            gridCore.loadData(params.initData, true);
         } else if (params.initRows > 0) {
             // Append initRows
-            setTimeout(function (caller, rows) {
-                caller.insertRow(rows);
-            }, 10, gridCore, params.initRows);
+            gridCore.insertRow(params.initRows);
         }
     }
 

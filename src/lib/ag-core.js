@@ -44,7 +44,7 @@ class GridCore {
         });
 
         // Merge default options
-        let settings = Object.assign({}, options);
+        const settings = Object.assign({}, options);
         self.settings = settings;
         console.debug('ag:Options initialized');
 
@@ -116,7 +116,7 @@ class GridCore {
         Util.applyClasses(tbWhole, self.uiFramework.getSectionClasses('table'));
 
         // Create thead
-        let thead = self.createElement('thead');
+        const thead = self.createElement('thead');
         tbWhole.appendChild(thead);
         let tbRow = self.createElement('tr', 'theadRow'), tbCell;
         thead.appendChild(tbRow);
@@ -187,12 +187,12 @@ class GridCore {
         self.finalColSpan = visibleCount;
 
         // Create tbody
-        let tbBody = self.createElement('tbody');
+        const tbBody = self.createElement('tbody');
         tbWhole.appendChild(tbBody);
         self.tbBody = tbBody;
 
         // Create tfoot
-        let tfoot = self.createElement('tfoot');
+        const tfoot = self.createElement('tfoot');
         tbWhole.appendChild(tfoot);
         tbRow = self.createElement('tr', 'tfootRow');
         tfoot.appendChild(tbRow);
@@ -201,8 +201,8 @@ class GridCore {
         tbRow.appendChild(tbCell);
 
         // Add hidden for rowOrder
-        let rowOrderName = settings.idPrefix + '_rowOrder';
-        let rowOrderCtrl = Util.createElem('input', rowOrderName, rowOrderName, null, 'hidden');
+        const rowOrderName = settings.idPrefix + '_rowOrder';
+        const rowOrderCtrl = Util.createElem('input', rowOrderName, rowOrderName, null, 'hidden');
         tbCell.appendChild(rowOrderCtrl);
 
         if (settings.hideButtons.append && settings.hideButtons.removeLast) {
@@ -251,14 +251,13 @@ class GridCore {
 
         // Clear existing content
         const self = this;
-        let settings = self.settings;
-        // let tbRow, tbCell;
+        const settings = self.settings;
         self.tbBody.innerHTML = '';
         self.rowOrder.length = 0;
         self.uniqueIndex = 0;
 
         // Add rows
-        let insertResult = self.insertRow(records.length);
+        const insertResult = self.insertRow(records.length);
 
         // Set data
         for (let r = 0; r < insertResult.addedRows.length; r++) {
@@ -285,9 +284,9 @@ class GridCore {
     insertRow(numOfRowOrRowArray, rowIndex, callerUniqueIndex) {
         // Define variables
         const self = this;
-        let settings = self.settings, uiFramework = self.uiFramework, tbBody = self.tbBody, tbRow, tbCell;
-        let addedRows = [], parentIndex = null;
-        // let tbWhole = self.tbWhole, tbSubRow = null, reachMaxRow = false, calColWidth = false
+        const settings = self.settings, uiFramework = self.uiFramework, tbBody = self.tbBody;
+        let tbRow, tbCell, addedRows = [], parentIndex = null;
+        // let tbWhole = self.tbWhole, tbSubRow = null, reachMaxRow = false;
         // let oldHeight = 0, oldScroll = 0;
         // Check number of row to be inserted
         let numOfRow = numOfRowOrRowArray, loadData = false;
@@ -304,15 +303,13 @@ class GridCore {
                     break;
                 }
             }
-        }
-        else if (Util.isNumeric(rowIndex)) {
+        } else if (Util.isNumeric(rowIndex)) {
             if (rowIndex >= self.rowOrder.length) {
                 rowIndex = null;
             } else {
                 parentIndex = rowIndex - 1;
             }
-        }
-        else if (self.rowOrder.length !== 0) {
+        } else if (self.rowOrder.length !== 0) {
             rowIndex = null;
             parentIndex = self.rowOrder.length - 1;
         }
@@ -326,7 +323,6 @@ class GridCore {
         // Remove empty row
         if (self.rowOrder.length === 0) {
             tbBody.innerHTML = '';
-            // calColWidth = true;
         }
         // Add total number of row
         for (let z = 0; z < numOfRow; z++) {
@@ -405,25 +401,6 @@ class GridCore {
                         tbCell.style[styleName] = settings.columns[y].cellCss[styleName];
                     }
                 }
-                // Create wrapper, if required
-                let ctrlHolder = null;
-                if (settings.columns[y].wrapper) {
-                    if (typeof settings.columns[y].wrapper === 'function') {
-                        // Create wrapper by custom function
-                        ctrlHolder = settings.columns[y].wrapper();
-                    } else if (settings.columns[y].wrapper.tagName) {
-                        // Clone the wrapper element
-                        ctrlHolder = settings.columns[y].wrapper.cloneNode(true);
-                    } else {
-                        // Unknown wrapper parameter?
-                        throw 'Unsupported *wrapper* value.';
-                    }
-                }
-                if (ctrlHolder) {
-                    tbCell.appendChild(ctrlHolder);
-                } else {
-                    ctrlHolder = tbCell;
-                }
                 // Prepare control id and name
                 let ctrlId = settings.idPrefix + '_' + settings.columns[y].name + '_' + uniqueIndex, ctrlName;
                 if (typeof settings.nameFormatter === 'function') {
@@ -433,13 +410,14 @@ class GridCore {
                 }
                 // Check control type
                 let ctrl = null;
-                if (settings.columns[y].type === 'custom') {
+                const isCustom = (settings.columns[y].type === 'custom');
+                if (isCustom) {
                     if (typeof settings.columns[y].customBuilder === 'function') {
-                        ctrl = settings.columns[y].customBuilder(ctrlHolder, settings.idPrefix, settings.columns[y].name, uniqueIndex);
+                        ctrl = settings.columns[y].customBuilder(tbCell, settings.idPrefix, settings.columns[y].name, uniqueIndex);
                     }
                 } else {
                     // Generate control
-                    ctrl = self.uiFramework.generateControl(ctrlHolder, settings.columns[y], ctrlId, ctrlName);
+                    ctrl = self.uiFramework.generateControl(tbCell, settings.columns[y], ctrlId, ctrlName);
                     // Add control attributes as needed
                     if (!Util.isEmpty(settings.columns[y].ctrlAttr)) {
                         for (let attrName in settings.columns[y].ctrlAttr) {
@@ -466,12 +444,17 @@ class GridCore {
                         }
                     }
                 }
+                // Set default value
                 if (loadData) {
                     // Load data if needed
                     self.setCtrlValue(y, uniqueIndex, numOfRowOrRowArray[z][settings.columns[y].name]);
                 } else if (!Util.isEmpty(settings.columns[y].value)) {
                     // Set default value
                     self.setCtrlValue(y, uniqueIndex, settings.columns[y].value);
+                }
+                // Trigger ctrlAdded callbacks
+                if (!isCustom && typeof settings.columns[y].ctrlAdded === 'function') {
+                    settings.columns[y].ctrlAdded(ctrl, tbCell, uniqueIndex);
                 }
             }
             // Add button cell if needed
@@ -486,7 +469,7 @@ class GridCore {
             // Add hidden controls
             hiddenColumns.forEach(function (hi) {
                 // Prepare control ID / name
-                let hiddenName = settings.columns[hi].name;
+                const hiddenName = settings.columns[hi].name;
                 let ctrlId = settings.idPrefix + '_' + hiddenName + '_' + uniqueIndex, ctrlName;
                 if (typeof settings.nameFormatter === 'function') {
                     ctrlName = settings.nameFormatter(settings.idPrefix, hiddenName, uniqueIndex);
@@ -511,7 +494,7 @@ class GridCore {
             } else if (settings.columns.length > self.visibleCount) {
                 Util.applyClasses(tbCell, uiFramework.getSectionClasses('last'));
                 // Check to use button group or not
-                let container = uiFramework.createButtonGroup();
+                const container = uiFramework.createButtonGroup();
                 if (container) {
                     tbCell.appendChild(container);
                 } else {
@@ -520,11 +503,11 @@ class GridCore {
                 // Add standard buttons
                 ['insert', 'remove', 'moveUp', 'moveDown'].forEach(function (type) {
                     if (!settings.hideButtons[type]) {
-                        let buttonId = settings.idPrefix + '_$' + type + '_' + uniqueIndex;
-                        let button = uiFramework.generateButton(container, type, buttonId);
+                        const buttonId = settings.idPrefix + '_$' + type + '_' + uniqueIndex;
+                        const button = uiFramework.generateButton(container, type, buttonId);
                         button.dataset.uniqueIndex = uniqueIndex;
                         button.addEventListener('click', function (evt) {
-                            let callerUniqueIndex = parseInt(evt.currentTarget.dataset.uniqueIndex);
+                            const callerUniqueIndex = parseInt(evt.currentTarget.dataset.uniqueIndex);
                             self.rowButtonActions(type, callerUniqueIndex);
                         });
                     }
