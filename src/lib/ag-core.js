@@ -494,7 +494,7 @@ class GridCore {
             } else if (settings.columns.length > self.visibleCount) {
                 Util.applyClasses(tbCell, uiFramework.getSectionClasses('last'));
                 // Check to use button group or not
-                const container = uiFramework.createButtonGroup();
+                let container = uiFramework.createButtonGroup();
                 if (container) {
                     tbCell.appendChild(container);
                 } else {
