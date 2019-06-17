@@ -99,8 +99,8 @@ const _defaultColumnOptions = {
     customSetter: null,
     // An object that contains event callbacks of control.
     events: null,
-    // Add wrapper to the input control.
-    wrapper: null
+    // Callback function when control added
+    ctrlAdded: null
 };
 
 class AppendGrid {
@@ -144,8 +144,18 @@ class AppendGrid {
             params.columns[z] = columnOpt;
         }
 
-        // Save the core grid to WeakMap 
-        _grid.set(this, new GridCore(params));
+        // Save the core grid to WeakMap
+        const gridCore = new GridCore(params);
+        _grid.set(this, gridCore);
+
+        // Handle initData or initRows
+        if (Array.isArray(params.initData)) {
+            // Load initData
+            gridCore.loadData(params.initData, true);
+        } else if (params.initRows > 0) {
+            // Append initRows
+            gridCore.insertRow(params.initRows);
+        }
     }
 
     appendRow(numOfRowOrRowArray) {

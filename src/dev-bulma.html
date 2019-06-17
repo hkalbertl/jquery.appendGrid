@@ -4,11 +4,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>appendGrid - Bulma</title>
+    <title>AppendGrid - Bulma</title>
 
     <!--UI Framework Style Sheets-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css"
-        integrity="sha256-8B1OaG0zT7uYA572S2xOxWACq9NXYPQ+U5kHPV1bJN4=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css"
+        integrity="sha256-vK3UTo/8wHbaUn+dTQD0X6dzidqc5l7gczvH+Bnowwk=" crossorigin="anonymous" />
 
     <!--Icon Webfont Frameworks-->
     <!--
@@ -30,7 +30,7 @@
 </head>
 
 <body class="container">
-    <h1 class="title">appendGrid - Bulma</h1>
+    <h1 class="title">AppendGrid - Bulma</h1>
     <form id="form" action="">
         <table id="tblAppendGrid"></table>
         <hr />
@@ -55,9 +55,11 @@
             window.myAppendGrid = new AppendGrid({
                 element: document.getElementById('tblAppendGrid'),
                 uiFramework: 'bulma',
-                // uiFramework: 'bootstrap4',
-                // uiFramework: 'foundation6',
-                // uiParams: { useButtonGroup: false, sectionClasses: { remove: 'btn-danger' } },
+                uiParams: {
+                    // useButtonGroup: false,
+                    // sectionClasses: { remove: 'btn-danger' },
+                    sizing: 'small'
+                },
                 // iconFramework: 'fontawesome5',
                 // iconFramework: 'materialdesignicons3',
                 iconFramework: 'typicons2',
@@ -70,14 +72,14 @@
                 },
                 // Optional CSS classes for Bulma
                 sectionClasses: {
-                    table: 'is-narrow is-fullwidth',
+                    table: 'is-fullwidth',
                     empty: 'has-background-warning'
                 },
                 // hideButtons: { moveUp: true, moveDown: true },
                 columns: [{
                     name: 'company',
                     display: 'Company',
-                    type: 'text',
+                    type: 'readonly',
                     // headerSpan: 2,
                     // displayClass: 'has-text-centered',
                     ctrlAttr: { maxlength: 100 },
@@ -233,8 +235,8 @@
                     console.log('agc: [' + table.id + ']afterRowRemoved=' + rowIndex);
                 },
                 // Use sample data in `dev-data.js`, if loaded
-                // initData: window.myAppendGridInitData || null
-                initData: null
+                initData: window.myAppendGridInitData || null
+                // initData: null
             });
             // Add button event
             document.getElementById('getAllValue1').addEventListener('click', function () {
