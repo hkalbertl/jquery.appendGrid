@@ -1,4 +1,4 @@
-## 2.0.3 (XXX XX, 20XX)
+## 2.0.3 (Jun 17, 2019)
 - `initData` or `initRows` will be handled after grid initialized.
 - Fixed a problem that numeric zero value cannot be set by using setCtrlValue method.
 - Added `readonly` column type for `bootstrap4` and `bulma` UI framework.
