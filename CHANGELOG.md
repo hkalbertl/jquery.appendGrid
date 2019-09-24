@@ -1,3 +1,7 @@
+## 2.0.4 (Sep 24, 2019)
+- Fixed a problem on removing a row when `hideRowNumColumn` is in used.
+  (Thanks malohtie for reporting)
+
 ## 2.0.3 (Jun 17, 2019)
 - `initData` or `initRows` will be handled after grid initialized.
 - Fixed a problem that numeric zero value cannot be set by using setCtrlValue method.
