@@ -549,7 +549,7 @@ class GridCore {
         self.saveSetting();
 
         // Sort row number
-        if (!self.hideRowNumColumn && !Util.isEmpty(rowIndex)) {
+        if (!settings.hideRowNumColumn && !Util.isEmpty(rowIndex)) {
             self.sortSequence(rowIndex);
         }
 
@@ -608,7 +608,7 @@ class GridCore {
                 // Save setting
                 self.saveSetting();
                 // Sort sequence
-                if (!self.hideRowNumColumn) {
+                if (!settings.hideRowNumColumn) {
                     self.sortSequence(rowIndex);
                 }
                 // Trigger event
@@ -694,7 +694,7 @@ class GridCore {
             self.rowOrder[oldIndex] = swapUniqueIndex;
             self.rowOrder[oldIndex - 1] = uniqueIndex;
             // Update row label
-            if (!self.hideRowNumColumn) {
+            if (!settings.hideRowNumColumn) {
                 let targetRowNumCell = document.getElementById(settings.idPrefix + '_$rowNum_' + uniqueIndex);
                 let swapRowNumCell = document.getElementById(settings.idPrefix + '_$rowNum_' + swapUniqueIndex);
                 let swapSeq = swapRowNumCell.innerHTML;
@@ -746,7 +746,7 @@ class GridCore {
             self.rowOrder[oldIndex] = swapUniqueIndex;
             self.rowOrder[oldIndex + 1] = uniqueIndex;
             // Update row label
-            if (!self.hideRowNumColumn) {
+            if (!settings.hideRowNumColumn) {
                 let targetRowNumCell = document.getElementById(settings.idPrefix + '_$rowNum_' + uniqueIndex);
                 let swapRowNumCell = document.getElementById(settings.idPrefix + '_$rowNum_' + swapUniqueIndex);
                 let swapSeq = swapRowNumCell.innerHTML;
