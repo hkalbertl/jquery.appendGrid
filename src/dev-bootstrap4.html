@@ -41,6 +41,7 @@
                     <button type="button" id="getAllValue1" class="btn btn-success btn-sm">getAllValue (Array)</button>
                     <button type="button" id="getAllValue2" class="btn btn-success btn-sm">getAllValue (Object)</button>
                     <button type="button" id="serialize" class="btn btn-success btn-sm">jQuery serialize()</button>
+                    <button type="button" id="removeEmpty" class="btn btn-secondary btn-sm">Remove Empty</button>
                 </div>
             </div>
             <div class="card-body">
@@ -105,7 +106,10 @@
                     display: 'Contact Person',
                     type: 'text',
                     ctrlAttr: { maxlength: 100 },
-                    ctrlCss: { backgroundColor: '#eeffee' }
+                    ctrlCss: { backgroundColor: '#eeffee' },
+                    emptyCriteria: function (value) {
+                        return !value || '???' === value;
+                    }
                 }, {
                     name: 'country',
                     display: 'Country',
@@ -225,6 +229,7 @@
                 afterRowRemoved: function (caller, rowIndex) {
                     console.log('agd: Row removed. RIDX=' + rowIndex);
                 },
+                hideRowNumColumn: true,
                 // Use sample data in `dev-data.js`, if loaded
                 initData: window.myAppendGridInitData || null
                 // initData: null
@@ -239,6 +244,9 @@
             });
             $('#serialize').on('click', function () {
                 $('#output').text($('#form').serialize());
+            });
+            $('#removeEmpty').on('click', function () {
+                window.myAppendGrid.removeEmptyRows();
             });
         });
     </script>
