@@ -285,8 +285,8 @@ class GridCore {
         // Define variables
         const self = this;
         const settings = self.settings, uiFramework = self.uiFramework, tbBody = self.tbBody;
-        let tbRow, tbCell, addedRows = [], parentIndex = null;
-        // let tbWhole = self.tbWhole, tbSubRow = null, reachMaxRow = false;
+        let tbRow, tbCell, addedRows = [], parentIndex = null, reachMaxRow = false;
+        // let tbWhole = self.tbWhole, tbSubRow = null;
         // let oldHeight = 0, oldScroll = 0;
         // Check number of row to be inserted
         let numOfRow = numOfRowOrRowArray, loadData = false;
@@ -327,12 +327,10 @@ class GridCore {
         // Add total number of row
         for (let z = 0; z < numOfRow; z++) {
             // Check maximum number of rows
-            /*
-            if (0 < settings.maxRowsAllowed && settings._rowOrder.length >= settings.maxRowsAllowed) {
+            if (0 < settings.maxRowsAllowed && self.rowOrder.length >= settings.maxRowsAllowed) {
                 reachMaxRow = true;
                 break;
             }
-            */
             // Prepare variables
             let uniqueIndex = ++self.uniqueIndex, hiddenColumns = [];
             // Prepare the table row
@@ -563,11 +561,9 @@ class GridCore {
                 settings.afterRowAppended(self.tbWhole, parentIndex, addedRows);
             }
         }
-        /*
-        if (reachMaxRow && $.isFunction(settings.maxNumRowsReached)) {
+        if (reachMaxRow && typeof settings.maxNumRowsReached === 'function') {
             settings.maxNumRowsReached();
         }
-        */
         // Scroll the page when append row
         /*
         if (settings.maintainScroll && !$.isNumeric(rowIndex)) {

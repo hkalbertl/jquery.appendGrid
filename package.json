@@ -1,6 +1,6 @@
 {
   "name": "jquery.appendgrid",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "AppendGrid - The dynamic table input JavaScript plugin",
   "main": "dist/AppendGrid.js",
   "scripts": {
@@ -28,30 +28,33 @@
   },
   "homepage": "https://github.com/hkalbertl/jquery.appendGrid",
   "devDependencies": {
-    "@babel/cli": "^7.6.2",
-    "@babel/core": "^7.6.2",
-    "@babel/node": "^7.6.2",
-    "@babel/preset-env": "^7.6.2",
-    "@fortawesome/fontawesome-free": "^5.11.2",
+    "@babel/cli": "^7.7.5",
+    "@babel/core": "^7.7.5",
+    "@babel/node": "^7.7.4",
+    "@babel/preset-env": "^7.7.6",
+    "@fortawesome/fontawesome-free": "^5.12.0",
     "babel-loader": "^8.0.6",
-    "bootstrap": "^4.3.1",
+    "bootstrap": "^4.4.1",
     "bulma": "^0.7.5",
     "chai": "^4.2.0",
     "clean-webpack-plugin": "^2.0.2",
     "html-webpack-include-assets-plugin": "^1.0.10",
     "html-webpack-plugin": "^3.2.0",
     "jquery": "^3.4.1",
-    "karma": "^4.3.0",
+    "karma": "^4.4.1",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.2.0",
     "karma-mocha": "^1.3.0",
-    "mocha": "^6.2.0",
-    "popper.js": "^1.15.0",
+    "mocha": "^6.2.2",
+    "popper.js": "^1.16.0",
     "uglifyjs-webpack-plugin": "^2.2.0",
-    "webpack": "^4.40.2",
-    "webpack-cli": "^3.3.9",
-    "webpack-dev-server": "^3.8.1",
+    "webpack": "^4.41.3",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0",
     "webpack-merge": "^4.2.2"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "optionalDependencies": {
+    "fsevents": "^2.1.2"
+  }
 }

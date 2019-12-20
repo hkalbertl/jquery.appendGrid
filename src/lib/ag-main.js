@@ -33,7 +33,9 @@ const _defaultGridOptions = {
     // The variable name of row count used for object mode of getAllValue
     rowCountName: '_RowCount',
     // Custom CSS classes to be added to different sections
-    sectionClasses: null
+    sectionClasses: null,
+    // The maximum number of rows allowed in this grid
+    maxRowsAllowed: 0
 };
 
 const _defaultCallbackContainer = {
@@ -52,7 +54,9 @@ const _defaultCallbackContainer = {
     // The callback function to be triggered before grid row remove.
     beforeRowRemove: null,
     // The callback function to be triggered after grid row removed.
-    afterRowRemoved: null
+    afterRowRemoved: null,
+    // The callback function to be triggered when row(s) is/are adding to grid but the maximum number of rows allowed is reached.
+    maxNumRowsReached: null
 };
 
 // Default column options.
