@@ -51,6 +51,23 @@ describe('AppendGrid Bootstrap4', function () {
         });
     });
 
+    describe('#removeRow', function () {
+        it('should have 6 rows', function () {
+            window.gridData.list[0].grid.removeRow(3);
+            assert.deepEqual(window.gridData.list[0].grid.getRowOrder(), [1, 2, 3, 5, 6, 7]);
+        });
+    });
+
+    describe('#insertRow', function () {
+        it('should have 7 rows', function () {
+            window.gridData.list[0].grid.insertRow([
+                { "foo": "3A", "bar": "2019-03-03" }
+            ], 3);
+            assert.deepEqual(window.gridData.list[0].grid.getRowOrder(), [1, 2, 3, 8, 5, 6, 7]);
+            assert.deepEqual(window.gridData.list[0].grid.getRowValue(3), { "foo": "3A", "bar": "2019-03-03" });
+        });
+    });
+
     // Remove the test table
     // window.myAppendGrid = null;
     // document.body.removeChild(domTable);

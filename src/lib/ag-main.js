@@ -230,7 +230,11 @@ class AppendGrid {
     }
 
     getRowValue(rowIndex) {
-        return _grid.get(this).getRowValue(rowIndex);
+        let uniqueIndex = this.getUniqueIndex(rowIndex);
+        if (uniqueIndex !== null) {
+            return _grid.get(this).getRowValue(uniqueIndex);
+        }
+        return null;
     }
 
     getCtrlValue(name, rowIndex) {

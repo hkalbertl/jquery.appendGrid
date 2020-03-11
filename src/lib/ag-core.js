@@ -562,7 +562,7 @@ class GridCore {
             }
         }
         if (reachMaxRow && typeof settings.maxNumRowsReached === 'function') {
-            settings.maxNumRowsReached();
+            settings.maxNumRowsReached(self.tbWhole);
         }
         // Scroll the page when append row
         /*

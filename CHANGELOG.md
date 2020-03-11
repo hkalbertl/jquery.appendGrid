@@ -1,3 +1,7 @@
+## 2.0.6 (Mar 11, 2020)
+- Fixed a problem on passing `rowIndex` parameter to `getRowValue` method.
+  (Thanks scrnjakovic for reporting)
+
 ## 2.0.5 (Dec 20, 2019)
 - Migrated `maxRowsAllowed` option from v1 that limited the maximum allowed rows of grid.
 - Migrated `maxNumRowsReached` callback from v1 that notify user when maximum allowed rows reached.
