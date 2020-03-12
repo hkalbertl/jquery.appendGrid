@@ -1,3 +1,9 @@
+## 2.0.6 (Mar 12, 2020)
+- Fixed issue #131 on passing `rowIndex` parameter to `getRowValue` method.
+  (Thanks scrnjakovic for reporting)
+- Fixed issue #132 about the order of array data added by using `insertRow` method.
+- Fixed no return values for `appendRow` and `insertRow` methods.
+
 ## 2.0.5 (Dec 20, 2019)
 - Migrated `maxRowsAllowed` option from v1 that limited the maximum allowed rows of grid.
 - Migrated `maxNumRowsReached` callback from v1 that notify user when maximum allowed rows reached.

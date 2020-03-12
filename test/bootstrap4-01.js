@@ -46,8 +46,28 @@ describe('AppendGrid Bootstrap4', function () {
 
     describe('#appendRow', function () {
         it('should have 7 rows', function () {
-            window.gridData.list[0].grid.appendRow(2);
+            let appendResult = window.gridData.list[0].grid.appendRow(2);
+            assert.deepEqual(appendResult, [6, 7]);
             assert.deepEqual(window.gridData.list[0].grid.getRowOrder(), [1, 2, 3, 4, 5, 6, 7]);
+        });
+    });
+
+    describe('#removeRow', function () {
+        it('should have 6 rows', function () {
+            window.gridData.list[0].grid.removeRow(3);
+            assert.deepEqual(window.gridData.list[0].grid.getRowOrder(), [1, 2, 3, 5, 6, 7]);
+        });
+    });
+
+    describe('#insertRow', function () {
+        it('should have 8 rows', function () {
+            let insertResult = window.gridData.list[0].grid.insertRow([
+                { "foo": "3A", "bar": "2019-03-03" },
+                { "foo": "4A", "bar": "2019-04-04" }
+            ], 3);
+            assert.deepEqual(insertResult, [8, 9]);
+            assert.deepEqual(window.gridData.list[0].grid.getRowOrder(), [1, 2, 3, 8, 9, 5, 6, 7]);
+            assert.deepEqual(window.gridData.list[0].grid.getRowValue(3), { "foo": "3A", "bar": "2019-03-03" });
         });
     });
 

@@ -338,7 +338,8 @@ class GridCore {
             tbRow.dataset.uniqueIndex = uniqueIndex;
             // Check row insert index
             if (Util.isNumeric(rowIndex)) {
-                self.rowOrder.splice(rowIndex, 0, uniqueIndex);
+                let newRowIndex = rowIndex + z;
+                self.rowOrder.splice(newRowIndex, 0, uniqueIndex);
                 /*
                 if (settings.useSubPanel) {
                     tbBody.insertBefore(tbSubRow = document.createElement('tr'), tbBody.childNodes[rowIndex * 2]);
@@ -347,8 +348,7 @@ class GridCore {
                     tbBody.insertBefore(tbRow = document.createElement('tr'), tbBody.childNodes[rowIndex]);
                 }
                 */
-                tbBody.insertBefore(tbRow, tbBody.childNodes[rowIndex]);
-                addedRows.push(rowIndex);
+                tbBody.insertBefore(tbRow, tbBody.childNodes[newRowIndex]);
             }
             else {
                 self.rowOrder.push(uniqueIndex);
@@ -358,8 +358,8 @@ class GridCore {
                     tbBody.appendChild(tbSubRow = document.createElement('tr'));
                 }
                 */
-                addedRows.push(self.rowOrder.length - 1);
             }
+            addedRows.push(uniqueIndex);
 
             // Config on the sub panel row
             /*
@@ -562,7 +562,7 @@ class GridCore {
             }
         }
         if (reachMaxRow && typeof settings.maxNumRowsReached === 'function') {
-            settings.maxNumRowsReached();
+            settings.maxNumRowsReached(self.tbWhole);
         }
         // Scroll the page when append row
         /*
