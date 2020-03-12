@@ -163,11 +163,13 @@ class AppendGrid {
     }
 
     appendRow(numOfRowOrRowArray) {
-        _grid.get(this).insertRow(numOfRowOrRowArray || 1);
+        let result = _grid.get(this).insertRow(numOfRowOrRowArray || 1);
+        return result.addedRows;
     }
 
     insertRow(numOfRowOrRowArray, rowIndex) {
-        _grid.get(this).insertRow(numOfRowOrRowArray, rowIndex);
+        let result = _grid.get(this).insertRow(numOfRowOrRowArray, rowIndex);
+        return result.addedRows;
     }
 
     removeRow(rowIndex) {
