@@ -1,3 +1,6 @@
+## 2.0.7 (Aug 20, 2020)
+- Supported [Bootstrap Icons](https://icons.getbootstrap.com/).
+
 ## 2.0.6 (Mar 12, 2020)
 - Fixed issue #131 on passing `rowIndex` parameter to `getRowValue` method.
   (Thanks scrnjakovic for reporting)
