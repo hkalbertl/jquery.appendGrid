@@ -141,7 +141,6 @@ class UiBase {
 		else if (columnOpt.type === 'checkbox') {
 			ctrl = Util.createElem('input', ctrlId, ctrlName, null, 'checkbox');
 			ctrl.value = 1;
-			// ctrlHolder.style.textAlign = 'center';
 		}
 		else if (columnOpt.type === 'textarea') {
 			ctrl = Util.createElem('textarea', ctrlId, ctrlName);

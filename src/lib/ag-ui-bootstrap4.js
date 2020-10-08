@@ -66,6 +66,9 @@ class UiBootstrap4 extends UiBase {
             ctrl = Util.createElem('input', ctrlId, ctrlName, 'form-check-input position-static');
             ctrl.type = 'checkbox';
             ctrl.value = 1;
+            // Apply classes, no need to add `this.getSectionClasses('control')` as special element classes are added
+		    Util.applyClasses(ctrl, columnOpt.ctrlClass);
+            // Add to holder
             wrapper.appendChild(ctrl);
         } else if (columnOpt.type === 'readonly') {
             // Create a readonly text input without border
