@@ -104,6 +104,9 @@ class UiBulma extends UiBase {
             ctrlHolder.appendChild(wrapper);
             // Create select
             ctrl = super.generateControl(null, columnOpt, ctrlId, ctrlName);
+            // Apply classes
+		    Util.applyClasses(ctrl, columnOpt.ctrlClass);
+            // Add to holder
             wrapper.appendChild(ctrl);
         } else if (columnOpt.type === 'checkbox') {
             // Create wrapper
@@ -112,6 +115,9 @@ class UiBulma extends UiBase {
             // Create checkbox
             ctrl = Util.createElem('input', ctrlId, ctrlName, null, 'checkbox');
             ctrl.value = 1;
+            // Apply classes
+		    Util.applyClasses(ctrl, columnOpt.ctrlClass);
+            // Add to holder
             wrapper.appendChild(ctrl);
         } else if (columnOpt.type === 'readonly') {
             // Create a readonly text input without border
