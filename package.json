@@ -47,8 +47,8 @@
     "karma-mocha": "^2.0.1",
     "mocha": "^6.2.3",
     "popper.js": "^1.16.1",
-    "terser-webpack-plugin": "^2.3.8",
-    "webpack": "^4.44.1",
+    "terser-webpack-plugin": "^5.1.1",
+    "webpack": "^5.33.2",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
     "webpack-merge": "^4.2.2"
