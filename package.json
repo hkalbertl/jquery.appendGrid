@@ -1,6 +1,6 @@
 {
   "name": "jquery.appendgrid",
-  "version": "2.0.8",
+  "version": "2.1.0",
   "description": "AppendGrid - The dynamic table input JavaScript plugin",
   "main": "dist/AppendGrid.js",
   "scripts": {
