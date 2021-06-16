@@ -1,5 +1,5 @@
 const path = require('path');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const common = require('./webpack.common.js');
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackTagsPlugin = require('html-webpack-tags-plugin');
@@ -10,6 +10,7 @@ module.exports = merge(common, {
 	devtool: 'inline-source-map',
     devServer: {
         historyApiFallback: true,
+		port: 9000,
         open: true
     },
 	plugins: [

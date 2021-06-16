@@ -1,6 +1,6 @@
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const common = require('./webpack.common.js');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = merge(common, {
@@ -12,10 +12,10 @@ module.exports = merge(common, {
 		minimize: true,
 		minimizer: [new TerserPlugin({
 			terserOptions: {
-				 compress: {
-					 drop_console: true,
-				 },
-		  }
+				compress: {
+					drop_console: true,
+				},
+			}
 		})]
 	}
 });
