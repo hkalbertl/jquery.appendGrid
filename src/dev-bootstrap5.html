@@ -3,16 +3,16 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AppendGrid - Bulma</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>AppendGrid - Bootstrap 5</title>
 
     <!--UI Framework Style Sheets-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css"
-        integrity="sha256-UDtbUHqpVVfXmdJcQVU/bfDEr9xldf3Dbd0ShD0Uf/Y=" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
 
     <!--Icon Webfont Frameworks-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css"
-        integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+        integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous" />
     <!--
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typicons/2.0.9/typicons.min.css"
         integrity="sha256-hmDtEnmZFvJ3zLsfobp03CSD3/qRCJmY3f7Vqf6zIgA=" crossorigin="anonymous" />
@@ -27,63 +27,78 @@
     <!--
     <link rel="stylesheet" href="https://cdn.materialdesignicons.com/3.5.95/css/materialdesignicons.min.css" />
     -->
+    <!--
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gijgo@1.9.13/css/gijgo.min.css" />
+    -->
 </head>
 
 <body class="container">
-    <h1 class="title">AppendGrid - Bulma</h1>
+    <h1>AppendGrid - Bootstrap 5</h1>
     <form id="form" action="">
         <table id="tblAppendGrid"></table>
-        <hr />
-        <button type="button" id="getAllValue1" class="button is-success">getAllValue (Array mode)</button>
-        <button type="button" id="getAllValue2" class="button is-success">getAllValue (Object mode)</button>
-        <button type="button" id="serialize" class="button is-success is-outlined" disabled="disabled">jQuery
-            serialize() [Not available]</button>
-        <hr />
-        <h5 class="subtitle">Output</h5>
-        <pre><code id="output"></code></pre>
+        <div class="card">
+            <div class="card-header">
+                Debug Output
+                <div class="float-right">
+                    <button type="button" id="getAllValue1" class="btn btn-success btn-sm">getAllValue (Array)</button>
+                    <button type="button" id="getAllValue2" class="btn btn-success btn-sm">getAllValue (Object)</button>
+                    <button type="button" id="serialize" class="btn btn-success btn-sm">jQuery serialize()</button>
+                    <button type="button" id="removeEmpty" class="btn btn-secondary btn-sm">Remove Empty</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <pre><code id="output"></code></pre>
+            </div>
+        </div>
     </form>
 
     <!-- Add polyfill for legacy browsers (such as IE) -->
     <script src="https://polyfill.io/v3/polyfill.min.js"></script>
 
     <!-- Add optional libraries -->
+    <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
+        integrity="sha384-Qg00WFl9r0Xr6rUqNLv1ffTSSKEFFCDCKVyHZ+sVt8KuvG99nWw5RNvbhuKgif9z"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+        crossorigin="anonymous"></script>
+    <!--
+    <script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.13/js/gijgo.min.js"></script>
+    -->
 
     <!-- plugin initialization -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        $(function () {
             // Create instance of AppendGrid
             window.myAppendGrid = new AppendGrid({
-                element: document.getElementById('tblAppendGrid'),
-                uiFramework: 'bulma',
+                element: 'tblAppendGrid',
+                uiFramework: 'bootstrap5',
                 uiParams: {
                     // useButtonGroup: false,
                     // sectionClasses: { remove: 'btn-danger' },
                     sizing: 'small'
                 },
-                iconFramework: 'fontawesome5',
-                // iconFramework: 'materialdesignicons3',
+                iconFramework: 'bootstrapicons',
+                iconParams: {
+                    baseUrl: 'https://cdn.jsdelivr.net/npm/bootstrap-icons/icons/'
+                },
+                // iconFramework: 'fontawesome5',
+                // iconFramework: 'ionicon4',
                 // iconFramework: 'typicons2',
                 // iconFramework: 'openiconic',
-                /*
-                iconParams: {
-                    icons: {
-                        append: 'typcn typcn-social-twitter',
-                        removeLast: 'typcn typcn-social-skype'
-                    }
-                },
-                */
-                // Optional CSS classes for Bulma
+                // iconFramework: 'materialdesignicons3',
+                // Optional CSS classes for Bootstrap
                 sectionClasses: {
-                    table: 'is-fullwidth',
-                    empty: 'has-background-warning'
+                    insert: 'text-primary'
                 },
-                // hideButtons: { moveUp: true, moveDown: true },
+                // hideRowNumColumn: true,
+                // rowButtonsInFront: true,
+                // hideButtons: { insert: true, remove: true, moveUp: true, moveDown: true },
+                // nameFormatter: function (idPrefix, colName, uniqueIndex) { return colName + '-' + uniqueIndex; },
                 columns: [{
                     name: 'company',
                     display: 'Company',
                     type: 'readonly',
-                    // headerSpan: 2,
-                    // displayClass: 'has-text-centered',
                     ctrlAttr: { maxlength: 100 },
                     events: {
                         click: function (e) {
@@ -98,7 +113,10 @@
                     display: 'Contact Person',
                     type: 'text',
                     ctrlAttr: { maxlength: 100 },
-                    ctrlCss: { backgroundColor: '#eeffee' }
+                    ctrlCss: { backgroundColor: '#eeffee' },
+                    emptyCriteria: function (value) {
+                        return !value || '???' === value;
+                    }
                 }, {
                     name: 'country',
                     display: 'Country',
@@ -109,7 +127,7 @@
                     name: 'isNPO',
                     display: 'NPO?',
                     type: 'checkbox',
-                    cellClass: 'has-text-centered',
+                    cellClass: 'text-center',
                     displayCss: { color: '#ff9900' }
                 }, {
                     name: 'orderPlaced',
@@ -119,24 +137,21 @@
                         min: 0,
                         max: 10000
                     },
-                    emptyCriteria: function (value) {
-                        // Empty or value equals to 0 will consider as empty.
-                        var numeric = parseFloat(value);
-                        if (!isNaN(numeric) && numeric > 0) {
-                            // Value is numeric and greater than zero
-                            return false;
-                        }
-                        return true;
-                    },
-                    displayClass: 'has-background-warning'
+                    displayClass: 'bg-light'
+                    /*
                 }, {
                     name: 'memberSince',
                     display: 'Member Since',
-                    type: 'date',
+                    // type: 'date',
                     ctrlAttr: {
                         maxlength: 10
+                    },
+                    ctrlAdded: function (element) {
+                        $(element).datepicker({
+                            uiLibrary: 'bootstrap4',
+                            format: 'yyyy-mm-dd'
+                        });
                     }
-                    /*
                 }, {
                     name: 'time',
                     display: 'Time',
@@ -144,42 +159,24 @@
                     customBuilder: function (ctrlHolder, idPrefix, name, uniqueIndex) {
                         var wrapper = document.createElement('div');
                         wrapper.id = idPrefix + '_' + name + '_' + uniqueIndex;
-                        wrapper.classList.add('field', 'has-addons', 'is-small');
+                        wrapper.classList.add('input-group', 'input-group-sm');
                         ctrlHolder.appendChild(wrapper);
-
-                        var hourWrapper1 = document.createElement('div');
-                        hourWrapper1.classList.add('control');
-                        wrapper.appendChild(hourWrapper1);
-
-                        var hourWrapper2 = document.createElement('div');
-                        hourWrapper2.classList.add('select');
-                        hourWrapper1.appendChild(hourWrapper2);
-
                         var hourElem = document.createElement('select');
                         hourElem.id = idPrefix + '_' + name + '_hour_' + '_' + uniqueIndex;
                         hourElem.name = hourElem.id;
                         hourElem.classList.add('form-control');
-                        hourWrapper2.appendChild(hourElem);
+                        wrapper.appendChild(hourElem);
                         for (var h = 0; h < 24; h++) {
                             var option = document.createElement('option');
                             option.value = (h < 10 ? '0' : '') + h;
                             option.innerText = option.value;
                             hourElem.appendChild(option);
                         }
-
-                        var minuteWrapper1 = document.createElement('div');
-                        minuteWrapper1.classList.add('control');
-                        wrapper.appendChild(minuteWrapper1);
-
-                        var minuteWrapper2 = document.createElement('div');
-                        minuteWrapper2.classList.add('select');
-                        minuteWrapper1.appendChild(minuteWrapper2);
-
                         var minuteElem = document.createElement('select');
                         minuteElem.id = idPrefix + '_' + name + '_minute_' + '_' + uniqueIndex;
                         minuteElem.name = minuteElem.id;
                         minuteElem.classList.add('form-control');
-                        minuteWrapper2.appendChild(minuteElem);
+                        wrapper.appendChild(minuteElem);
                         for (var m = 0; m < 60; m += 5) {
                             var option = document.createElement('option');
                             option.value = (m < 10 ? '0' : '') + m;
@@ -201,41 +198,45 @@
                     */
                 }, {
                     name: 'uid',
-                    type: 'hidden'
+                    type: 'hidden',
+                    value: '0',
+                    emptyCriteria: function (value) {
+                        var numeric = parseFloat(value);
+                        if (!isNaN(numeric) && !isFinite(numeric)) {
+                            // `value` is number and greater than 0
+                            return numeric > 0;
+                        } else if (typeof value === 'string') {
+                            // `value` is text and not empty
+                            return value !== '';
+                        }
+                        // `value` is empty
+                        return true;
+                    }
                 }],
-                // The callback function for format the HTML name of generated controls.
-                nameFormatter: function (idPrefix, name, uniqueIndex) {
-                    return name + '-' + uniqueIndex;
+                // Events handling
+                dataLoaded: function (element, records) {
+                    console.log('agd: Data loaded.');
                 },
-                // The callback function to be triggered after all data loaded to grid.
-                dataLoaded: function (table, records) {
-                    console.log('agc: [' + table.id + ']dataLoaded=' + records.length);
+                rowDataLoaded: function (element, record, dataIndex, uniqueIndex) {
+                    console.log('agd: Row Data loaded. UQIDX=' + uniqueIndex);
                 },
-                // The callback function to be triggered after data loaded to a row.
-                rowDataLoaded: function (table, record, rowIndex, uniqueIndex) {
-                    console.log('agc: [' + table.id + ']rowDataLoaded=' + JSON.stringify(record));
+                afterRowAppended: function (element, parentIndex, addedRows) {
+                    console.log('agd: Row appended.');
                 },
-                // The callback function to be triggered after new row appended.
-                afterRowAppended: function (table, rowIndex) {
-                    console.log('agc: [' + table.id + ']afterRowAppended=' + rowIndex);
+                afterRowInserted: function (element, parentIndex, addedRows) {
+                    console.log('agd: Row inserted.');
                 },
-                // The callback function to be triggered after new row inserted.
-                afterRowInserted: function (table, rowIndex) {
-                    console.log('agc: [' + table.id + ']afterRowInserted=' + rowIndex);
+                afterRowSwapped: function (element, oldRowIndex, newRowIndex) {
+                    console.log('agd: Row swapped.');
                 },
-                // The callback function to be triggered after grid row swapped.
-                afterRowSwapped: function (table, oldRowIndex, newRowIndex) {
-                    console.log('agc: [' + table.id + ']afterRowSwapped=' + oldRowIndex + ',' + newRowIndex);
-                },
-                // The callback function to be triggered before grid row remove.
-                beforeRowRemove: function (table, rowIndex) {
-                    // return confirm('agc: [' + table.id + ']Are you sure to remove this row?');
+                beforeRowRemove: function (element, rowIndex) {
+                    // return confirm('Are you sure to remove this row?');
                     return true;
                 },
-                // The callback function to be triggered after grid row removed.
-                afterRowRemoved: function (table, rowIndex) {
-                    console.log('agc: [' + table.id + ']afterRowRemoved=' + rowIndex);
+                afterRowRemoved: function (caller, rowIndex) {
+                    console.log('agd: Row removed. RIDX=' + rowIndex);
                 },
+                hideRowNumColumn: true,
                 // Test max row
                 maxRowsAllowed: 10,
                 maxNumRowsReached: function () {
@@ -244,13 +245,20 @@
                 // Use sample data in `dev-data.js`, if loaded
                 initData: window.myAppendGridInitData || null
                 // initData: null
+                // initRows: 5
             });
             // Add button event
-            document.getElementById('getAllValue1').addEventListener('click', function () {
-                document.getElementById('output').innerText = JSON.stringify(window.myAppendGrid.getAllValue(), null, '  ');
+            $('#getAllValue1').on('click', function () {
+                $('#output').text(JSON.stringify(window.myAppendGrid.getAllValue(), null, '  '));
             });
-            document.getElementById('getAllValue2').addEventListener('click', function () {
-                document.getElementById('output').innerText = JSON.stringify(window.myAppendGrid.getAllValue(true), null, '  ');
+            $('#getAllValue2').on('click', function () {
+                $('#output').text(JSON.stringify(window.myAppendGrid.getAllValue(true), null, '  '));
+            });
+            $('#serialize').on('click', function () {
+                $('#output').text($('#form').serialize());
+            });
+            $('#removeEmpty').on('click', function () {
+                window.myAppendGrid.removeEmptyRows();
             });
         });
     </script>

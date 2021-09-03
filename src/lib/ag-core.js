@@ -8,6 +8,7 @@ import IconTypicons2 from './ag-icon-typicons2';
 import IconOpenIconic from './ag-icon-openiconic';
 import UiDefault from './ag-ui-default';
 import UiBootstrap4 from './ag-ui-bootstrap4';
+import UiBootstrap5 from './ag-ui-bootstrap5';
 import UiBulma from './ag-ui-bulma';
 import UiFoundation6 from './ag-ui-foundation6';
 import * as Util from './ag-util';
@@ -86,6 +87,8 @@ class GridCore {
         // Check UI framework
         if (settings.uiFramework === 'bootstrap4') {
             self.uiFramework = new UiBootstrap4(settings.uiParams, settings.i18n, self.iconFramework);
+        }else if (settings.uiFramework === 'bootstrap5') {
+            self.uiFramework = new UiBootstrap5(settings.uiParams, settings.i18n, self.iconFramework);
         } else if (settings.uiFramework === 'bulma') {
             self.uiFramework = new UiBulma(settings.uiParams, settings.i18n, self.iconFramework);
         } else if (settings.uiFramework === 'foundation6') {
