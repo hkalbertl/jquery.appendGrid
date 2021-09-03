@@ -1,5 +1,5 @@
-## 2.1.0 (May 17, 2021)
-- Supported [Bootstrap 5](https://getbootstrap.com/docs/5.0/getting-started/introduction/).
+## 2.1.0 (Sep 3, 2021)
+- Supported [Bootstrap 5](https://getbootstrap.com/docs/5.1/getting-started/introduction/).
 
 ## 2.0.8 (Oct 8, 2020)
 - Fixed issue #136 on not assigning `ctrlClass` to some of the column type.
