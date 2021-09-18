@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/hkalbertl/jquery.appendGrid",
   "devDependencies": {
-    "@babel/cli": "^7.13.14",
+    "@babel/cli": "^7.12.1",
     "@babel/core": "^7.13.15",
     "@babel/node": "^7.13.13",
     "@babel/preset-env": "^7.13.15",
