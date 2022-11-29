@@ -6,7 +6,7 @@
 ## About verisons
 You may find that the project name on GitHub is still "jquery.appendGrid". It is just a historical reason that [version 1](../../tree/v1-dev) required jQuery but it is not required in [version 2](../../tree/v2-dev) anymore. In order to keep GitHub project URL so the repository name was not changed.
 
-The new code is rewritten by using ES6. It will compatible with modern web frameworks such as [Bootstrap](https://getbootstrap.com/) and [Bulma](https://bulma.io/) natively. For [version 1](../../tree/v1-dev) that based on [jQuery UI](https://jqueryui.com/) will provide minor bug fix only.
+The new code is rewritten by using ES6. It will compatible with modern web frameworks such as [Bootstrap](https://getbootstrap.com/) and [Bulma](https://bulma.io/) natively.
 
 
 ## Prerequisite
@@ -14,11 +14,11 @@ The new code is rewritten by using ES6. It will compatible with modern web frame
 
 
 ## Demo
-Lots of demo cases are available on [Demo section](https://appendgrid.apphb.com/Demo) of **AppendGrid** website.
+Lots of demo cases are available on [Demo section](https://appendgrid.bsite.net/Demo) of **AppendGrid** website.
 
 
 ## Documentation
-The full list of options / methods / callback events are available on the [Documentation section](https://appendgrid.apphb.com/Documentation) of **AppendGrid** website.
+The full list of options / methods / callback events are available on the [Documentation section](https://appendgrid.bsite.net/Documentation) of **AppendGrid** website.
 
 
 ## Instructions
