@@ -1,3 +1,6 @@
+## 2.1.1 (Dec 11, 2022)
+- Supported [FontAwesome 6](https://fontawesome.com/).
+
 ## 2.1.0 (Sep 3, 2021)
 - Supported [Bootstrap 5](https://getbootstrap.com/docs/5.1/getting-started/introduction/).
 
