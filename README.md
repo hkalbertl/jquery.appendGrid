@@ -29,7 +29,7 @@ The full list of options / methods / callback events are available on the [Docum
 
 ## Others
 - Project structure is based on [js-plugin-starter](https://github.com/thatisuday/js-plugin-starter)
-
+- The project website was hosted by AppHarbor but it is [closed on Dec 2022](https://twitter.com/appharbor/status/1590544012481826816) and now it is moved to new hosting provider [FreeASPHosting.net](http://freeasphosting.net/) with as [new project website URL](https://appendgrid.bsite.net)
 
 ## License
 Licensed under the [MIT](http://www.opensource.org/licenses/mit-license.php) license.
