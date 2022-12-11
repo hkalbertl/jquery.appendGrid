@@ -1,6 +1,7 @@
 ﻿// import dependencies
 import IconDefault from './ag-icon-default';
 import IconBootstrapIcons from './ag-icon-bootstrapicons';
+import IconFontAwesome6 from './ag-icon-fontawesome6';
 import IconFontAwesome5 from './ag-icon-fontawesome5';
 import IconMaterialDesignIcons3 from './ag-icon-materialdesignicons3';
 import IconIonicons4 from './ag-icon-ionicons4';
@@ -67,6 +68,8 @@ class GridCore {
         // Check Icon framework
         if (settings.iconFramework === 'bootstrapicons') {
             self.iconFramework = new IconBootstrapIcons(settings.iconParams);
+        } else if (settings.iconFramework === 'fontawesome6') {
+            self.iconFramework = new IconFontAwesome6(settings.iconParams);
         } else if (settings.iconFramework === 'fontawesome5') {
             self.iconFramework = new IconFontAwesome5(settings.iconParams);
         } else if (settings.iconFramework === 'ionicon4') {
