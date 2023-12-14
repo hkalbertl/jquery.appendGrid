@@ -14,11 +14,11 @@ The new code is rewritten by using ES6. It will compatible with modern web frame
 
 
 ## Demo
-Lots of demo cases are available on [Demo section](https://appendgrid.bsite.net/Demo) of **AppendGrid** website.
+Lots of demo cases are available on [Demo section](https://appendgrid.azurewebsites.net/Demo) of **AppendGrid** website.
 
 
 ## Documentation
-The full list of options / methods / callback events are available on the [Documentation section](https://appendgrid.bsite.net/Documentation) of **AppendGrid** website.
+The full list of options / methods / callback events are available on the [Documentation section](https://appendgrid.azurewebsites.net/Documentation) of **AppendGrid** website.
 
 
 ## Instructions
@@ -29,7 +29,8 @@ The full list of options / methods / callback events are available on the [Docum
 
 ## Others
 - Project structure is based on [js-plugin-starter](https://github.com/thatisuday/js-plugin-starter)
-- The project website was hosted by AppHarbor but it is [closed on Dec 2022](https://twitter.com/appharbor/status/1590544012481826816) and now it is moved to new hosting provider [FreeASPHosting.net](http://freeasphosting.net/) with as [new project website URL](https://appendgrid.bsite.net)
+- The project website was hosted by AppHarbor but it is [closed on Dec 2022](https://twitter.com/appharbor/status/1590544012481826816) and the website was moved to [freeasphosting.net](https://freeasphosting.net)
+- Due to some compatibility issues and the project website is moved to [Azure Web Apps](https://azure.microsoft.com/en-us/products/app-service/web) with a [new project website URL](https:/appendgrid.azurewebsites.net) (wish it won't change again)
 
 ## License
 Licensed under the [MIT](http://www.opensource.org/licenses/mit-license.php) license.
