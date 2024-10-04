@@ -34,7 +34,7 @@
     "@babel/preset-env": "^7.13.15",
     "@fortawesome/fontawesome-free": "^5.15.3",
     "babel-loader": "^8.2.2",
-    "bootstrap": "^4.6.0",
+    "bootstrap": "^5.3.3",
     "bulma": "^0.7.5",
     "chai": "^4.3.4",
     "clean-webpack-plugin": "^3.0.0",
